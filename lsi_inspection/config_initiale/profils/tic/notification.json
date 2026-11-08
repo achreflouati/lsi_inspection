@@ -1,0 +1,46 @@
+[
+ {
+  "attach_print": 0,
+  "channel": "Email",
+  "condition": "doc.sales_stage and doc.lsi_responsable_phase and doc.status not in ('Converted', 'Lost', 'Closed')",
+  "days_in_advance": 0,
+  "document_type": "Opportunity",
+  "enabled": 1,
+  "event": "Value Change",
+  "is_standard": 0,
+  "message": "<p>L'opportunité <b>{{ doc.name }}</b> ({{ doc.customer_name or doc.party_name }}) entre dans la phase <b>{{ doc.sales_stage }}</b>.</p>{% if doc.lsi_echeance_phase %}<p>Échéance : {{ frappe.utils.format_datetime(doc.lsi_echeance_phase) }}</p>{% endif %}<p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">Ouvrir l'opportunité</a></p>",
+  "message_type": "Markdown",
+  "name": "Phase - entree : responsable",
+  "recipients": [
+   {
+    "receiver_by_document_field": "lsi_responsable_phase"
+   }
+  ],
+  "send_system_notification": 1,
+  "send_to_all_assignees": 0,
+  "subject": "{{ doc.name }} : phase « {{ doc.sales_stage }} » à traiter",
+  "value_changed": "sales_stage"
+ },
+ {
+  "attach_print": 0,
+  "channel": "Email",
+  "condition": "doc.sales_stage == \"Étude technique\" and doc.status not in ('Converted', 'Lost', 'Closed')",
+  "days_in_advance": 0,
+  "document_type": "Opportunity",
+  "enabled": 1,
+  "event": "Value Change",
+  "is_standard": 0,
+  "message": "<p>L'opportunité <b>{{ doc.name }}</b> ({{ doc.customer_name or doc.party_name }}) entre en <b>étude technique</b>. Votre département est concerné.</p><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">Ouvrir l'opportunité</a></p>",
+  "message_type": "Markdown",
+  "name": "Phase Etude technique : pilotes des departements",
+  "recipients": [
+   {
+    "receiver_by_document_field": "utilisateur_pilote,lsi_departements"
+   }
+  ],
+  "send_system_notification": 1,
+  "send_to_all_assignees": 0,
+  "subject": "{{ doc.name }} : étude technique — départements concernés",
+  "value_changed": "sales_stage"
+ }
+]

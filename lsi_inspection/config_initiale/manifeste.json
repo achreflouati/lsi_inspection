@@ -1,11 +1,39 @@
 {
- "description": "Doctypes de la configuration initiale, dans l'ordre de chargement. export = references : seuls les documents cités par les autres sont exportés.",
+ "description": "Doctypes de la configuration initiale, dans l'ordre de chargement. export = references : seuls les documents cités par les autres sont exportés. filtres : filtres de l'export (ex. Notifications de configuration : sans module, les Notifications de structure étant livrées en fixtures).",
  "doctypes": [
-  {"doctype": "Famille de Type"},
-  {"doctype": "Type Metier"},
-  {"doctype": "Sales Stage"},
-  {"doctype": "Evenement Phase"},
-  {"doctype": "Email Template", "export": "references"},
-  {"doctype": "Opportunity Type"}
+  {
+   "doctype": "Famille de Type"
+  },
+  {
+   "doctype": "Type Metier"
+  },
+  {
+   "doctype": "Sales Stage"
+  },
+  {
+   "doctype": "Evenement Phase"
+  },
+  {
+   "doctype": "Email Template",
+   "export": "references"
+  },
+  {
+   "doctype": "Opportunity Type"
+  },
+  {
+   "doctype": "Notification",
+   "filtres": [
+    [
+     "document_type",
+     "=",
+     "Opportunity"
+    ],
+    [
+     "module",
+     "is",
+     "not set"
+    ]
+   ]
+  }
  ]
 }

@@ -3,7 +3,8 @@
 - charger() (after_sync à l'installation, after_migrate) : insère ce qui manque, ne modifie JAMAIS l'existant ;
 - exporter_profil(profil) : écrit la configuration du site dans config_initiale/profils/<profil>/ (JSON triés, sans champs
   techniques) ; ne touche jamais commun/.
-La liste des doctypes (et leur ordre de chargement) est dans config_initiale/manifeste.json : configuration, pas code.
+La liste des doctypes (et leur ordre de chargement, et les filtres d'export) est dans config_initiale/manifeste.json :
+configuration, pas code.
 Circuit : TIC paramètre à l'écran → export → commit Git → la production l'insère à la migration.
 """
 
@@ -130,7 +131,7 @@ def exporter_profil(profil, dossier=None):
 		if e.get("export") == "references":
 			continue
 		exclus = {d["name"] for d in _lire(commun, e["doctype"])}
-		noms = [n for n in frappe.get_all(e["doctype"], pluck="name", order_by="name asc") if n not in exclus]
+		noms = [n for n in frappe.get_all(e["doctype"], filters=e.get("filtres"), pluck="name", order_by="name asc") if n not in exclus]
 		docs[e["doctype"]] = [frappe.get_doc(e["doctype"], n) for n in noms]
 	tous = [d for liste in docs.values() for d in liste]
 	for e in entrees:

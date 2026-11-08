@@ -4,7 +4,7 @@
   "lsi_dossier_ao": 1,
   "lsi_notifications_phase": [
    {
-    "actif": 1,
+    "actif": 0,
     "destinataires": "Responsable de phase",
     "email": 0,
     "modele": "Phase - entree",
@@ -12,7 +12,7 @@
     "systeme": 1
    },
    {
-    "actif": 1,
+    "actif": 0,
     "destinataires": "Départements concernés (tous)",
     "email": 1,
     "modele": "Phase - entree",
