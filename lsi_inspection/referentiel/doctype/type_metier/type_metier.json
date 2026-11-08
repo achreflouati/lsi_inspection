@@ -11,7 +11,8 @@
   "code",
   "libelle",
   "actif",
-  "ordre"
+  "ordre",
+  "par_defaut"
  ],
  "fields": [
   {
@@ -52,12 +53,20 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Ordre"
+  },
+  {
+   "default": "0",
+   "description": "Valeur propos\u00e9e quand le champ est vide (une seule par famille).",
+   "fieldname": "par_defaut",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Par d\u00e9faut"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-08 13:40:09.484262",
+ "modified": "2026-11-08 14:57:19.249564",
  "modified_by": "Administrator",
  "module": "Referentiel",
  "name": "Type Metier",

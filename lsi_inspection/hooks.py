@@ -277,7 +277,8 @@ doc_events = {
 		"on_change": f"{_phases}.sur_document",
 	},
 	"Opportunity": {
-		"validate": ["lsi_inspection.outils.verifier_obligatoires", f"{_phases}.opportunity_validate"],
+		"validate": ["lsi_inspection.outils.defauts_referentiel", "lsi_inspection.outils.verifier_obligatoires",
+			f"{_phases}.opportunity_validate"],
 		"on_update": f"{_phases}.opportunity_on_update",
 	},
 	"Opportunity Type": {"validate": f"{_phases}.type_validate", "on_update": f"{_phases}.type_on_update"},

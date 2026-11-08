@@ -5,7 +5,8 @@
   "famille": "CANAL_DEMANDE",
   "libelle": "Consultation écrite",
   "name": "CANAL_DEMANDE-ECRITE",
-  "ordre": 2
+  "ordre": 2,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -13,7 +14,8 @@
   "famille": "CANAL_DEMANDE",
   "libelle": "Consultation verbale",
   "name": "CANAL_DEMANDE-VERBALE",
-  "ordre": 1
+  "ordre": 1,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -21,7 +23,8 @@
   "famille": "CONFORMITE_CDC",
   "libelle": "À analyser",
   "name": "CONFORMITE_CDC-A_ANALYSER",
-  "ordre": 1
+  "ordre": 1,
+  "par_defaut": 1
  },
  {
   "actif": 1,
@@ -29,7 +32,8 @@
   "famille": "CONFORMITE_CDC",
   "libelle": "Conforme",
   "name": "CONFORMITE_CDC-CONFORME",
-  "ordre": 2
+  "ordre": 2,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -37,7 +41,8 @@
   "famille": "CONFORMITE_CDC",
   "libelle": "Non conforme",
   "name": "CONFORMITE_CDC-NON_CONFORME",
-  "ordre": 4
+  "ordre": 4,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -45,7 +50,8 @@
   "famille": "CONFORMITE_CDC",
   "libelle": "Partiel",
   "name": "CONFORMITE_CDC-PARTIEL",
-  "ordre": 3
+  "ordre": 3,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -53,7 +59,8 @@
   "famille": "MOTIF_NON_VALIDATION",
   "libelle": "Autre",
   "name": "MOTIF_NON_VALIDATION-AUTRE",
-  "ordre": 5
+  "ordre": 5,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -61,7 +68,8 @@
   "famille": "MOTIF_NON_VALIDATION",
   "libelle": "Délai insuffisant",
   "name": "MOTIF_NON_VALIDATION-DELAI",
-  "ordre": 4
+  "ordre": 4,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -69,7 +77,8 @@
   "famille": "MOTIF_NON_VALIDATION",
   "libelle": "Matériel manquant",
   "name": "MOTIF_NON_VALIDATION-MATERIEL",
-  "ordre": 2
+  "ordre": 2,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -77,7 +86,8 @@
   "famille": "MOTIF_NON_VALIDATION",
   "libelle": "Hors périmètre",
   "name": "MOTIF_NON_VALIDATION-PERIMETRE",
-  "ordre": 3
+  "ordre": 3,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -85,7 +95,8 @@
   "famille": "MOTIF_NON_VALIDATION",
   "libelle": "Qualification manquante",
   "name": "MOTIF_NON_VALIDATION-QUALIFICATION",
-  "ordre": 1
+  "ordre": 1,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -93,7 +104,8 @@
   "famille": "PORTEE_AO",
   "libelle": "International",
   "name": "PORTEE_AO-INTERNATIONAL",
-  "ordre": 2
+  "ordre": 2,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -101,7 +113,8 @@
   "famille": "PORTEE_AO",
   "libelle": "National",
   "name": "PORTEE_AO-NATIONAL",
-  "ordre": 1
+  "ordre": 1,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -109,7 +122,8 @@
   "famille": "RESULTAT_AO",
   "libelle": "En attente",
   "name": "RESULTAT_AO-EN_ATTENTE",
-  "ordre": 1
+  "ordre": 1,
+  "par_defaut": 1
  },
  {
   "actif": 1,
@@ -117,7 +131,8 @@
   "famille": "RESULTAT_AO",
   "libelle": "Non",
   "name": "RESULTAT_AO-NON",
-  "ordre": 3
+  "ordre": 3,
+  "par_defaut": 0
  },
  {
   "actif": 1,
@@ -125,6 +140,7 @@
   "famille": "RESULTAT_AO",
   "libelle": "Oui",
   "name": "RESULTAT_AO-OUI",
-  "ordre": 2
+  "ordre": 2,
+  "par_defaut": 0
  }
 ]
