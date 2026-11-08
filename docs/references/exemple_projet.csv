@@ -1,0 +1,87 @@
+### Projet
+Pos;Type de position;Désignation1;Désignation2;Quantité;Unité;Prix unitaire;Prix global;Coûts précalculés;Etape
+1;En-tête groupe;Contrôle par Radiographie (Vacation)
+1.1;Service à côut;Inspecteur RT niveau II;;1;Jour;;;;Contrôle par Radiographie (RT)
+1.2;Service à côut;Inspecteur RT niveau II - Travaux de nuit;T.N;0;Jour;;;;Contrôle par Radiographie (RT)
+1.3;Service à côut;Inspecteur RT niveau II - Dimanche & jour férié;Dimanche & jour férié;0;Jour;;;;Contrôle par Radiographie (RT)
+1.4;Article à côut;Heure supplémentaire Inspecteur;;0;Unité;;;;Contrôle par Radiographie (RT)
+1.5;Service à côut;Assistant RT;;1;Jour;;;;Contrôle par Radiographie (RT)
+1.6;Service à côut;Assistant RT - Travaux de nuit;T.N;0;Jour;;;;Contrôle par Radiographie (RT)
+1.7;Service à côut;Assistant RT - Dimanche & jour férié;Dimanche & jour férié;0;Jour;;;;Contrôle par Radiographie (RT)
+1.8;Article à côut;Heure supplémentaire Assistant;;0;Unité;;;;Contrôle par Radiographie (RT)
+1.9;Durée de l'équipement à coût;PROJECTEUR GAMMA;;1;Jour;;;;Contrôle par Radiographie (RT)
+1.17;Prix fixe;Film;ligne de facturation;3;Unité;;;;Contrôle par Radiographie (RT)
+1.17.1;Article de la position à prix fixe;FILM MX125 RECHARGEABLE 10/40;sous position;1;Unité;;;;Contrôle par Radiographie (RT)
+1.17.2;Article de la position à prix fixe;FILM FUJIFILM RECHARGEABLE IX100 10/40;sous position;1;Unité;;;;Contrôle par Radiographie (RT)
+1.17.3;Article de la position à prix fixe;FILM FUJIFILM STANDARD IX100 10/40;sous position;1;Unité;;;;Contrôle par Radiographie (RT)
+1.18;Article à côut;EMBOUT TEST/MDS TIF/TSI;accessoires;1;Unité;;;;Contrôle par Radiographie (RT)
+1.19;Article à côut;CASSETTE FILM 10/40;accessoires;1;Unité;;;;Contrôle par Radiographie (RT)
+1;Sous-total groupe
+2;En-tête groupe;Approbation d'un DMOS (forfait)
+2.1;Prix fixe;Forfait /DMOS;ligne de facturation;1;Unité;;;;Approbation d'un DMOS
+2.1.1;Service de la position à prix fixe;Expert en soudage;sous position;2;Jour;;;;Approbation d'un DMOS
+2;Sous-total groupe
+3;En-tête groupe;Découpage et essai mécaniques & Assistance aux essais mécaniques (Vacation)
+3.1;Sous-traitance à coût;Usinage de traction;;2;Unité;;;;Découpages et Essais Mécaniques
+3.2;Sous-traitance à coût;Essai De Traction;;2;Unité;;;;Découpages et Essais Mécaniques
+3;Sous-total groupe
+4;En-tête groupe;Transport & Indemnité
+4.1;Durée de l'équipement à coût;VEHICULE;;1;Jours;;;;2 sélectionné
+4.2;Durée de l'équipement à coût;CARTE CARBURANT;;1;Jours;;;;2 sélectionné
+4.3;Article à côut;Indemnité d'hébergement;;0;Unité;;;;2 sélectionné
+4.4;Article à côut;Indemnité de Repas;;0;Unité;;;;2 sélectionné
+4.5;Article à côut;Frais kilométriques;;1;Kilomètre;;;;2 sélectionné
+4.6;Article à côut;Frais de Péage;;1;Unité;;;;2 sélectionné
+4;Sous-total groupe
+5;En-tête groupe;Contrôle réglementaire des installations électriques (Tarif Journalier)
+5.1;Prix fixe;Inspecteur agréé B2 + Transport;ligne de facturation;1;Jour;;;;Contrôle réglementaire des installations électriques Sfax
+5.1.1;Service de la position à prix fixe;Inspecteur agréé B2;sous position;6;Heure;;;;Contrôle réglementaire des installations électriques Sfax
+5.1.2;Service de la position à prix fixe;Rédaction rapport;sous position;2;Heure;;;;Contrôle réglementaire des installations électriques Sfax
+5.1.3;Durée de l'équipement à coût;VEHICULE ;sous position;1;Jours;;;;Contrôle réglementaire des installations électriques Sfax
+5.1.4;Durée de l'équipement à coût;CARTE CARBURANT;sous position;1;jour;;;;Contrôle réglementaire des installations électriques Sfax
+5.1.5;Article à côut;Indemnités kilométriques;sous position;100;Kilomètre;;;;Contrôle réglementaire des installations électriques Sfax
+5.2;Durée de l'équipement à coût;APPAREIL PHOTO;;1;Jour;;;;Contrôle réglementaire des installations électriques Sfax
+5.3;Durée de l'équipement à coût;CONTRÔLEUR D'INSTALLATION ÉLECTRIQUE;;1;Jour;;;;Contrôle réglementaire des installations électriques Sfax
+5;Sous-total groupe
+
+### Mission1 (quantités réellement consommées — servira au lot OM)
+Désignation1;Désignation2;Quantité;Unité
+Contrôle par Radiographie (Vacation)
+Inspecteur RT niveau II;;1;Jour
+Inspecteur RT niveau II - Travaux de nuit;T.N;1;Jour
+Heure supplémentaire Inspecteur;;2;Unité
+Assistant RT;;1;Jour
+Assistant RT - Travaux de nuit;T.N;1;Jour
+Heure supplémentaire Assistant;;2;Unité
+PROJECTEUR GAMMA;;2;Jour
+Film;ligne de facturation;8;Unité
+FILM MX125 RECHARGEABLE 10/40;sous position;4;Unité
+FILM FUJIFILM RECHARGEABLE IX100 10/40;sous position;2;Unité
+FILM FUJIFILM STANDARD IX100 10/40;sous position;2;Unité
+EMBOUT TEST/MDS TIF/TSI;accessoires;1;Unité
+CASSETTE FILM 10/40;accessoires;1;Unité
+Transport & Indemnité
+VEHICULE;;2;Jours
+CARTE CARBURANT;;2;Jours
+Indemnité d'hébergement;;2;Unité
+Indemnité de Repas;;2;Unité
+Frais kilométriques;ligne de facturation;100;Kilomètre
+Frais de Péage;;2;Unité
+
+### Mission2
+Désignation1;Désignation2;Quantité;Unité
+Approbation d'un DMOS (forfait)
+Forfait /DMOS;ligne de facturation;1;Unité
+Expert en soudage;sous position;2;Jour
+
+### Mission3
+Désignation1;Désignation2;Quantité;Unité
+Contrôle réglementaire des installations électriques (Tarif Journalier)
+Inspecteur agréé B2 + Transport;ligne de facturation;1;Jour
+Inspecteur agréé B2;sous position;6;Heure
+Rédaction rapport;sous position;2;Heure
+VEHICULE ;sous position;1;Jours
+CARTE CARBURANT;sous position;1;jour
+Indemnités kilométriques;sous position;100;Kilomètre
+APPAREIL PHOTO;;1;Jour
+CONTRÔLEUR D'INSTALLATION ÉLECTRIQUE;;1;Jour
