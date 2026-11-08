@@ -72,7 +72,16 @@ Ordre des règles natives (`status_updater`, dernière vraie l'emporte) : Lost (
 actif) < Converted (devis commandé) < Closed. D'où l'évaluation des événements de statut **avant commit** : la valeur
 intermédiaire `Lost` ne déclenche rien.
 
-Non traité (à décider) : une opportunité « Lost » rouverte (devis annulé) ne revient pas automatiquement sur ses phases.
+**Réouverture (lot 2b)** : quand le statut final de l'opportunité **quitte** « Lost » (devis annulé ou rouvert), l'événement
+de configuration « Opportunité rouverte » (Changement de statut, `status`, valeur Lost, sens **Quitte la valeur**), indiqué
+comme **Événement d'annulation** de la phase finale Perdue du parcours, déclenche :
+- phase Perdue → **« Annulée »** (elle peut être de nouveau atteinte par une nouvelle perte) ;
+- phases passées « Sautée (auto) » au moment de la perte → « À venir » ; phases faites avant la perte : inchangées ;
+- la phase qui était **En cours** avant la perte redevient « En cours » (nouveau début, nouvelle échéance, ToDo, notifications
+  d'entrée) ; à défaut, la première phase à venir ;
+- historique : ligne **« Réouverture »** (de Perdue vers la phase reprise, par, événement, document source = dernier devis
+  modifié de l'opportunité).
+Mécanisme générique : tout événement d'annulation peut être indiqué sur une phase finale (Gagnée comprise), aucun nom en dur.
 
 ## 4. Configuration initiale et profils
 
@@ -99,7 +108,7 @@ Non traité (à décider) : une opportunité « Lost » rouverte (devis annulé)
 | | Alertes codées → Notifications natives + règles par phase paramétrables |
 | | Champs créés au migrate → fixtures |
 
-## 6. Tests (47, transaction annulée, configuration propre aux tests)
+## 6. Tests (51, transaction annulée, configuration propre aux tests)
 
 `tests/test_phases.py`, `test_notifications.py`, `test_validation.py`, `test_config.py`, `test_workspace.py`,
 `test_installation.py`. Couvrent : construction, type sans parcours, Terminer ma phase + ToDo, obligatoire, historique
@@ -110,7 +119,9 @@ moteur ; Paramétreur commercial seul (phase + règle → Notification Log + e-m
 inactive, modèle en erreur non bloquant, sans compte sortant, destinataires, retard une seule fois, Days After natif ;
 workflow (refus sans motif, clarification, commercial non autorisé), statut natif inchangé, série OFF, link_filters, code
 unique par famille, pilote et ligne principale ; chargement idempotent, valeur modifiée conservée, nouvel élément inséré,
-site sans profil, export jamais dans commun, ré-export identique, export → import sur base vide = mêmes données.
+site sans profil, export jamais dans commun, ré-export identique, export → import sur base vide = mêmes données ; réouverture
+(devis annulé → Perdue Annulée, phase reprise, historique), sans événement d'annulation rien ne change, nouvelle perte après
+réouverture, le sens « Quitte » ne se déclenche pas à l'arrivée.
 
 ## 7. Fiche de test (testeurs TIC)
 
@@ -132,3 +143,4 @@ les notifications système partent).
 | T2.10 | Terminer, sauter une phase, puis **Retour à** une phase antérieure ; essayer de modifier l'historique | Une ligne par action (Terminée, Sautée, Retour arrière), les anciennes inchangées ; historique en lecture seule |
 | T2.11 | **Gagnée par la commande** : devis depuis l'opportunité → Valider (soumettre) → Commande client depuis le devis → Valider | Statut natif « Converted » ; phases restantes « Sautée (auto) », **Gagnée « Terminée »** ; historique « Gagnée » avec le devis |
 | T2.12 | **Perdue par le devis** : sur un devis validé, **Déclarer perdu** (motif + détail) ; recommencer avec deux devis ouverts dont un seul déclaré perdu | 1er cas : statut « Lost », phases restantes « Sautée (auto) », **Perdue « Terminée »**, historique « Perdue » avec le devis et le motif. 2e cas : statut « Quotation », aucune phase finale |
+| T2.13 | **Réouverture** : sur l'opportunité perdue de T2.12 (1er cas), **Annuler** le devis déclaré perdu | Statut natif quitte « Lost » ; phase Perdue **« Annulée »** ; la phase qui était en cours avant la perte redevient **« En cours »** (ToDo au responsable) ; phases sautées par la perte « À venir » ; historique « Réouverture » (par, devis source) ; une nouvelle perte remet Perdue « Terminée » |

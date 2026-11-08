@@ -4,6 +4,11 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/). Une entrée p
 
 ## [Non publié]
 
+### Lot 2b — réouverture (branche lot2b-reouverture)
+- Evenement Phase : sens « Atteint la valeur » / « Quitte la valeur ». Événement commun « Opportunité rouverte ».
+- Parcours : « Événement d'annulation » d'une phase finale ; statut « Annulée », action d'historique « Réouverture ».
+- Statut natif qui quitte « Lost » : Perdue annulée, phase en cours avant la perte reprise. 51 tests ; T2.13.
+
 ### Lot 2 — opportunité (branche lot2-opportunite)
 - Modules Referentiel et Commercial ; référentiel générique Famille de Type / Type Metier.
 - Opportunité : série OFF-.YYYY.-.####, canal et origine de la demande, workflow « Validation demande d'offre » (motif
