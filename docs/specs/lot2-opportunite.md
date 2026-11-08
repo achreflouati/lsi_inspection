@@ -108,7 +108,7 @@ Mécanisme générique : tout événement d'annulation peut être indiqué sur u
 | | Alertes codées → Notifications natives + règles par phase paramétrables |
 | | Champs créés au migrate → fixtures |
 
-## 6. Tests (51, transaction annulée, configuration propre aux tests)
+## 6. Tests (63, transaction annulée, configuration propre aux tests)
 
 `tests/test_phases.py`, `test_notifications.py`, `test_validation.py`, `test_config.py`, `test_workspace.py`,
 `test_installation.py`. Couvrent : construction, type sans parcours, Terminer ma phase + ToDo, obligatoire, historique
@@ -122,6 +122,49 @@ unique par famille, pilote et ligne principale ; chargement idempotent, valeur m
 site sans profil, export jamais dans commun, ré-export identique, export → import sur base vide = mêmes données ; réouverture
 (devis annulé → Perdue Annulée, phase reprise, historique), sans événement d'annulation rien ne change, nouvelle perte après
 réouverture, le sens « Quitte » ne se déclenche pas à l'arrivée.
+
+## 8. Écran Opportunité (aligné sur tidemo, règles lsi_inspection)
+
+L'onglet **Détails reste 100 % natif** (ordre ERPNext). Tous les ajouts sont dans un onglet **« Suivi commercial »** placé juste
+après Détails :
+
+```
+Opportunité OFF-2026-0001        Phase en cours : Création          [Terminer ma phase]  [Créer ▾]
+├─ Détails (natif)
+├─ Suivi commercial
+│   ▸ Demande d'offre               Type de consultation · Personnel à l'origine de la consultation |
+│                                   Statut de validation · Motif de non-validation · Date limite de réponse
+│   ▸ Départements concernés        département · pilote · utilisateur du pilote · principal (un seul)
+│   ▸ Avancement de l'opportunité   Phase commerciale en cours depuis · Échéance |
+│                                   Responsables de la phase en cours · Responsable principal
+│   ▸ Durée par phase commerciale   tableau HTML (phase, statut en pastille : vert terminée, orange en cours, gris à venir,
+│                                   jaune sautée, rouge « en retard » ; début, fin, durée h · j, cible, échéance, fin sur,
+│                                   responsable, terminé par ; total depuis la création ; bulle sur une phase sautée)
+│                                   + Phases de l'opportunité + Historique des phases commerciales
+│   ▸ Dossier AO*                   Référence · Acheteur public · Portée · CDC · Caution provisoire |
+│                                   Publication · Limite des questions · Limite de remise · Ouverture des plis
+│                                   Lots · Exigences du CDC (analyse)
+│   ▸ Résultat de l'AO*             Attribué · Notre rang · Offres des concurrents
+├─ Contacts · Articles · Activités · Commentaires · Connexions (natif)
+* visible si « Dossier AO » est coché sur le type d'opportunité
+```
+
+| tidemo | tic |
+|---|---|
+| N° d'offre (champ codé) | Nom du document (série native OFF-.YYYY.-.####), colonne ID et filtre ID natifs |
+| Type de consultation (liste en dur, 4 valeurs) | Champ du référentiel « Type de consultation » (Consultation verbale / écrite) ; Appel d'offres et Contrat cadre = types d'opportunité |
+| Services concernés | Abandonné (tableau Départements concernés) |
+| Plan d'action | Abandonné |
+| Responsables par étape (paramètres) | Parcours du type d'opportunité |
+| Historique des étapes | Historique des phases (ajout seul) + « Terminé par » et durées dans le tableau HTML |
+| Visibilité AO : type de consultation = « Appel d'offres » | Case « Dossier AO » sur le type d'opportunité (configuration) + `fetch_from` |
+| Portée, Attribué, Conformité (listes en dur) | Référentiel PORTEE_AO, RESULTAT_AO, CONFORMITE_CDC (valeur « Par défaut » par famille) |
+| Alertes J-7 / J-3 / J-1 (tâche codée) | 3 Notifications natives « Days Before » (Remise AO J-7 / J-3 / J-1) |
+| État « Attente clarification client » | Identique |
+| Filtres de liste Département concerné / Pilote | Identiques (script de liste générique) |
+
+Plus tard : EFT (bouton, Devis TIC, case « Créer l'EFT liée », événements EFT, masquage du devis natif) — lot EFT ;
+Avant-projet (champ, bouton, événement) — lot Avant-projet ; Veille concurrentielle — lot AO / Veille.
 
 ## 7. Fiche de test (testeurs TIC)
 
@@ -144,3 +187,8 @@ les notifications système partent).
 | T2.11 | **Gagnée par la commande** : devis depuis l'opportunité → Valider (soumettre) → Commande client depuis le devis → Valider | Statut natif « Converted » ; phases restantes « Sautée (auto) », **Gagnée « Terminée »** ; historique « Gagnée » avec le devis |
 | T2.12 | **Perdue par le devis** : sur un devis validé, **Déclarer perdu** (motif + détail) ; recommencer avec deux devis ouverts dont un seul déclaré perdu | 1er cas : statut « Lost », phases restantes « Sautée (auto) », **Perdue « Terminée »**, historique « Perdue » avec le devis et le motif. 2e cas : statut « Quotation », aucune phase finale |
 | T2.13 | **Réouverture** : sur l'opportunité perdue de T2.12 (1er cas), **Annuler** le devis déclaré perdu | Statut natif quitte « Lost » ; phase Perdue **« Annulée »** ; la phase qui était en cours avant la perte redevient **« En cours »** (ToDo au responsable) ; phases sautées par la perte « À venir » ; historique « Réouverture » (par, devis source) ; une nouvelle perte remet Perdue « Terminée » |
+| T2.14 | **Écran** : ouvrir une opportunité | Onglet Détails identique à ERPNext ; onglet **Suivi commercial** juste après, sections dans l'ordre : Demande d'offre, Départements concernés, Avancement de l'opportunité, Durée par phase commerciale, (Dossier AO, Résultat de l'AO si type AO) ; bandeau « Phase en cours » |
+| T2.15 | **Demande d'offre** : liste « Type de consultation » ; saisir la date limite de réponse ; Demander clarification | Seules « Consultation verbale » et « Consultation écrite » ; date enregistrée ; état **« Attente clarification client »** |
+| T2.16 | **Durée par phase** : Terminer ma phase, puis valider un devis (phases sautées) ; mettre une durée cible d'1 jour et revenir le surlendemain | Pastilles : verte (terminée), orange (en cours), jaune (sautée), grise (à venir) ; durées en h et j ; « Terminé par » ; total depuis la création ; **bulle** sur une phase sautée (« Devis validé : Quotation … ») ; pastille rouge **« en retard »** après l'échéance |
+| T2.17 | **Dossier AO** : opportunité de type Appel d'offres puis de type Spot ; sur l'AO : référence, dates (remise dans 3 jours), un lot, une exigence, un concurrent | AO : sections Dossier AO et Résultat visibles ; Spot : masquées. Conformité de l'exigence = **« À analyser »** et Attribué = **« En attente »** par défaut ; le lendemain matin, alerte « Remise AO J-3 » (cloche + e-mail) au commercial et au rôle Etude technique |
+| T2.18 | **Liste et paramétrage** : liste des opportunités ; en Paramétreur commercial, cocher « Dossier AO » sur un autre type et changer la valeur par défaut de Conformité | Colonnes ID (n° d'offre), statut de validation, date limite de remise ; filtres Département concerné, Pilote, Référence AO ; le Dossier AO apparaît sur ce type ; la nouvelle valeur par défaut est proposée, sans code |

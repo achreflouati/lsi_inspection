@@ -4,6 +4,15 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/). Une entrée p
 
 ## [Non publié]
 
+### Lot 2 — écran Opportunité aligné sur tidemo
+- Onglet « Suivi commercial » après Détails (Détails 100 % natif), sections dans l'ordre de tidemo, libellés alignés.
+- Type de consultation (référentiel), date limite de réponse ; avancement (en cours depuis, responsables) ; tableau HTML
+  « Durée par phase commerciale » comme tidemo.
+- Dossier AO et Résultat de l'AO (Lot AO, Exigence CDC, Resultat AO Concurrent ; familles PORTEE_AO, CONFORMITE_CDC,
+  RESULTAT_AO ; case Dossier AO sur le type) ; alertes Remise AO J-7 / J-3 / J-1 (Notifications natives).
+- Valeurs par défaut du référentiel ; état « Attente clarification client » ; filtres de liste Département concerné / Pilote.
+- 63 tests ; fiche de test T2.14 à T2.18.
+
 ### Lot 2b — réouverture (branche lot2b-reouverture)
 - Evenement Phase : sens « Atteint la valeur » / « Quitte la valeur ». Événement commun « Opportunité rouverte ».
 - Parcours : « Événement d'annulation » d'une phase finale ; statut « Annulée », action d'historique « Réouverture ».
