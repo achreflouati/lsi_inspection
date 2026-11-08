@@ -132,3 +132,111 @@ lsi_eft.charger_modele = function (frm) {
 		frappe.call({ method: `${M}.charger_modele`, args: { eft: frm.doc.name, modele: v.modele }, freeze: true }).then(() => frm.reload_doc()),
 		__("Charger un modèle"));
 };
+
+// ------------------------------------------------------------------ temps réel, couleurs, synthèse (comme tic_demo)
+// Le calcul est fait par le MÊME moteur que l'enregistrement (méthode « apercu », sans enregistrer) : pools, conversions, stock.
+const LSI_COULEURS = ["#2563eb", "#16a34a", "#9333ea", "#ea580c", "#db2777", "#0891b2", "#ca8a04", "#4b5563"];
+const LSI_CHAMPS_POSITION = ["item_code", "type_position", "qty", "uom", "prix_unitaire", "cout_unitaire", "cout_manuel", "parente", "groupe", "numero"];
+
+lsi_eft.couleur_etape = function (frm, etape) {
+	const i = (frm.doc.etapes || []).findIndex((e) => e.prestation === etape);
+	return i < 0 ? null : LSI_COULEURS[i % LSI_COULEURS.length];
+};
+
+lsi_eft.etape_de = function (frm, p) {
+	// étape principale d'une position (même règle que le serveur) : parente → répartition de la position, puis du groupe, sinon étape unique
+	if (p.__etape) return p.__etape;
+	const par_num = Object.fromEntries((frm.doc.positions || []).map((x) => [x.numero, x]));
+	if (p.parente && par_num[p.parente]) return lsi_eft.etape_de(frm, par_num[p.parente]);
+	for (const cible of [p.numero, p.groupe]) {
+		const r = (frm.doc.repartitions || []).find((x) => String(x.cible) === String(cible) && x.etape);
+		if (r) return r.etape;
+	}
+	return (frm.doc.etapes || []).length === 1 ? frm.doc.etapes[0].prestation : null;
+};
+
+lsi_eft.colorer = function (frm) {
+	if (!document.getElementById("lsi-eft-style")) {
+		$(`<style id="lsi-eft-style">
+			.grid-row.lsi-manquant > .data-row { background: var(--bg-orange, #fff1e7); }
+			.grid-row.lsi-perte > .data-row { background: var(--bg-red, #fde8e8); }
+			.grid-row.lsi-tarif > .data-row { color: var(--text-muted); font-style: italic; }
+			.grid-row.lsi-sous > .data-row .static-area { opacity: .85; }
+			.lsi-synth td, .lsi-synth th { padding: 4px 8px; font-size: 12px; }
+			.lsi-synth .manquant { color: #c2410c; font-weight: 600; } .lsi-synth .perte { color: #b91c1c; font-weight: 600; }
+		</style>`).appendTo("head");
+	}
+	const peindre = (champ, couleur_de, classes_de) => {
+		const grid = frm.fields_dict[champ] && frm.fields_dict[champ].grid;
+		(grid ? grid.grid_rows : []).forEach((r) => {
+			const c = couleur_de(r.doc);
+			$(r.wrapper).find("> .data-row").css("border-left", c ? `5px solid ${c}` : "");
+			const cl = classes_de ? classes_de(r.doc) : {};
+			Object.entries(cl).forEach(([k, v]) => $(r.wrapper).toggleClass(k, !!v));
+		});
+	};
+	peindre("etapes", (e) => lsi_eft.couleur_etape(frm, e.prestation));
+	peindre("groupes", (g) => lsi_eft.couleur_etape(frm, lsi_eft.etape_de(frm, { numero: null, groupe: g.numero })));
+	peindre("positions", (p) => lsi_eft.couleur_etape(frm, lsi_eft.etape_de(frm, p)), (p) => ({
+		"lsi-manquant": p.cout_manquant || p.cout_en_attente,
+		"lsi-perte": !p.parente && flt(p.prix_total) > 0 && flt(p.marge) < 0,
+		"lsi-tarif": p.tarif,
+		"lsi-sous": !!p.parente,
+	}));
+	lsi_eft.synthese(frm);
+};
+
+lsi_eft.synthese = function (frm) {
+	const f = frm.get_field("synthese_html");
+	if (!f) return;
+	const esc = frappe.utils.escape_html, m = (v) => format_currency(v, frappe.defaults.get_default("currency"));
+	const ligne = (titre, c, p, manquant, couleur, gras) => {
+		const marge = flt(p) - flt(c), taux = flt(p) ? (marge / flt(p)) * 100 : 0;
+		return `<tr style="${gras ? "font-weight:700;" : ""}${couleur ? `border-left:5px solid ${couleur}` : ""}"><td>${titre}</td>
+			<td class="text-right ${manquant ? "manquant" : ""}">${m(c)}${manquant ? " ⚠" : ""}</td><td class="text-right">${m(p)}</td>
+			<td class="text-right ${marge < 0 ? "perte" : ""}">${m(marge)}</td><td class="text-right ${marge < 0 ? "perte" : ""}">${format_number(taux, null, 1)} %</td></tr>`;
+	};
+	const vendues = (frm.doc.positions || []).filter((p) => !p.parente);
+	const corps = (frm.doc.totaux_etapes || []).map((t) => {
+		const manquant = vendues.some((p) => lsi_eft.etape_de(frm, p) === t.etape && (p.cout_manquant || p.cout_en_attente));
+		const libelle = ((frm.doc.etapes || []).find((e) => e.prestation === t.etape) || {}).libelle || t.etape;
+		return ligne(esc(libelle), t.cout_total, t.prix_total, manquant, lsi_eft.couleur_etape(frm, t.etape));
+	}).join("");
+	f.$wrapper.html(vendues.length ? `<table class="table table-bordered lsi-synth"><thead><tr><th>${__("Prestation (étape)")}</th>
+		<th class="text-right">${__("Coût")}</th><th class="text-right">${__("Prix")}</th><th class="text-right">${__("Marge")}</th>
+		<th class="text-right">${__("Marge %")}</th></tr></thead><tbody>${corps}
+		${ligne(__("Total de l'EFT"), frm.doc.total_cout, frm.doc.total_prix, frm.doc.cout_incomplet, null, true)}</tbody></table>
+		<p class="text-muted small">${__("Lignes : orange = coût manquant ou en attente ; rouge = vendue à perte ; gris = tarif à quantité 0. Bande de couleur = prestation.")}</p>`
+		: `<p class="text-muted">${__("Ajoutez une prestation (bouton « Ajouter depuis une gamme ») pour commencer le chiffrage.")}</p>`);
+};
+
+lsi_eft.apercu = frappe.utils.debounce(function (frm) {
+	if (frm.doc.docstatus !== 0) return;
+	frappe.call({ method: `${M}.apercu`, args: { doc: frm.doc }, type: "POST" }).then((r) => {
+		const d = r.message || {};
+		if (d.erreur) {
+			frappe.show_alert({ message: d.erreur, indicator: "orange" }, 6);
+			return;
+		}
+		(frm.doc.positions || []).forEach((p) => {
+			const v = (d.positions || {})[p.name];
+			if (v) { Object.assign(p, v); p.__etape = v.etape_principale; }
+		});
+		(frm.doc.groupes || []).forEach((g) => Object.assign(g, (d.groupes || {})[g.name] || {}));
+		frm.doc.totaux_etapes = (d.totaux_etapes || []).map((t, i) => Object.assign({ doctype: "EFT Total Etape", idx: i + 1, parentfield: "totaux_etapes" }, t));
+		["total_cout", "total_prix", "total_marge", "taux_marge", "cout_incomplet"].forEach((c) => (frm.doc[c] = d[c]));
+		["positions", "groupes", "totaux_etapes", "total_cout", "total_prix", "total_marge", "taux_marge", "cout_incomplet"].forEach((c) => frm.refresh_field(c));
+		lsi_eft.colorer(frm);
+	});
+}, 400);
+
+frappe.ui.form.on("EFT", {
+	refresh(frm) { setTimeout(() => lsi_eft.colorer(frm), 300); },
+	positions_on_form_rendered(frm) { lsi_eft.colorer(frm); },
+});
+frappe.ui.form.on("EFT Position", Object.assign(
+	Object.fromEntries(LSI_CHAMPS_POSITION.map((c) => [c, (frm) => lsi_eft.apercu(frm)])),
+	{ positions_remove: (frm) => lsi_eft.apercu(frm) }
+));
+frappe.ui.form.on("EFT Repartition", { cible: (frm) => lsi_eft.apercu(frm), etape: (frm) => lsi_eft.apercu(frm), part: (frm) => lsi_eft.apercu(frm),
+	repartitions_remove: (frm) => lsi_eft.apercu(frm) });

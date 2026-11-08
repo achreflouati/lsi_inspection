@@ -18,6 +18,7 @@
   "workflow_state",
   "amended_from",
   "tab_structure",
+  "synthese_html",
   "etapes",
   "groupes",
   "positions",
@@ -38,7 +39,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hidden": 1,
-   "label": "Série",
+   "label": "S\u00e9rie",
    "options": "EFT-.YYYY.-.####",
    "reqd": 1
   },
@@ -54,7 +55,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Opportunité",
+   "label": "Opportunit\u00e9",
    "options": "Opportunity"
   },
   {
@@ -78,7 +79,7 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
-   "label": "Société",
+   "label": "Soci\u00e9t\u00e9",
    "options": "Company",
    "reqd": 1
   },
@@ -104,10 +105,10 @@
    "label": "Chiffrage"
   },
   {
-   "description": "Ajouter une prestation : à l'enregistrement, sa gamme crée le groupe et préremplit les positions (× quantité).",
+   "description": "Ajouter une prestation : \u00e0 l'enregistrement, sa gamme cr\u00e9e le groupe et pr\u00e9remplit les positions (\u00d7 quantit\u00e9).",
    "fieldname": "etapes",
    "fieldtype": "Table",
-   "label": "Étapes (prestations)",
+   "label": "\u00c9tapes (prestations)",
    "options": "EFT Etape"
   },
   {
@@ -125,7 +126,7 @@
   {
    "fieldname": "repartitions",
    "fieldtype": "Table",
-   "label": "Répartition par étape (groupes ou positions partagés)",
+   "label": "R\u00e9partition par \u00e9tape (groupes ou positions partag\u00e9s)",
    "options": "EFT Repartition"
   },
   {
@@ -136,7 +137,7 @@
   {
    "fieldname": "total_cout",
    "fieldtype": "Currency",
-   "label": "Coût total",
+   "label": "Co\u00fbt total",
    "read_only": 1
   },
   {
@@ -166,18 +167,18 @@
    "default": "0",
    "fieldname": "cout_incomplet",
    "fieldtype": "Check",
-   "label": "Coût incomplet (au moins un coût manquant ou en attente)",
+   "label": "Co\u00fbt incomplet (au moins un co\u00fbt manquant ou en attente)",
    "read_only": 1
   },
   {
    "fieldname": "sb_etapes",
    "fieldtype": "Section Break",
-   "label": "Totaux par étape"
+   "label": "Totaux par \u00e9tape"
   },
   {
    "fieldname": "totaux_etapes",
    "fieldtype": "Table",
-   "label": "Totaux par étape",
+   "label": "Totaux par \u00e9tape",
    "options": "EFT Total Etape",
    "read_only": 1
   },
@@ -190,13 +191,18 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "synthese_html",
+   "fieldtype": "HTML",
+   "label": "Synth\u00e8se par prestation"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-08 16:26:22.279854",
+ "modified": "2026-11-08 23:53:04.186530",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "EFT",
@@ -225,7 +231,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Paramétreur chiffrage",
+   "role": "Param\u00e9treur chiffrage",
    "share": 1,
    "write": 1
   },
