@@ -178,21 +178,67 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertEqual(self.pos(amende, "1.9").cout_unitaire, 130)
 
 	# ------------------------------------------------------------------ gammes, modèles, prorata
-	def test_gamme_fois_quantite(self):
+	def _gamme_rt(self, avec_numeros=True, avec_types=True):
 		rt = ETAPES["Contrôle par Radiographie (RT)"]
 		lignes = [l for l in lire_projet() if l["pos"].startswith("1.")]
+		idx = {l["pos"]: i for i, l in enumerate(lignes, 1)}
 		frappe.get_doc(dict(doctype="Gamme", prestation=rt, titre_groupe="Contrôle par Radiographie (Vacation)", actif=1, lignes=[
-			dict(numero=l["pos"][2:], parente=l["pos"][2:].rsplit(".", 1)[0] if l["pos"].count(".") == 2 else None, type_position=TYPES[l["type"]],
-				item_code=article(l["d1"]), qty=l["qty"], uom=l["uom"]) for l in lignes])).insert()
+			dict(numero=l["pos"][2:] if avec_numeros else None, type_position=TYPES[l["type"]] if avec_types else None, item_code=article(l["d1"]),
+				parente_ligne=idx[l["pos"].rsplit(".", 1)[0]] if l["pos"].count(".") == 2 else None, qty=l["qty"], uom=l["uom"])
+			for l in lignes])).insert()
+		return rt, lignes
+
+	def test_gamme_fois_quantite(self):
+		rt, lignes = self._gamme_rt()
 		doc = frappe.get_doc(dict(doctype="EFT", titre=f"{P} gamme", company=self.company, etapes=[dict(prestation=rt, qty=2)])).insert()
 		self.assertEqual([g.titre for g in doc.groupes], ["Contrôle par Radiographie (Vacation)"])
 		self.assertEqual([p.numero for p in doc.positions], [l["pos"] for l in lignes])
 		self.assertEqual(self.pos(doc, "1.17").qty, 6)  # 3 × 2
-		self.assertEqual(self.pos(doc, "1.17.1").qty, 2)
+		self.assertEqual((self.pos(doc, "1.17.1").qty, self.pos(doc, "1.17.1").parente), (2, "1.17"))
 		self.assertEqual(self.pos(doc, "1.2").qty, 0)  # tarif : reste à 0
 		self.assertTrue(doc.etapes[0].gamme_appliquee)
 		doc.save()
 		self.assertEqual(len(doc.groupes), 1)  # la gamme ne s'applique qu'une fois
+
+	def test_ajouter_depuis_une_gamme_numeros_et_types_automatiques(self):
+		frappe.db.set_value("Item Group", self.groupe, "lsi_type_position", TYPES["Article à côut"])
+		for l in lire_projet():  # type par défaut sur l'article (exception au groupe) pour les services, équipements, prix fixe
+			if l["type"] not in ("En-tête groupe", "Article à côut", "Article de la position à prix fixe"):
+				frappe.db.set_value("Item", article(l["d1"]), "lsi_type_position", TYPES[l["type"]])
+		rt, lignes = self._gamme_rt(avec_numeros=False, avec_types=False)
+		doc = frappe.get_doc(dict(doctype="EFT", titre=f"{P} bouton", company=self.company)).insert()
+		moteur.ajouter_gamme(doc.name, rt, 1)
+		doc = frappe.get_doc("EFT", doc.name)
+		principales = [p for p in doc.positions if not p.parente]
+		self.assertEqual([p.numero for p in principales], [f"1.{i}" for i in range(1, len(principales) + 1)])  # 1.1 … 1.12
+		film = next(p for p in principales if p.item_code == article("Film"))
+		sous = [p for p in doc.positions if p.parente == film.numero]
+		self.assertEqual([p.numero for p in sous], [f"{film.numero}.{i}" for i in (1, 2, 3)])
+		self.assertEqual(film.type_position, TYPES["Prix fixe"])
+		self.assertEqual({p.type_position for p in sous}, {TYPES["Article à côut"]})  # déduit du groupe d'articles
+		self.assertTrue(all(p.mode == "À coût" for p in sous))  # un type « à coût » sous un prix fixe = sous-position
+		self.assertAlmostEqual(film.cout_total, sum(p.cout_total for p in sous), 3)
+
+	def test_position_sans_type_ni_defaut_refusee(self):
+		doc = self.eft_exemple()
+		self.pos(doc, "1.18").type_position = None
+		with self.assertRaises(frappe.ValidationError):
+			doc.save()
+
+	def test_valorisation_du_stock_et_stock_disponible(self):
+		code = article("FILM MX125 RECHARGEABLE 10/40")
+		frappe.db.set_value("Item", code, {"is_stock_item": 1, "lsi_source_cout": "Valorisation"})
+		entrepot = frappe.get_all("Warehouse", filters={"company": self.company, "is_group": 0}, pluck="name", limit=1)[0]
+		for qty, prix in ((10, 12), (30, 16)):  # moyenne pondérée : (120 + 480) / 40 = 15
+			se = frappe.get_doc(dict(doctype="Stock Entry", stock_entry_type="Material Receipt", purpose="Material Receipt", company=self.company,
+				items=[dict(item_code=code, qty=qty, basic_rate=prix, t_warehouse=entrepot, uom="Unité", conversion_factor=1)]))
+			se.insert()
+			se.submit()
+		doc = self.eft_exemple()
+		p = self.pos(doc, "1.17.1")
+		self.assertAlmostEqual(p.cout_unitaire, 15, 3)
+		self.assertEqual(p.stock_disponible, 40)
+		self.assertEqual(p.source_cout, "Valorisation")
 
 	def test_modele_sans_couts_et_chargement(self):
 		doc = self.eft_exemple()
