@@ -17,6 +17,38 @@
  },
  {
   "actif": 1,
+  "code": "A_ANALYSER",
+  "famille": "CONFORMITE_CDC",
+  "libelle": "À analyser",
+  "name": "CONFORMITE_CDC-A_ANALYSER",
+  "ordre": 1
+ },
+ {
+  "actif": 1,
+  "code": "CONFORME",
+  "famille": "CONFORMITE_CDC",
+  "libelle": "Conforme",
+  "name": "CONFORMITE_CDC-CONFORME",
+  "ordre": 2
+ },
+ {
+  "actif": 1,
+  "code": "NON_CONFORME",
+  "famille": "CONFORMITE_CDC",
+  "libelle": "Non conforme",
+  "name": "CONFORMITE_CDC-NON_CONFORME",
+  "ordre": 4
+ },
+ {
+  "actif": 1,
+  "code": "PARTIEL",
+  "famille": "CONFORMITE_CDC",
+  "libelle": "Partiel",
+  "name": "CONFORMITE_CDC-PARTIEL",
+  "ordre": 3
+ },
+ {
+  "actif": 1,
   "code": "AUTRE",
   "famille": "MOTIF_NON_VALIDATION",
   "libelle": "Autre",
@@ -54,5 +86,45 @@
   "libelle": "Qualification manquante",
   "name": "MOTIF_NON_VALIDATION-QUALIFICATION",
   "ordre": 1
+ },
+ {
+  "actif": 1,
+  "code": "INTERNATIONAL",
+  "famille": "PORTEE_AO",
+  "libelle": "International",
+  "name": "PORTEE_AO-INTERNATIONAL",
+  "ordre": 2
+ },
+ {
+  "actif": 1,
+  "code": "NATIONAL",
+  "famille": "PORTEE_AO",
+  "libelle": "National",
+  "name": "PORTEE_AO-NATIONAL",
+  "ordre": 1
+ },
+ {
+  "actif": 1,
+  "code": "EN_ATTENTE",
+  "famille": "RESULTAT_AO",
+  "libelle": "En attente",
+  "name": "RESULTAT_AO-EN_ATTENTE",
+  "ordre": 1
+ },
+ {
+  "actif": 1,
+  "code": "NON",
+  "famille": "RESULTAT_AO",
+  "libelle": "Non",
+  "name": "RESULTAT_AO-NON",
+  "ordre": 3
+ },
+ {
+  "actif": 1,
+  "code": "OUI",
+  "famille": "RESULTAT_AO",
+  "libelle": "Oui",
+  "name": "RESULTAT_AO-OUI",
+  "ordre": 2
  }
 ]

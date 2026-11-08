@@ -1,4 +1,7 @@
 [
  {"name": "CANAL_DEMANDE", "code": "CANAL_DEMANDE", "libelle": "Type de consultation", "actif": 1},
- {"name": "MOTIF_NON_VALIDATION", "code": "MOTIF_NON_VALIDATION", "libelle": "Motif de non-validation", "actif": 1}
+ {"name": "MOTIF_NON_VALIDATION", "code": "MOTIF_NON_VALIDATION", "libelle": "Motif de non-validation", "actif": 1},
+ {"name": "PORTEE_AO", "code": "PORTEE_AO", "libelle": "Portée de l'appel d'offres", "actif": 1},
+ {"name": "CONFORMITE_CDC", "code": "CONFORMITE_CDC", "libelle": "Conformité à une exigence du CDC", "actif": 1},
+ {"name": "RESULTAT_AO", "code": "RESULTAT_AO", "libelle": "Résultat de l'appel d'offres", "actif": 1}
 ]

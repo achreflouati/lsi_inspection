@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-08 14:56:41.533820",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "competitor",
+  "montant",
+  "rang",
+  "commentaire"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "competitor",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Concurrent",
+   "options": "Competitor",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "montant",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Montant offert"
+  },
+  {
+   "columns": 1,
+   "fieldname": "rang",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Rang"
+  },
+  {
+   "columns": 3,
+   "fieldname": "commentaire",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Commentaire"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-08 14:56:41.533820",
+ "modified_by": "Administrator",
+ "module": "Commercial",
+ "name": "Resultat AO Concurrent",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

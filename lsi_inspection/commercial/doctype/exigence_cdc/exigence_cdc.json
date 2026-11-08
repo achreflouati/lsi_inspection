@@ -1,0 +1,78 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-08 14:56:41.364271",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "exigence",
+  "lot",
+  "item_code",
+  "conformite",
+  "responsable",
+  "commentaire"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "exigence",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Exigence du CDC",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "lot",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Lot"
+  },
+  {
+   "columns": 2,
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Prestation li\u00e9e",
+   "options": "Item"
+  },
+  {
+   "columns": 2,
+   "fieldname": "conformite",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Conformit\u00e9",
+   "link_filters": "[[\"Type Metier\", \"famille\", \"=\", \"CONFORMITE_CDC\"], [\"Type Metier\", \"actif\", \"=\", 1]]",
+   "options": "Type Metier"
+  },
+  {
+   "columns": 1,
+   "fieldname": "responsable",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Responsable",
+   "options": "User"
+  },
+  {
+   "fieldname": "commentaire",
+   "fieldtype": "Small Text",
+   "label": "Commentaire"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-08 14:56:41.364271",
+ "modified_by": "Administrator",
+ "module": "Commercial",
+ "name": "Exigence CDC",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

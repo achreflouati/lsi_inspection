@@ -1,6 +1,7 @@
 [
  {
   "description": "Réponse à appel d'offres (parcours par défaut).",
+  "lsi_dossier_ao": 1,
   "lsi_notifications_phase": [
    {
     "actif": 1,
@@ -104,29 +105,35 @@
   "name": "Appel d'offres"
  },
  {
+  "lsi_dossier_ao": 0,
   "lsi_parcours_defaut": 0,
   "name": "Assistance/Support"
  },
  {
   "description": "Contrat cadre.",
+  "lsi_dossier_ao": 0,
   "lsi_parcours_defaut": 0,
   "name": "Contrat cadre"
  },
  {
+  "lsi_dossier_ao": 0,
   "lsi_parcours_defaut": 0,
   "name": "Entretien"
  },
  {
   "description": "Renouvellement d'un contrat.",
+  "lsi_dossier_ao": 0,
   "lsi_parcours_defaut": 0,
   "name": "Renouvellement"
  },
  {
   "description": "Demande ponctuelle (verbale ou écrite).",
+  "lsi_dossier_ao": 0,
   "lsi_parcours_defaut": 0,
   "name": "Spot"
  },
  {
+  "lsi_dossier_ao": 0,
   "lsi_parcours_defaut": 0,
   "name": "Ventes"
  }

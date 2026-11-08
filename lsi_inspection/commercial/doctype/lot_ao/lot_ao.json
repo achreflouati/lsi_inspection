@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-08 14:56:40.064547",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "numero",
+  "intitule",
+  "on_repond",
+  "montant_offert"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "fieldname": "numero",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "N\u00b0 lot",
+   "reqd": 1
+  },
+  {
+   "columns": 5,
+   "fieldname": "intitule",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Intitul\u00e9"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "on_repond",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "On r\u00e9pond"
+  },
+  {
+   "columns": 2,
+   "fieldname": "montant_offert",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Montant offert"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-08 14:56:40.064547",
+ "modified_by": "Administrator",
+ "module": "Commercial",
+ "name": "Lot AO",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
