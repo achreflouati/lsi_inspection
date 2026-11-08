@@ -262,7 +262,7 @@ fixtures = [
 	{"dt": "Workflow State", "filters": [["name", "in", ["À valider", "Validée", "Non validée", "Attente clarification client"]]]},
 	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Valider", "Refuser", "Demander clarification", "Remettre à valider"]]]},
 	# permissions : toutes les règles (natives recopiées + nos rôles) des doctypes dont on change les droits
-	{"dt": "Custom DocPerm", "filters": [["parent", "in", ["Opportunity", "Opportunity Type", "Sales Stage", "Email Template"]]]},
+	{"dt": "Custom DocPerm", "filters": [["parent", "in", ["Opportunity", "Opportunity Type", "Sales Stage", "Email Template", "Notification"]]]},
 ]
 
 # Lot 2 — opportunité : moteur générique des phases (configuration : Opportunity Type, Evenement Phase, Notification Phase)
@@ -284,8 +284,6 @@ doc_events = {
 	},
 	"Opportunity Type": {"validate": f"{_phases}.type_validate", "on_update": f"{_phases}.type_on_update"},
 }
-# règles « Retard » des notifications par phase (la Notification native « Days After » ne lit pas les règles par phase)
-scheduler_events = {"daily": [f"{_phases}.retards_quotidiens"]}
 # configuration initiale (commun + profil du site) : insère ce qui manque, ne modifie jamais l'existant
 after_sync = "lsi_inspection.config.charger"
 after_migrate = "lsi_inspection.config.charger"

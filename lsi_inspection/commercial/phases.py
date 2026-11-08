@@ -4,7 +4,8 @@ Tout se lit dans la configuration (aucune valeur métier ici) :
 - parcours : table « Parcours Phase » du type d'opportunité (ou du type « parcours par défaut ») ;
 - événements de fin : doctype « Evenement Phase » (Manuel, Création, Validation, État du workflow, Changement de statut,
   Annulation) ;
-- notifications : table « Notification Phase » du type (moment, destinataires, canal, modèle d'e-mail natif).
+- notifications : Notifications NATIVES (Value Change sur sales_stage = entrée dans une phase, New pour la première phase,
+  Days After sur lsi_echeance_phase = retard), paramétrées à l'écran ; le moteur ne fait que tenir sales_stage à jour.
 
 Suivi : table lsi_phases (état courant) ; historique lsi_historique_phases en ajout seul ; en-tête lsi_responsable_phase,
 lsi_echeance_phase et sales_stage (phase en cours) calculés dans validate.
@@ -16,7 +17,7 @@ ouvert : Lost puis Quotation). Une erreur du moteur ne bloque jamais le document
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_to_date, cint, cstr, get_datetime, get_url_to_form, now_datetime, time_diff_in_hours
+from frappe.utils import add_to_date, cint, cstr, get_datetime, now_datetime, time_diff_in_hours
 
 TABLE, HISTO = "lsi_phases", "lsi_historique_phases"
 A_VENIR, EN_COURS, TERMINEE, SAUTEE, SAUTEE_AUTO = "À venir", "En cours", "Terminée", "Sautée", "Sautée (auto)"
@@ -24,7 +25,6 @@ ANNULEE = "Annulée"  # phase finale annulée par son événement d'annulation (
 FAITES = (TERMINEE, SAUTEE, SAUTEE_AUTO)
 GAGNEE, PERDUE = "Gagnée", "Perdue"
 FERMEES = ("Converted", "Lost", "Closed")  # statuts natifs : opportunité close, son tableau n'est plus reconstruit
-ENTREE, FIN, RETARD = "Entrée dans la phase", "Fin de phase", "Retard"
 DECLENCHEURS = {"after_insert": "Création", "on_submit": "Validation", "on_cancel": "Annulation"}
 AVEC_VALEUR = ("État du workflow", "Changement de statut")
 QUITTE = "Quitte la valeur"
@@ -107,14 +107,6 @@ def _utilisateurs_actifs(users):
 	return [u for u in users if u in actifs]
 
 
-def _utilisateurs_departements(departements):
-	departements = [d for d in departements if d]
-	if not departements:
-		return []
-	return frappe.get_all("Employee", filters={"department": ("in", departements), "status": "Active", "user_id": ("is", "set")},
-		pluck="user_id")
-
-
 def _ligne_principale(opp):
 	lignes = opp.get("lsi_departements") or []
 	return next((r for r in lignes if cint(r.principal)), lignes[0] if lignes else None)
@@ -166,7 +158,7 @@ def _sequence(opp):
 
 
 def _demarrer(opp, ligne, maintenant):
-	ligne.statut, ligne.debut, ligne.fin, ligne.retard_notifie = EN_COURS, maintenant, None, 0
+	ligne.statut, ligne.debut, ligne.fin = EN_COURS, maintenant, None
 	ligne.echeance = add_to_date(maintenant, days=cint(ligne.duree_cible)) if cint(ligne.duree_cible) else None
 	ph = next((p for p in phases_parcours(opp.opportunity_type) if p.phase == ligne.phase), None)
 	ligne.responsables = ", ".join(responsables(opp, ph)) if ph else ligne.responsables
@@ -181,7 +173,7 @@ def _terminer(opp, ligne, statut, maintenant):
 
 
 def _remettre(ligne):
-	ligne.statut, ligne.debut, ligne.fin, ligne.echeance, ligne.duree_jours, ligne.retard_notifie = A_VENIR, None, None, None, 0, 0
+	ligne.statut, ligne.debut, ligne.fin, ligne.echeance, ligne.duree_jours = A_VENIR, None, None, None, 0
 	ligne.commentaire = None
 
 
@@ -282,7 +274,9 @@ def opportunity_validate(doc, method=None):
 
 
 def opportunity_on_update(doc, method=None):
-	"""Après enregistrement : tâches (ToDo natif) et notifications des phases quittées / commencées. Jamais bloquant."""
+	"""Après enregistrement : tâches (ToDo natif) des phases quittées / commencées. Jamais bloquant.
+	Les notifications d'entrée / de retard sont des Notifications natives (Value Change sur sales_stage, Days After sur
+	lsi_echeance_phase), paramétrées à l'écran."""
 	actions, doc.flags.lsi_actions = doc.flags.lsi_actions or [], []
 	for quoi, phase in sorted(actions, key=lambda a: a[0] != "fin"):
 		ligne = next((r for r in doc.get(TABLE) or [] if r.phase == phase), None)
@@ -291,10 +285,8 @@ def opportunity_on_update(doc, method=None):
 		try:
 			if quoi == "fin":
 				_fermer_todos(doc, phase)
-				notifier(doc, ligne, FIN)
 			else:
 				_affecter(doc, ligne)
-				notifier(doc, ligne, ENTREE)
 		except Exception:
 			frappe.log_error(title=_("Phases : actions de la phase {0}").format(phase), reference_doctype="Opportunity", reference_name=doc.name)
 
@@ -611,83 +603,3 @@ def _rouvrir(opp, finale, evenement, source):
 		_demarrer(opp, reprise, maintenant)
 	_historique(opp, finale.phase, reprise.phase if reprise else None, "Réouverture", evenement=evenement,
 		source=_source_reouverture(opp, source), maintenant=maintenant)
-
-
-# ------------------------------------------------------------------ notifications par phase
-def regles(opp, phase, moment):
-	t = type_parcours(opp.opportunity_type)
-	if not t:
-		return []
-	rows = frappe.get_all("Notification Phase", filters={"parent": t, "parenttype": "Opportunity Type", "actif": 1, "moment": moment},
-		fields=["phase", "destinataires", "role", "utilisateur", "departement", "systeme", "email", "modele"], order_by="idx")
-	return [r for r in rows if not r.phase or r.phase == phase]
-
-
-def destinataires(opp, regle, ligne):
-	d = regle.destinataires
-	if d == "Responsable de phase":
-		users = cstr(ligne.responsables).split(", ")
-	elif d == "Commercial":
-		users = [_commercial(opp)]
-	elif d == "Rôle":
-		from frappe.utils.user import get_users_with_role
-
-		users = get_users_with_role(regle.role) if regle.role else []
-	elif d == "Utilisateur":
-		users = [regle.utilisateur]
-	elif d == "Pilote":
-		users = [r.utilisateur_pilote for r in opp.get("lsi_departements") or []]
-	elif d == "Département principal":
-		p = _ligne_principale(opp)
-		users = _utilisateurs_departements([p.departement] if p else [])
-	elif d == "Départements concernés (tous)":
-		users = _utilisateurs_departements([r.departement for r in opp.get("lsi_departements") or []])
-	elif d == "Département précis":
-		users = _utilisateurs_departements([regle.departement])
-	else:
-		users = []
-	return _utilisateurs_actifs(users)
-
-
-def notifier(opp, ligne, moment):
-	"""Applique les règles actives du moment ; chaque règle est indépendante et ne bloque jamais."""
-	n = 0
-	for regle in regles(opp, ligne.phase, moment):
-		try:
-			users = destinataires(opp, regle, ligne)
-			if not users or not (cint(regle.systeme) or cint(regle.email)):
-				continue
-			tpl = frappe.get_doc("Email Template", regle.modele)
-			ctx = dict(doc=opp, phase=ligne.phase, moment=moment, ligne=ligne, lien=get_url_to_form("Opportunity", opp.name))
-			sujet = frappe.render_template(tpl.subject or "", ctx)
-			corps = frappe.render_template((tpl.response_html if cint(tpl.use_html) else tpl.response) or "", ctx)
-			if cint(regle.systeme):
-				from frappe.desk.doctype.notification_log.notification_log import enqueue_create_notification
-
-				enqueue_create_notification(users, dict(type="Alert", document_type="Opportunity", document_name=opp.name, subject=sujet,
-					email_content=corps, from_user=frappe.session.user))
-			if cint(regle.email):
-				emails = [e for e in frappe.get_all("User", filters={"name": ("in", users)}, pluck="email") if e]
-				if emails:
-					frappe.sendmail(recipients=emails, subject=sujet, message=corps, reference_doctype="Opportunity", reference_name=opp.name)
-			n += 1
-		except Exception:
-			frappe.log_error(title=_("Phases : notification {0} / {1}").format(moment, ligne.phase), reference_doctype="Opportunity",
-				reference_name=opp.name)
-	return n
-
-
-def retards_quotidiens():
-	"""Tâche quotidienne : règles « Retard » des notifications par phase (une fois par phase en retard).
-	La Notification native « Days After » couvre l'alerte fixe ; elle ne sait pas lire les règles par phase (table enfant,
-	modèle d'e-mail, destinataires calculés) : d'où cette tâche, limitée aux opportunités ouvertes en retard."""
-	maintenant = now_datetime()
-	for name in frappe.get_all("Opportunity", filters={"status": ("not in", FERMEES), "lsi_echeance_phase": ("<", maintenant)}, pluck="name"):
-		try:
-			opp = frappe.get_doc("Opportunity", name)
-			cur = courante(opp)
-			if cur and not cint(cur.retard_notifie) and cur.echeance and get_datetime(cur.echeance) < maintenant:
-				notifier(opp, cur, RETARD)
-				frappe.db.set_value("Phase Opportunite", cur.name, "retard_notifie", 1, update_modified=False)
-		except Exception:
-			frappe.log_error(title=_("Phases : retards"), reference_doctype="Opportunity", reference_name=name)
