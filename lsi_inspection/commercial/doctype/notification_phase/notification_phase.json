@@ -1,0 +1,120 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-08 13:40:09.978894",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "phase",
+  "moment",
+  "destinataires",
+  "role",
+  "utilisateur",
+  "departement",
+  "systeme",
+  "email",
+  "modele",
+  "actif"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "phase",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Phase (vide = toutes)",
+   "options": "Sales Stage"
+  },
+  {
+   "columns": 2,
+   "fieldname": "moment",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Moment",
+   "options": "Entr\u00e9e dans la phase\nFin de phase\nRetard",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "destinataires",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Destinataires",
+   "options": "D\u00e9partements concern\u00e9s (tous)\nD\u00e9partement principal\nPilote\nResponsable de phase\nCommercial\nR\u00f4le\nUtilisateur\nD\u00e9partement pr\u00e9cis",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.destinataires=='R\u00f4le'",
+   "fieldname": "role",
+   "fieldtype": "Link",
+   "label": "R\u00f4le",
+   "mandatory_depends_on": "eval:doc.destinataires=='R\u00f4le'",
+   "options": "Role"
+  },
+  {
+   "depends_on": "eval:doc.destinataires=='Utilisateur'",
+   "fieldname": "utilisateur",
+   "fieldtype": "Link",
+   "label": "Utilisateur",
+   "mandatory_depends_on": "eval:doc.destinataires=='Utilisateur'",
+   "options": "User"
+  },
+  {
+   "depends_on": "eval:doc.destinataires=='D\u00e9partement pr\u00e9cis'",
+   "fieldname": "departement",
+   "fieldtype": "Link",
+   "label": "D\u00e9partement",
+   "mandatory_depends_on": "eval:doc.destinataires=='D\u00e9partement pr\u00e9cis'",
+   "options": "Department"
+  },
+  {
+   "columns": 1,
+   "default": "1",
+   "fieldname": "systeme",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Notification syst\u00e8me"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "email",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "E-mail"
+  },
+  {
+   "columns": 1,
+   "fieldname": "modele",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Mod\u00e8le de message",
+   "options": "Email Template",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "default": "1",
+   "fieldname": "actif",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Actif"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-08 13:40:09.978894",
+ "modified_by": "Administrator",
+ "module": "Commercial",
+ "name": "Notification Phase",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

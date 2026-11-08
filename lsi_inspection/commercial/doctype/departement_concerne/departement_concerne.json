@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-08 13:40:10.405060",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "departement",
+  "pilote",
+  "pilote_nom",
+  "utilisateur_pilote",
+  "principal"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "departement",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "D\u00e9partement",
+   "options": "Department",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fetch_from": "departement.lsi_responsable",
+   "fetch_if_empty": 1,
+   "fieldname": "pilote",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Pilote",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "pilote.employee_name",
+   "fieldname": "pilote_nom",
+   "fieldtype": "Data",
+   "label": "Nom du pilote",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fetch_from": "pilote.user_id",
+   "fieldname": "utilisateur_pilote",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Utilisateur du pilote",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "principal",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Principal"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-08 13:40:10.405060",
+ "modified_by": "Administrator",
+ "module": "Commercial",
+ "name": "Departement Concerne",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
