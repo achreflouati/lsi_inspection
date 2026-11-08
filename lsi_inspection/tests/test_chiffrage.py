@@ -370,3 +370,41 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertNotIn("erreur", r)
 		self.assertTrue(r["positions"]["new-eft-position-1"]["cout_manquant"])
 		self.assertEqual(r["positions"]["new-eft-position-1"]["source_cout"], "article à choisir")
+
+	# ------------------------------------------------------------------ simplification : on travaille par prestation
+	def test_ligne_saisie_par_prestation_groupe_et_numero_automatiques(self):
+		doc = self.eft_exemple()
+		self.assertEqual(self.pos(doc, "2.1").etape, ETAPES["Approbation d'un DMOS"])  # prestation remplie d'après le groupe
+		doc.append("positions", dict(etape=ETAPES["Approbation d'un DMOS"], item_code=article("Expert en soudage"), type_position=TYPES["Service à côut"],
+			qty=1, uom="Jour"))
+		doc.save()
+		nouvelle = doc.positions[-1] if doc.positions[-1].numero == "2.2" else self.pos(doc, "2.2")
+		self.assertEqual((nouvelle.groupe, nouvelle.numero, nouvelle.etape), ("2", "2.2", ETAPES["Approbation d'un DMOS"]))
+		self.assertEqual(nouvelle.cout_unitaire, max(DESIGNATIONS["Expert en soudage"]))
+
+	def test_sous_position_suit_sa_parente(self):
+		doc = self.eft_exemple()
+		doc.append("positions", dict(parente="1.17", item_code=article("CASSETTE FILM 10/40"), type_position=TYPES["Article à côut"], qty=1, uom="Unité"))
+		doc.save()
+		p = self.pos(doc, "1.17.4")
+		self.assertEqual((p.groupe, p.etape), ("1", ETAPES["Contrôle par Radiographie (RT)"]))
+
+	def test_prestation_sans_gamme_cree_son_groupe(self):
+		rt = ETAPES["Contrôle par Radiographie (RT)"]
+		doc = frappe.get_doc(dict(doctype="EFT", titre=f"{P} sans gamme", company=self.company, etapes=[dict(prestation=rt, qty=1)])).insert()
+		self.assertEqual([(g.numero, g.titre) for g in doc.groupes], [("1", rt)])
+		doc.append("positions", dict(item_code=article("PROJECTEUR GAMMA"), type_position=TYPES["Durée de l'équipement à coût"], qty=2, uom="Jour"))
+		doc.save()  # une seule prestation : la ligne y est rattachée
+		self.assertEqual((doc.positions[0].numero, doc.positions[0].etape), ("1.1", rt))
+		self.assertEqual(doc.totaux_etapes[0].cout_total, 2 * max(CATEGORIES["PROJECTEUR GAMMA"]))
+
+	def test_partager_un_groupe(self):
+		doc = self.eft_exemple()
+		rt, dmos = ETAPES["Contrôle par Radiographie (RT)"], ETAPES["Approbation d'un DMOS"]
+		moteur.partager_groupe(doc.name, "4", frappe.as_json([rt, dmos]))
+		doc = frappe.get_doc("EFT", doc.name)
+		self.assertEqual(sorted(r.etape for r in doc.repartitions if r.cible == "4"), sorted([rt, dmos]))
+		g4 = next(g for g in doc.groupes if g.numero == "4")
+		t = {x.etape: x.cout_total for x in doc.totaux_etapes}
+		g2 = next(g for g in doc.groupes if g.numero == "2")
+		self.assertAlmostEqual(t[dmos], g2.cout_total + g4.cout_total / 2, 3)

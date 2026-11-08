@@ -28,6 +28,14 @@ source du coût = Item Group (exception sur Item) ; répartition = parts indiqu�
 - **Consommables stockables** (films, embout, cassette) : coût = **valorisation du stock** (moyenne pondérée des entrepôts),
   stock disponible affiché dans la position.
 
+## Écran simplifié : on travaille par prestation
+- **Étapes** = prestations vendues : seul tableau à remplir (ou bouton « Ajouter depuis une gamme »).
+- **Groupes** = blocs d'impression, **automatiques et en lecture seule** : créés par la gamme, ou pour une prestation sans gamme.
+- **Positions** : colonne **Prestation** ; groupe et n° automatiques (`<groupe>.<suivant>`, `<parente>.<suivant>` pour une sous-position).
+- **Répartition** masquée : bouton **« Partager un groupe »** (cocher les prestations concernées, parts égales).
+- **Temps réel** : le même moteur recalcule sans enregistrer ; lignes orange (coût manquant / en attente), rouge (perte), gris
+  (tarif à 0) ; une couleur par prestation ; synthèse par prestation.
+
 ## Règles
 - Position vendue = sans parente (à coût ou prix fixe) ; sous-position = parente à prix fixe : coût seulement, jamais vendue ni au devis.
 - Quantité 0 = tarif annoncé : prix unitaire affiché, total 0, hors totaux ; repris au devis grâce à l'option native.
