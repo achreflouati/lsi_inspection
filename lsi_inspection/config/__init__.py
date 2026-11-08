@@ -118,6 +118,8 @@ def _propre(doc):
 		f = df.fieldname
 		if f in TECHNIQUES or df.fieldtype in no_value_fields and df.fieldtype not in table_fields:
 			continue
+		if df.get("fetch_from") and not df.get("fetch_if_empty"):
+			continue  # toujours recopié automatiquement : jamais exporté (sinon l'export dépend de l'ordre de chargement)
 		if df.fieldtype in table_fields:
 			lignes = [_propre(r) for r in doc.get(f) or []]
 			if lignes:
