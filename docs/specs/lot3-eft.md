@@ -18,6 +18,16 @@ feuille Projet (33 positions, 5 groupes) — vérifié par `tests/test_chiffrage
 Paramètres sans document unique : liste de prix d'achat = Buying Settings ; heures / jour = UOM Conversion Factor ; marge cible et
 source du coût = Item Group (exception sur Item) ; répartition = parts indiquées, sinon parts égales.
 
+## Simplification (après revue avec TIC)
+- **Article** : tous les champs du chiffrage dans un **onglet « Chiffrage »** (type de position par défaut, pool, source du coût,
+  marge cible). **Groupe d'articles** : type de position par défaut, source du coût, marge cible.
+- **Gamme** = article + quantité (unité reprise de l'article, modifiable), « sous-position de la ligne n° » ; type et n° facultatifs
+  (type déduit de l'article puis de son groupe ; numéros automatiques 1, 2… et <ligne>.1, .2…).
+- **EFT** : bouton **« Ajouter depuis une gamme »** (gamme + quantité → groupe créé immédiatement). Une position sans type prend
+  celui de l'article ou de son groupe ; un type « à coût » placé sous un prix fixe est une sous-position.
+- **Consommables stockables** (films, embout, cassette) : coût = **valorisation du stock** (moyenne pondérée des entrepôts),
+  stock disponible affiché dans la position.
+
 ## Règles
 - Position vendue = sans parente (à coût ou prix fixe) ; sous-position = parente à prix fixe : coût seulement, jamais vendue ni au devis.
 - Quantité 0 = tarif annoncé : prix unitaire affiché, total 0, hors totaux ; repris au devis grâce à l'option native.
@@ -38,9 +48,9 @@ Prérequis : `bench --site tic.erpsys.ovh execute lsi_inspection.demo.lot3.run` 
 | # | Faire | Attendu |
 |---|---|---|
 | T3.1 | Paramétrage : types de position, coûts journaliers (salariés, actifs), prix d'achat, conversion Jour → Heure | Écrans natifs ; coûts salariés invisibles sans rôle autorisé |
-| T3.2 | Gammes RT, DMOS, Découpage, Électricité ; modèle « Transport & Indemnité » | Lignes de l'exemple, quantités par unité, tarifs à 0 |
+| T3.2 | Gammes RT, DMOS, Découpage, Électricité (article + quantité) ; article > onglet Chiffrage ; modèle « Transport & Indemnité » | Lignes de l'exemple, types déduits des groupes d'articles, tarifs à 0 |
 | T3.3 | Opportunité > Créer > **EFT** | EFT créée ; la phase réglée sur « EFT créée » se termine |
-| T3.4 | EFT « DÉMO lot 3 » (ou ajouter une prestation) | Groupes 1, 2, 3, 5 préremplis par les gammes |
+| T3.4 | EFT « DÉMO lot 3 » ; sur une EFT vide : **Ajouter depuis une gamme** | Groupe créé immédiatement, n° automatiques, quantités × quantité ; films : coût par valorisation, stock disponible |
 | T3.5 | Groupe 4 « Transport & Indemnité » partagé RT + Découpage | Totaux par étape à parts égales ; modifier les parts → totaux suivent |
 | T3.6 | Positions > Voir les ressources sur 1.1 ; choisir une autre ressource ; 5.1.1 | Pool au plus élevé, trace ; 5.1.1 en heures (÷ 8) |
 | T3.7 | 3.2 Essai de traction : Positions > Demander un prix | Demande de prix brouillon ; « coût en attente » ; offre fournisseur validée → coût |

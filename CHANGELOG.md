@@ -9,7 +9,9 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/). Une entrée p
   configurables (pool générique Designation/Employee, Asset Category/Asset ; articles ; prix fournisseurs), gammes, modèles.
 - Devis natif depuis l'EFT (positions vendues seulement, quantité 0 native), formats Devis groupe et OT, rapport Besoins EFT.
 - Workflow EFT, rôles Chiffreur / Paramétreur chiffrage, coûts journaliers des salariés en permlevel 1.
-- Profil tic (types, gammes, modèle, conversion Jour → Heure, quantité 0) ; jeu DÉMO lot 3 ; 91 tests.
+- Profil tic (types, gammes, modèle, conversion Jour → Heure, quantité 0) ; jeu DÉMO lot 3.
+- Simplification : onglet Chiffrage sur l'article, gamme = article + quantité, bouton « Ajouter depuis une gamme », types déduits
+  des groupes d'articles, consommables stockables valorisés au stock ; 94 tests.
 
 ### Lot 2 — notifications de phase natives (simplification)
 - Notifications d'entrée en phase : Notifications natives Value Change sur sales_stage (New pour la première phase),
