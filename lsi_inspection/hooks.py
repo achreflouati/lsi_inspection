@@ -268,6 +268,7 @@ fixtures = [
 # Lot 2 — opportunité : moteur générique des phases (configuration : Opportunity Type, Evenement Phase, Notification Phase)
 _phases = "lsi_inspection.commercial.phases"
 doctype_js = {"Opportunity": "public/js/opportunity.js"}
+doctype_list_js = {"Opportunity": "public/js/opportunity_list.js"}
 doc_events = {
 	"*": {
 		# événements de fin de phase : sortie immédiate si le doctype n'est dans aucun Evenement Phase actif
