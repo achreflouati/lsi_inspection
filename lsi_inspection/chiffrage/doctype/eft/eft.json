@@ -1,0 +1,278 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-11-08 16:00:57.980221",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "titre",
+  "opportunity",
+  "customer",
+  "customer_name",
+  "cb_entete",
+  "company",
+  "date",
+  "workflow_state",
+  "amended_from",
+  "tab_structure",
+  "etapes",
+  "groupes",
+  "positions",
+  "repartitions",
+  "tab_totaux",
+  "total_cout",
+  "total_prix",
+  "cb_totaux",
+  "total_marge",
+  "taux_marge",
+  "cout_incomplet",
+  "sb_etapes",
+  "totaux_etapes",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "EFT-.YYYY.-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "S\u00e9rie",
+   "options": "EFT-.YYYY.-.####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "titre",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Titre",
+   "reqd": 1
+  },
+  {
+   "fieldname": "opportunity",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Opportunit\u00e9",
+   "options": "Opportunity"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Client",
+   "options": "Customer"
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Nom du client",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_entete",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Soci\u00e9t\u00e9",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Statut",
+   "no_copy": 1,
+   "options": "Workflow State",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amend\u00e9 depuis",
+   "no_copy": 1,
+   "options": "EFT",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "tab_structure",
+   "fieldtype": "Tab Break",
+   "label": "Chiffrage"
+  },
+  {
+   "description": "Ajouter une prestation : \u00e0 l'enregistrement, sa gamme cr\u00e9e le groupe et pr\u00e9remplit les positions (\u00d7 quantit\u00e9).",
+   "fieldname": "etapes",
+   "fieldtype": "Table",
+   "label": "\u00c9tapes (prestations)",
+   "options": "EFT Etape"
+  },
+  {
+   "fieldname": "groupes",
+   "fieldtype": "Table",
+   "label": "Groupes",
+   "options": "EFT Groupe"
+  },
+  {
+   "fieldname": "positions",
+   "fieldtype": "Table",
+   "label": "Positions et sous-positions",
+   "options": "EFT Position"
+  },
+  {
+   "fieldname": "repartitions",
+   "fieldtype": "Table",
+   "label": "R\u00e9partition par \u00e9tape (groupes ou positions partag\u00e9s)",
+   "options": "EFT Repartition"
+  },
+  {
+   "fieldname": "tab_totaux",
+   "fieldtype": "Tab Break",
+   "label": "Totaux"
+  },
+  {
+   "fieldname": "total_cout",
+   "fieldtype": "Currency",
+   "label": "Co\u00fbt total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_prix",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Prix total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_totaux",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_marge",
+   "fieldtype": "Currency",
+   "label": "Marge",
+   "read_only": 1
+  },
+  {
+   "fieldname": "taux_marge",
+   "fieldtype": "Percent",
+   "label": "Marge %",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "cout_incomplet",
+   "fieldtype": "Check",
+   "label": "Co\u00fbt incomplet (au moins un co\u00fbt manquant ou en attente)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_etapes",
+   "fieldtype": "Section Break",
+   "label": "Totaux par \u00e9tape"
+  },
+  {
+   "fieldname": "totaux_etapes",
+   "fieldtype": "Table",
+   "label": "Totaux par \u00e9tape",
+   "options": "EFT Total Etape",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "EFT",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-11-08 16:00:57.980221",
+ "modified_by": "Administrator",
+ "module": "Chiffrage",
+ "name": "EFT",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Param\u00e9treur chiffrage",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Chiffreur",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "titre,opportunity,customer",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "titre",
+ "track_changes": 1
+}

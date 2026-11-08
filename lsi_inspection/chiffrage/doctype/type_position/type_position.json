@@ -1,0 +1,205 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:libelle",
+ "creation": "2026-11-08 16:00:54.683340",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "libelle",
+  "mode",
+  "source_cout",
+  "actif",
+  "sb_pool",
+  "pool_doctype",
+  "ressource_doctype",
+  "champ_appartenance",
+  "cb_pool",
+  "champ_cout",
+  "uom_cout",
+  "filtres_ressources",
+  "sb_regle",
+  "regle",
+  "uom_defaut",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "libelle",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Libell\u00e9",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "\u00c0 co\u00fbt",
+   "description": "\u00c0 co\u00fbt : la ressource est la ligne vendue. Prix fixe : ligne de facturation, co\u00fbt = somme des sous-positions. Sous-position : co\u00fbt seulement, sous une position \u00e0 prix fixe.",
+   "fieldname": "mode",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Mode",
+   "options": "\u00c0 co\u00fbt\nPrix fixe\nSous-position",
+   "reqd": 1
+  },
+  {
+   "fieldname": "source_cout",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Source du co\u00fbt",
+   "options": "Pool de ressources\nArticle\nPrix fournisseur\nSomme des sous-positions\nManuel",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "actif",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Actif"
+  },
+  {
+   "depends_on": "eval:doc.source_cout=='Pool de ressources'",
+   "fieldname": "sb_pool",
+   "fieldtype": "Section Break",
+   "label": "Pool de ressources"
+  },
+  {
+   "description": "Ex. Designation (main-d'\u0153uvre), Asset Category (\u00e9quipement). L'article vendu porte son pool (Item > Pool).",
+   "fieldname": "pool_doctype",
+   "fieldtype": "Link",
+   "label": "Doctype du pool",
+   "mandatory_depends_on": "eval:doc.source_cout=='Pool de ressources'",
+   "options": "DocType"
+  },
+  {
+   "description": "Ex. Employee, Asset.",
+   "fieldname": "ressource_doctype",
+   "fieldtype": "Link",
+   "label": "Doctype des ressources",
+   "mandatory_depends_on": "eval:doc.source_cout=='Pool de ressources'",
+   "options": "DocType"
+  },
+  {
+   "description": "Champ de la ressource qui pointe vers le pool (ex. designation, asset_category).",
+   "fieldname": "champ_appartenance",
+   "fieldtype": "Data",
+   "label": "Champ d'appartenance au pool",
+   "mandatory_depends_on": "eval:doc.source_cout=='Pool de ressources'"
+  },
+  {
+   "fieldname": "cb_pool",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Ex. lsi_cout_journalier.",
+   "fieldname": "champ_cout",
+   "fieldtype": "Data",
+   "label": "Champ du co\u00fbt de la ressource",
+   "mandatory_depends_on": "eval:doc.source_cout=='Pool de ressources'"
+  },
+  {
+   "description": "Unit\u00e9 dans laquelle le co\u00fbt de la ressource est exprim\u00e9 (ex. Jour).",
+   "fieldname": "uom_cout",
+   "fieldtype": "Link",
+   "label": "Unit\u00e9 du co\u00fbt",
+   "options": "UOM"
+  },
+  {
+   "description": "Ressources retenues, ex. {\"status\": \"Active\"} ou {\"docstatus\": [\"<\", 2]}.",
+   "fieldname": "filtres_ressources",
+   "fieldtype": "Code",
+   "label": "Filtres des ressources (JSON)",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "sb_regle",
+   "fieldtype": "Section Break",
+   "label": "R\u00e8gles"
+  },
+  {
+   "default": "Plus \u00e9lev\u00e9",
+   "description": "Co\u00fbt retenu parmi les ressources (pool) ou les prix fournisseurs.",
+   "fieldname": "regle",
+   "fieldtype": "Select",
+   "label": "R\u00e8gle par d\u00e9faut",
+   "options": "Plus \u00e9lev\u00e9\nMoins \u00e9lev\u00e9\nMoyenne"
+  },
+  {
+   "fieldname": "uom_defaut",
+   "fieldtype": "Link",
+   "label": "Unit\u00e9 par d\u00e9faut",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-11-08 16:00:54.683340",
+ "modified_by": "Administrator",
+ "module": "Chiffrage",
+ "name": "Type Position",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Param\u00e9treur chiffrage",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Chiffreur",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "libelle"
+}

@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-08 16:00:56.099402",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "prestation",
+  "libelle",
+  "qty",
+  "uom",
+  "gamme_appliquee"
+ ],
+ "fields": [
+  {
+   "columns": 4,
+   "fieldname": "prestation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Prestation",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fetch_from": "prestation.item_name",
+   "fieldname": "libelle",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Libell\u00e9"
+  },
+  {
+   "columns": 1,
+   "default": "1",
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantit\u00e9"
+  },
+  {
+   "columns": 1,
+   "fetch_from": "prestation.stock_uom",
+   "fetch_if_empty": 1,
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unit\u00e9",
+   "options": "UOM"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "gamme_appliquee",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Gamme appliqu\u00e9e",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-08 16:00:56.099402",
+ "modified_by": "Administrator",
+ "module": "Chiffrage",
+ "name": "EFT Etape",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

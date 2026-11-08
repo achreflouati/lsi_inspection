@@ -1,0 +1,90 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-08 16:00:57.074825",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "numero",
+  "parente",
+  "type_position",
+  "item_code",
+  "designation_2",
+  "qty",
+  "uom"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "description": "Ex. 1, 17, 17.1 : devient &lt;groupe&gt;.1 dans l'EFT.",
+   "fieldname": "numero",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "N\u00b0 (relatif)",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "parente",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Parente (n\u00b0 relatif)"
+  },
+  {
+   "columns": 2,
+   "fieldname": "type_position",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Type de position",
+   "options": "Type Position",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Article",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "designation_2",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "D\u00e9signation 2"
+  },
+  {
+   "columns": 1,
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantit\u00e9 par unit\u00e9"
+  },
+  {
+   "columns": 1,
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unit\u00e9",
+   "options": "UOM"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-08 16:00:57.074825",
+ "modified_by": "Administrator",
+ "module": "Chiffrage",
+ "name": "Gamme Ligne",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
