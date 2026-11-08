@@ -3,6 +3,10 @@
 const M = "lsi_inspection.chiffrage.moteur";
 
 frappe.ui.form.on("EFT", {
+	setup(frm) {
+		// colonne « Prestation » : seulement les prestations (étapes) de l'EFT
+		frm.set_query("etape", "positions", () => ({ filters: { name: ["in", (frm.doc.etapes || []).map((e) => e.prestation).filter((x) => x)] } }));
+	},
 	refresh(frm) {
 		if (frm.is_new()) return;
 		if (frm.doc.docstatus === 0) {
@@ -12,6 +16,7 @@ frappe.ui.form.on("EFT", {
 			frm.add_custom_button(__("Historique d'achat"), () => lsi_eft.historique(frm), P);
 			frm.add_custom_button(__("Demander un prix"), () => lsi_eft.demander_prix(frm), P);
 			frm.add_custom_button(__("Répartir au prorata"), () => lsi_eft.prorata(frm), P);
+			frm.add_custom_button(__("Partager un groupe"), () => lsi_eft.partager(frm), P);
 			frm.add_custom_button(__("Charger un modèle"), () => lsi_eft.charger_modele(frm), __("Modèle"));
 		}
 		frm.add_custom_button(__("Enregistrer comme modèle"), () => lsi_eft.enregistrer_modele(frm), __("Modèle"));
@@ -49,6 +54,25 @@ lsi_eft.ajouter_gamme = function (frm) {
 			.then(() => frm.reload_doc()),
 		__("Ajouter depuis une gamme"), __("Ajouter")
 	);
+};
+
+lsi_eft.partager = function (frm) {
+	const groupes = (frm.doc.groupes || []).map((g) => ({ value: g.numero, label: `${g.numero} — ${g.titre || ""}` }));
+	if (!groupes.length) return frappe.msgprint(__("Aucun groupe."));
+	const d = new frappe.ui.Dialog({
+		title: __("Partager un groupe entre plusieurs prestations"),
+		fields: [
+			{ fieldname: "groupe", fieldtype: "Select", label: __("Groupe"), options: groupes, reqd: 1 },
+			{ fieldname: "etapes", fieldtype: "MultiCheck", label: __("Prestations concernées (parts égales)"),
+				options: (frm.doc.etapes || []).filter((e) => e.prestation).map((e) => ({ label: e.libelle || e.prestation, value: e.prestation })) },
+		],
+		primary_action_label: __("Partager"),
+		primary_action(v) {
+			frappe.call({ method: `${M}.partager_groupe`, args: { eft: frm.doc.name, groupe: v.groupe, etapes: v.etapes }, freeze: true })
+				.then(() => { d.hide(); frm.reload_doc(); });
+		},
+	});
+	d.show();
 };
 
 lsi_eft.ressources = function (frm) {
@@ -136,7 +160,7 @@ lsi_eft.charger_modele = function (frm) {
 // ------------------------------------------------------------------ temps réel, couleurs, synthèse (comme tic_demo)
 // Le calcul est fait par le MÊME moteur que l'enregistrement (méthode « apercu », sans enregistrer) : pools, conversions, stock.
 const LSI_COULEURS = ["#2563eb", "#16a34a", "#9333ea", "#ea580c", "#db2777", "#0891b2", "#ca8a04", "#4b5563"];
-const LSI_CHAMPS_POSITION = ["item_code", "type_position", "qty", "uom", "prix_unitaire", "cout_unitaire", "cout_manuel", "parente", "groupe", "numero"];
+const LSI_CHAMPS_POSITION = ["etape", "item_code", "type_position", "qty", "uom", "prix_unitaire", "cout_unitaire", "cout_manuel", "parente", "groupe", "numero"];
 
 lsi_eft.couleur_etape = function (frm, etape) {
 	const i = (frm.doc.etapes || []).findIndex((e) => e.prestation === etape);

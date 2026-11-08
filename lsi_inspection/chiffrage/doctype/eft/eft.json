@@ -105,7 +105,7 @@
    "label": "Chiffrage"
   },
   {
-   "description": "Ajouter une prestation : \u00e0 l'enregistrement, sa gamme cr\u00e9e le groupe et pr\u00e9remplit les positions (\u00d7 quantit\u00e9).",
+   "description": "Ajoutez une prestation : sa gamme cr\u00e9e son groupe et ses lignes \u00e0 l'enregistrement (ou bouton \u00ab Ajouter depuis une gamme \u00bb).",
    "fieldname": "etapes",
    "fieldtype": "Table",
    "label": "\u00c9tapes (prestations)",
@@ -114,8 +114,9 @@
   {
    "fieldname": "groupes",
    "fieldtype": "Table",
-   "label": "Groupes",
-   "options": "EFT Groupe"
+   "label": "Groupes (automatiques : cr\u00e9\u00e9s par les gammes et les prestations)",
+   "options": "EFT Groupe",
+   "read_only": 1
   },
   {
    "fieldname": "positions",
@@ -126,6 +127,7 @@
   {
    "fieldname": "repartitions",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "R\u00e9partition par \u00e9tape (groupes ou positions partag\u00e9s)",
    "options": "EFT Repartition"
   },
@@ -202,7 +204,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-08 23:53:04.186530",
+ "modified": "2026-11-09 00:20:00.250843",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "EFT",

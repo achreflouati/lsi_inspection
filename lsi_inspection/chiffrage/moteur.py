@@ -99,7 +99,87 @@ def eft_validate(doc, method=None):
 	if doc.docstatus != 0:
 		return  # soumise : coûts figés
 	appliquer_gammes(doc)
+	organiser(doc)
 	calculer(doc)
+
+
+# ------------------------------------------------------------------ organisation automatique : prestation → groupe, n° automatiques
+def etapes_du_groupe(doc, numero):
+	return [r.etape for r in doc.get("repartitions") or [] if cstr(r.cible) == cstr(numero) and r.etape]
+
+
+def groupe_de_etape(doc, etape):
+	return next((cstr(g.numero) for g in doc.get("groupes") or [] if etape in etapes_du_groupe(doc, g.numero)), None)
+
+
+def _creer_groupe(doc, etape):
+	n = cstr(_prochain_groupe(doc))
+	libelle = next((e.libelle for e in doc.get("etapes") or [] if e.prestation == etape and e.libelle), None)
+	doc.append("groupes", dict(numero=n, titre=libelle or frappe.db.get_value("Item", etape, "item_name") or etape))
+	doc.append("repartitions", dict(cible=n, etape=etape))
+	return n
+
+
+def _suivant(prefixe, numeros):
+	"""Prochain n° « <prefixe>.<k> » libre."""
+	ks = [int(x.rsplit(".", 1)[1]) for x in numeros if x.startswith(f"{prefixe}.") and x.count(".") == prefixe.count(".") + 1
+		and x.rsplit(".", 1)[1].isdigit()]
+	return f"{prefixe}.{max(ks, default=0) + 1}"
+
+
+def organiser(doc):
+	"""L'utilisateur ne travaille que sur les prestations (étapes) : les groupes, la répartition et les n° suivent.
+	- une prestation sans groupe (sans gamme) reçoit un groupe vide ;
+	- une position reçoit le groupe de sa prestation (ou la prestation de son groupe) ; une sous-position suit sa parente ;
+	- une position sans n° reçoit le suivant de son groupe (ou de sa parente)."""
+	presentes = [e.prestation for e in doc.get("etapes") or [] if e.prestation]
+	for p in doc.get("positions") or []:  # prestation choisie sur une ligne mais absente des étapes : ajoutée
+		if p.etape and p.etape not in presentes and not p.parente:
+			doc.append("etapes", dict(prestation=p.etape, qty=1, gamme_appliquee=1))
+			presentes.append(p.etape)
+	for e in doc.get("etapes") or []:
+		if e.prestation and not groupe_de_etape(doc, e.prestation):
+			if cint(e.gamme_appliquee) or not frappe.db.exists("Gamme", {"prestation": e.prestation, "actif": 1}):
+				_creer_groupe(doc, e.prestation)
+	positions = doc.get("positions") or []
+	par_num = {p.numero: p for p in positions if p.numero}
+	for p in sorted(positions, key=lambda x: bool(x.parente)):  # positions principales d'abord
+		if p.parente and p.parente in par_num:
+			parent = par_num[p.parente]
+			p.groupe, p.etape = parent.groupe, parent.etape or p.etape
+			continue
+		if p.etape and (not p.groupe or p.etape not in etapes_du_groupe(doc, p.groupe)):
+			p.groupe = groupe_de_etape(doc, p.etape) or _creer_groupe(doc, p.etape)
+		elif not p.etape and p.groupe:
+			p.etape = (etapes_du_groupe(doc, p.groupe) or [None])[0]
+		elif not p.etape and not p.groupe and len(presentes) == 1:
+			p.etape = presentes[0]
+			p.groupe = groupe_de_etape(doc, p.etape) or _creer_groupe(doc, p.etape)
+	numeros = {p.numero for p in positions if p.numero}
+	for p in positions:
+		if not p.numero and (p.parente or p.groupe):
+			p.numero = _suivant(cstr(p.parente or p.groupe), numeros)
+			numeros.add(p.numero)
+
+
+@frappe.whitelist(methods=["POST"])
+def partager_groupe(eft, groupe, etapes):
+	"""Un groupe partagé entre plusieurs prestations (parts égales) : cocher les prestations concernées."""
+	doc = _eft_brouillon(eft)
+	etapes = frappe.parse_json(etapes) or []
+	if not etapes:
+		frappe.throw(_("Cochez au moins une prestation."))
+	if not any(cstr(g.numero) == cstr(groupe) for g in doc.groupes):
+		frappe.throw(_("Groupe {0} introuvable.").format(groupe))
+	for r in [r for r in doc.repartitions if cstr(r.cible) == cstr(groupe)]:
+		doc.remove(r)
+	for e in etapes:
+		doc.append("repartitions", dict(cible=cstr(groupe), etape=e))
+	for p in doc.positions:
+		if cstr(p.groupe) == cstr(groupe) and p.etape not in etapes:
+			p.etape = etapes[0]
+	doc.save()
+	return doc.name
 
 
 def modele_validate(doc, method=None):
@@ -154,7 +234,7 @@ def appliquer_gamme(doc, etape):
 	doc.append("groupes", dict(numero=n, titre=gamme.titre_groupe))
 	for l in gamme.lignes:
 		parent = nums.get(cint(l.get("parente_ligne"))) if cint(l.get("parente_ligne")) else None
-		doc.append("positions", dict(numero=f"{n}.{nums[l.idx]}", groupe=n, parente=f"{n}.{parent}" if parent else None,
+		doc.append("positions", dict(numero=f"{n}.{nums[l.idx]}", groupe=n, etape=etape.prestation, parente=f"{n}.{parent}" if parent else None,
 			type_position=l.type_position or type_par_defaut(l.item_code), item_code=l.item_code, designation_2=l.designation_2,
 			qty=flt(l.qty) * flt(etape.qty or 1), uom=l.uom))
 	doc.append("repartitions", dict(cible=n, etape=etape.prestation))
@@ -402,7 +482,7 @@ def make_eft(opportunity):
 	return doc.name
 
 
-CHAMPS_APERCU_POSITION = ("type_position", "mode", "tarif", "stock_disponible", "etapes", "cout_unitaire", "cout_total", "source_cout",
+CHAMPS_APERCU_POSITION = ("numero", "groupe", "etape", "type_position", "mode", "tarif", "stock_disponible", "etapes", "cout_unitaire", "cout_total", "source_cout",
 	"ressource", "ressource_doctype", "cout_manquant", "cout_en_attente", "prix_unitaire", "prix_total", "prix_conseille", "marge", "taux_marge")
 
 
@@ -416,6 +496,7 @@ def apercu(doc):
 	if d.docstatus != 0:
 		return {}
 	try:
+		organiser(d)
 		calculer(d)
 	except frappe.ValidationError as e:
 		frappe.clear_messages()
@@ -580,7 +661,7 @@ def charger_modele(eft, modele):
 		if e.prestation not in presentes:
 			doc.append("etapes", dict(prestation=e.prestation, libelle=e.libelle, qty=e.qty, uom=e.uom, gamme_appliquee=1))
 	for p in m.positions:
-		doc.append("positions", dict(numero=renum(p.numero), groupe=renum(p.groupe), parente=renum(p.parente), type_position=p.type_position,
+		doc.append("positions", dict(numero=renum(p.numero), groupe=renum(p.groupe), etape=p.etape, parente=renum(p.parente), type_position=p.type_position,
 			item_code=p.item_code, designation_2=p.designation_2, qty=p.qty, uom=p.uom))
 	for r in m.repartitions:
 		doc.append("repartitions", dict(cible=renum(r.cible), etape=r.etape, part=r.part))
