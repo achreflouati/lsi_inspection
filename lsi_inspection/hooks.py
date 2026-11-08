@@ -254,15 +254,16 @@ required_apps = ["erpnext", "hrms"]
 # Exemple : {"dt": "Custom Field", "filters": [["module", "=", "LSI Inspection"]]}
 fixtures = [
 	# lot 2 — structure de l'opportunité (champs, property setters, notifications fixes : module Commercial)
-	{"dt": "Custom Field", "filters": [["module", "in", ["Commercial", "Referentiel"]]]},
-	{"dt": "Property Setter", "filters": [["module", "in", ["Commercial", "Referentiel"]]]},
+	{"dt": "Custom Field", "filters": [["module", "in", ["Commercial", "Referentiel", "Chiffrage"]]]},
+	{"dt": "Property Setter", "filters": [["module", "in", ["Commercial", "Referentiel", "Chiffrage"]]]},
 	{"dt": "Notification", "filters": [["module", "in", ["Commercial"]]]},
-	{"dt": "Role", "filters": [["name", "in", ["Validateur demande d'offre", "Etude technique", "Paramétreur commercial"]]]},
-	{"dt": "Workflow", "filters": [["name", "in", ["Validation demande d'offre"]]]},
-	{"dt": "Workflow State", "filters": [["name", "in", ["À valider", "Validée", "Non validée", "Attente clarification client"]]]},
-	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Valider", "Refuser", "Demander clarification", "Remettre à valider"]]]},
+	{"dt": "Role", "filters": [["name", "in", ["Validateur demande d'offre", "Etude technique", "Paramétreur commercial", "Chiffreur", "Paramétreur chiffrage"]]]},
+	{"dt": "Workflow", "filters": [["name", "in", ["Validation demande d'offre", "EFT"]]]},
+	{"dt": "Workflow State", "filters": [["name", "in", ["À valider", "Validée", "Non validée", "Attente clarification client", "Brouillon", "Chiffrée", "Annulée"]]]},
+	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Valider", "Refuser", "Demander clarification", "Remettre à valider", "Chiffrer", "Revenir en brouillon", "Annuler"]]]},
 	# permissions : toutes les règles (natives recopiées + nos rôles) des doctypes dont on change les droits
-	{"dt": "Custom DocPerm", "filters": [["parent", "in", ["Opportunity", "Opportunity Type", "Sales Stage", "Email Template", "Notification"]]]},
+	{"dt": "Custom DocPerm", "filters": [["parent", "in", ["Opportunity", "Opportunity Type", "Sales Stage", "Email Template", "Notification",
+		"Employee", "Asset", "Item", "Item Group", "UOM Conversion Factor", "Designation", "Asset Category"]]]},
 ]
 
 # Lot 2 — opportunité : moteur générique des phases (configuration : Opportunity Type, Evenement Phase, Notification Phase)

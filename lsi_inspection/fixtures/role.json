@@ -37,5 +37,31 @@
   "restrict_to_domain": null,
   "role_name": "Paramétreur commercial",
   "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-11-08 16:00:53.313913",
+  "name": "Chiffreur",
+  "restrict_to_domain": null,
+  "role_name": "Chiffreur",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-11-08 16:00:53.784744",
+  "name": "Paramétreur chiffrage",
+  "restrict_to_domain": null,
+  "role_name": "Paramétreur chiffrage",
+  "two_factor_auth": 0
  }
 ]

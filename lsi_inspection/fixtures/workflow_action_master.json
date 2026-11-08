@@ -26,5 +26,26 @@
   "modified": "2026-11-08 13:44:52.621949",
   "name": "Remettre à valider",
   "workflow_action_name": "Remettre à valider"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-11-08 16:02:04.574313",
+  "name": "Chiffrer",
+  "workflow_action_name": "Chiffrer"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-11-08 16:02:04.603150",
+  "name": "Revenir en brouillon",
+  "workflow_action_name": "Revenir en brouillon"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-11-08 16:02:04.605909",
+  "name": "Annuler",
+  "workflow_action_name": "Annuler"
  }
 ]
