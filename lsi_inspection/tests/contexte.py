@@ -27,6 +27,7 @@ class TestLot2(IntegrationTestCase):
 		garde.start()
 		self.addCleanup(garde.stop)
 		frappe.set_user("Administrator")
+		self._temoin = self.etat_site()
 		frappe.db.savepoint("lsi_test")
 		frappe.local.lsi_evenements_differes = {}
 		phases.vider_cache_evenements()
@@ -39,6 +40,13 @@ class TestLot2(IntegrationTestCase):
 		phases.vider_cache_evenements()
 		frappe.cache.hdel("notifications", "Opportunity")  # notifications natives créées par le test
 		frappe.clear_cache(doctype="Opportunity")
+		# contrôle automatique : utilisateurs temporaires supprimés, aucun e-mail ni notification laissés sur le site
+		self.assertEqual(self.etat_site(), self._temoin, "le test a laissé des données sur le site")
+
+	@staticmethod
+	def etat_site():
+		return dict(utilisateurs=frappe.db.count("User"), email_queue=frappe.db.count("Email Queue"),
+			notification_log=frappe.db.count("Notification Log"), opportunites=frappe.db.count("Opportunity"))
 
 	# ------------------------------------------------------------------ référentiels
 	def etape(self, nom):
