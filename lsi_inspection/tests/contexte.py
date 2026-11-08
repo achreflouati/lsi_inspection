@@ -74,7 +74,7 @@ class TestLot2(IntegrationTestCase):
 			doc.save(ignore_permissions=True)
 		return nom
 
-	def parcours_standard(self, nom=f"{PREFIXE} Parcours", notifications=None, options=None):
+	def parcours_standard(self, nom=f"{PREFIXE} Parcours", notifications=None, options=None, annulation=True):
 		"""Parcours de test : 5 phases dans la séquence + Gagnée (finale) + Perdue (hors séquence)."""
 		o = options or {}
 		self.evenement("Manuel")
@@ -87,7 +87,9 @@ class TestLot2(IntegrationTestCase):
 			(60, "T Gagnée", "Commercial", self.evenement("Opportunité convertie", "Changement de statut", document_type="Opportunity",
 				champ_statut="status", valeur="Converted"), {"phase_finale": "Gagnée"}),
 			(99, "T Perdue", "Commercial", self.evenement("Opportunité perdue", "Changement de statut", document_type="Opportunity",
-				champ_statut="status", valeur="Lost"), {"phase_finale": "Perdue"}),
+				champ_statut="status", valeur="Lost"), {"phase_finale": "Perdue", "evenement_annulation": self.evenement("Opportunité rouverte",
+				"Changement de statut", document_type="Opportunity", champ_statut="status", valeur="Lost", sens="Quitte la valeur")
+				if annulation else None}),
 		], notifications)
 
 	# ------------------------------------------------------------------ données
