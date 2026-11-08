@@ -89,10 +89,12 @@ Mise à jour d'un lot : sauvegarde, `git pull` dans `apps/lsi_inspection`, puis 
 
 ```bash
 bench --site tic.erpsys.ovh set-config allow_tests true   # une fois
-bench --site tic.erpsys.ovh run-tests --app lsi_inspection --skip-test-records
+bench --site tic.erpsys.ovh run-tests --app lsi_inspection --skip-test-records --skip-before-tests
 ```
 
-`--skip-test-records` est obligatoire : sans lui, le lanceur de Frappe crée et valide en base des « test records » (ex. rôles
+`--skip-before-tests` est **obligatoire** : sans lui, les préparations de test d'ERPNext et de HRMS s'exécutent sur le site et le
+modifient de façon définitive (ERPNext **efface tous les prix d'articles**, change des paramètres de vente et de stock ; HRMS crée
+une liste de congés de test). Avec `--module`, ces préparations de **toutes** les apps s'exécutent. `--skip-test-records` est aussi obligatoire : sans lui, le lanceur de Frappe crée et valide en base des « test records » (ex. rôles
 « _Test Role ») sur le site. Chaque test tourne dans une transaction annulée ; tout commit et tout envoi d'e-mail SMTP sont
 interdits pendant les tests, et un contrôle automatique vérifie en fin de test qu'aucun utilisateur, e-mail, notification ou
 opportunité n'a été laissé. Les tests à l'écran se font uniquement avec des comptes réels (jamais d'adresse fictive sur le site).
