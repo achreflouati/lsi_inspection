@@ -252,4 +252,15 @@ required_apps = ["erpnext", "hrms"]
 # --------
 # Tout le paramétrage est livré ici, TOUJOURS filtré (jamais un doctype entier sans filtre).
 # Exemple : {"dt": "Custom Field", "filters": [["module", "=", "LSI Inspection"]]}
-fixtures = []
+fixtures = [
+	# lot 2 — structure de l'opportunité (champs, property setters, notifications fixes : module Commercial)
+	{"dt": "Custom Field", "filters": [["module", "in", ["Commercial", "Referentiel"]]]},
+	{"dt": "Property Setter", "filters": [["module", "in", ["Commercial", "Referentiel"]]]},
+	{"dt": "Notification", "filters": [["module", "in", ["Commercial"]]]},
+	{"dt": "Role", "filters": [["name", "in", ["Validateur demande d'offre", "Etude technique", "Paramétreur commercial"]]]},
+	{"dt": "Workflow", "filters": [["name", "in", ["Validation demande d'offre"]]]},
+	{"dt": "Workflow State", "filters": [["name", "in", ["À valider", "Validée", "Non validée", "Clarification"]]]},
+	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Valider", "Refuser", "Demander clarification", "Remettre à valider"]]]},
+	# permissions : toutes les règles (natives recopiées + nos rôles) des doctypes dont on change les droits
+	{"dt": "Custom DocPerm", "filters": [["parent", "in", ["Opportunity", "Opportunity Type", "Sales Stage", "Email Template"]]]},
+]

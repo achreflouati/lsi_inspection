@@ -1,0 +1,30 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-11-08 13:44:52.597666",
+  "name": "Valider",
+  "workflow_action_name": "Valider"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-11-08 13:44:52.616092",
+  "name": "Refuser",
+  "workflow_action_name": "Refuser"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-11-08 13:44:52.618900",
+  "name": "Demander clarification",
+  "workflow_action_name": "Demander clarification"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-11-08 13:44:52.621949",
+  "name": "Remettre à valider",
+  "workflow_action_name": "Remettre à valider"
+ }
+]

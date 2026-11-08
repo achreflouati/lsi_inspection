@@ -1,0 +1,41 @@
+[
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-11-08 13:40:07.629598",
+  "name": "Validateur demande d'offre",
+  "restrict_to_domain": null,
+  "role_name": "Validateur demande d'offre",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-11-08 13:40:08.152945",
+  "name": "Etude technique",
+  "restrict_to_domain": null,
+  "role_name": "Etude technique",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-11-08 13:40:08.159887",
+  "name": "Paramétreur commercial",
+  "restrict_to_domain": null,
+  "role_name": "Paramétreur commercial",
+  "two_factor_auth": 0
+ }
+]

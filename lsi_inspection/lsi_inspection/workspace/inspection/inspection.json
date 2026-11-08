@@ -70,7 +70,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Param\u00e9trage commercial",
-   "link_count": 5,
+   "link_count": 9,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -91,6 +91,46 @@
    "label": "\u00c9tape de vente",
    "link_count": 0,
    "link_to": "Sales Stage",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "\u00c9v\u00e9nement de phase",
+   "link_count": 0,
+   "link_to": "Evenement Phase",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Famille de type",
+   "link_count": 0,
+   "link_to": "Famille de Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Type m\u00e9tier",
+   "link_count": 0,
+   "link_to": "Type Metier",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mod\u00e8le d'e-mail",
+   "link_count": 0,
+   "link_to": "Email Template",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -126,7 +166,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-08 12:14:48.901026",
+ "modified": "2026-11-08 13:44:57.321406",
  "modified_by": "Administrator",
  "module": "LSI Inspection",
  "name": "Inspection",

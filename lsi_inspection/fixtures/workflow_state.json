@@ -1,0 +1,38 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-11-08 13:44:52.556724",
+  "name": "À valider",
+  "style": "",
+  "workflow_state_name": "À valider"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-11-08 13:44:52.571615",
+  "name": "Validée",
+  "style": "",
+  "workflow_state_name": "Validée"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-11-08 13:44:52.573541",
+  "name": "Non validée",
+  "style": "",
+  "workflow_state_name": "Non validée"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-11-08 13:44:52.576394",
+  "name": "Clarification",
+  "style": "",
+  "workflow_state_name": "Clarification"
+ }
+]
