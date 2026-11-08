@@ -100,6 +100,9 @@ def _base():
 		_creer("Price List", ACHAT, dict(price_list_name=ACHAT, buying=1, selling=0, currency=frappe.db.get_value("Company", company, "default_currency")))
 		frappe.db.set_single_value("Buying Settings", "buying_price_list", ACHAT)
 	liste = frappe.db.get_single_value("Buying Settings", "buying_price_list")
+	for g, (type_pos, source, marge) in GROUPES.items():
+		_creer("Item Group", g, dict(item_group_name=g, parent_item_group=racine, is_group=0, lsi_type_position=type_pos,
+			lsi_source_cout=source, lsi_marge_cible=marge))
 	location = _creer("Location", "DÉMO Dépôt", dict(location_name="DÉMO Dépôt"))
 	genre = frappe.get_all("Gender", pluck="name", limit=1)[0]
 
@@ -129,8 +132,10 @@ def _base():
 				_noter("Asset", a.name)
 
 	def article(code, uom, **kw):
-		return _creer("Item", code, dict(item_code=code, item_name=code, item_group=GROUPE, stock_uom=uom, is_stock_item=0,
-			include_item_in_manufacturing=0, description=MARQUE, **kw))
+		valeurs = dict(item_code=code, item_name=code, item_group=_groupe_de(code) or GROUPE, stock_uom=uom, is_stock_item=0,
+			include_item_in_manufacturing=0, description=MARQUE)
+		valeurs.update(kw)
+		return _creer("Item", code, valeurs)
 
 	for p in PRESTATIONS:
 		article(p, "Unité")
@@ -139,7 +144,7 @@ def _base():
 	for code, uom in PRIX_FIXE:
 		article(code, uom)
 	for code, uom, prix in ARTICLES:
-		article(code, uom)
+		article(code, uom, is_stock_item=1 if code in CONSOMMABLES else 0)
 		if not frappe.db.exists("Item Price", {"item_code": code, "price_list": liste}):
 			_creer("Item Price", None, dict(item_code=code, price_list=liste, price_list_rate=prix, uom=uom), champ_nom=True)
 	for code, prix_fournisseurs in SOUS_TRAITANCE.items():
@@ -153,10 +158,78 @@ def _base():
 	return company
 
 
+# ------------------------------------------------------------------ groupes d'articles (type de position par défaut) et stock
+GROUPES = {  # groupe : (type de position par défaut, source du coût, marge cible)
+	"DÉMO Prestations": (None, None, None),
+	"DÉMO Main-d'œuvre": ("Service à coût", None, 30),
+	"DÉMO Équipements": ("Durée de l'équipement à coût", None, 30),
+	"DÉMO Consommables": ("Article à coût", "Valorisation", 30),
+	"DÉMO Frais": ("Article à coût", "Liste de prix d'achat", 30),
+	"DÉMO Sous-traitance": ("Sous-traitance à coût", None, 30),
+	"DÉMO Forfaits": ("Prix fixe", None, None),
+}
+CONSOMMABLES = ["FILM MX125 RECHARGEABLE 10/40", "FILM FUJIFILM RECHARGEABLE IX100 10/40", "FILM FUJIFILM STANDARD IX100 10/40",
+	"EMBOUT TEST/MDS TIF/TSI", "CASSETTE FILM 10/40"]
+STOCK_INITIAL = 50
+
+
+def _groupe_de(code):
+	if code in PRESTATIONS:
+		return "DÉMO Prestations"
+	if code in CONSOMMABLES:
+		return "DÉMO Consommables"
+	if any(code == s[0] for s in SERVICES):
+		pool_dt = next(s[2] for s in SERVICES if s[0] == code)
+		return "DÉMO Main-d'œuvre" if pool_dt == "Designation" else "DÉMO Équipements"
+	if code in SOUS_TRAITANCE:
+		return "DÉMO Sous-traitance"
+	if any(code == a[0] for a in ARTICLES):
+		return "DÉMO Frais"
+	if any(code == p[0] for p in PRIX_FIXE):
+		return "DÉMO Forfaits"
+	return None
+
+
+def _groupes_et_stock(company):
+	"""Articles rangés par groupe (le groupe porte le type de position par défaut) ; consommables stockables + réception de stock."""
+	racine = frappe.db.get_value("Item Group", {"is_group": 1, "parent_item_group": ("in", ["", None])})
+	for g, (type_pos, source, marge) in GROUPES.items():
+		_creer("Item Group", g, dict(item_group_name=g, parent_item_group=racine, is_group=0, lsi_type_position=type_pos,
+			lsi_source_cout=source, lsi_marge_cible=marge))
+	for code in [n for dt, n in _registre() if dt == "Item"]:
+		g = _groupe_de(code)
+		if g and frappe.db.get_value("Item", code, "item_group") != g:
+			frappe.db.set_value("Item", code, "item_group", g)
+	entrepot = frappe.db.get_value("Warehouse", {"company": company, "is_group": 0, "warehouse_name": ("like", "Magasins%")}) or \
+		frappe.get_all("Warehouse", filters={"company": company, "is_group": 0}, pluck="name", limit=1)[0]
+	recevoir = []
+	for code in CONSOMMABLES:
+		if not frappe.db.exists("Item", code):
+			continue
+		if not frappe.db.get_value("Item", code, "is_stock_item"):
+			if frappe.db.exists("Stock Ledger Entry", {"item_code": code}):
+				continue
+			it = frappe.get_doc("Item", code)
+			it.is_stock_item = 1
+			it.flags.ignore_permissions = True
+			it.save()
+		if not frappe.db.exists("Stock Ledger Entry", {"item_code": code, "is_cancelled": 0}):
+			prix = next(a[2] for a in ARTICLES if a[0] == code)
+			recevoir.append(dict(item_code=code, qty=STOCK_INITIAL, basic_rate=prix, t_warehouse=entrepot, uom="Unité", conversion_factor=1))
+	if recevoir:
+		se = frappe.get_doc(dict(doctype="Stock Entry", stock_entry_type="Material Receipt", purpose="Material Receipt", company=company,
+			remarks=f"{MARQUE} stock initial des consommables", items=recevoir))
+		se.flags.ignore_permissions = True
+		se.insert()
+		se.submit()
+		_noter("Stock Entry", se.name)
+
+
 # ------------------------------------------------------------------ scénario
 def run():
 	frappe.flags.mute_emails = True
 	company = _base()
+	_groupes_et_stock(company)
 	from lsi_inspection import config
 
 	config.charger()  # les gammes en attente (articles absents) sont maintenant insérées
@@ -195,6 +268,11 @@ def run():
 				p.prix_unitaire = PRIX[p.numero]
 		e.save(ignore_permissions=True)
 		eft = e.name
+	else:
+		e = frappe.get_doc("EFT", eft)
+		if e.docstatus == 0:
+			e.flags.ignore_permissions = True
+			e.save()  # recalcul (brouillon) : valorisation du stock, types par défaut
 	frappe.db.commit()
 	e = frappe.get_doc("EFT", eft)
 	print(f"{DEMO} : opportunité {opp}, EFT {eft} — {len(e.groupes)} groupes, {len(e.positions)} positions ; "

@@ -1,18 +1,12 @@
 [
  {
   "actif": 1,
-  "champ_appartenance": "designation",
-  "champ_cout": "lsi_cout_journalier",
-  "filtres_ressources": "{\"status\": \"Active\"}",
-  "libelle": "Service à coût",
-  "mode": "À coût",
-  "name": "Service à coût",
-  "pool_doctype": "Designation",
+  "libelle": "Article de la position à prix fixe",
+  "mode": "Sous-position",
+  "name": "Article de la position à prix fixe",
   "regle": "Plus élevé",
-  "ressource_doctype": "Employee",
-  "source_cout": "Pool de ressources",
-  "uom_cout": "Jour",
-  "uom_defaut": "Jour"
+  "source_cout": "Article",
+  "uom_defaut": "Unité"
  },
  {
   "actif": 1,
@@ -40,29 +34,11 @@
  },
  {
   "actif": 1,
-  "libelle": "Sous-traitance à coût",
-  "mode": "À coût",
-  "name": "Sous-traitance à coût",
-  "regle": "Plus élevé",
-  "source_cout": "Prix fournisseur",
-  "uom_defaut": "Unité"
- },
- {
-  "actif": 1,
   "libelle": "Prix fixe",
   "mode": "Prix fixe",
   "name": "Prix fixe",
   "regle": "Plus élevé",
   "source_cout": "Somme des sous-positions",
-  "uom_defaut": "Unité"
- },
- {
-  "actif": 1,
-  "libelle": "Article de la position à prix fixe",
-  "mode": "Sous-position",
-  "name": "Article de la position à prix fixe",
-  "regle": "Plus élevé",
-  "source_cout": "Article",
   "uom_defaut": "Unité"
  },
  {
@@ -79,5 +55,29 @@
   "source_cout": "Pool de ressources",
   "uom_cout": "Jour",
   "uom_defaut": "Jour"
+ },
+ {
+  "actif": 1,
+  "champ_appartenance": "designation",
+  "champ_cout": "lsi_cout_journalier",
+  "filtres_ressources": "{\"status\": \"Active\"}",
+  "libelle": "Service à coût",
+  "mode": "À coût",
+  "name": "Service à coût",
+  "pool_doctype": "Designation",
+  "regle": "Plus élevé",
+  "ressource_doctype": "Employee",
+  "source_cout": "Pool de ressources",
+  "uom_cout": "Jour",
+  "uom_defaut": "Jour"
+ },
+ {
+  "actif": 1,
+  "libelle": "Sous-traitance à coût",
+  "mode": "À coût",
+  "name": "Sous-traitance à coût",
+  "regle": "Plus élevé",
+  "source_cout": "Prix fournisseur",
+  "uom_defaut": "Unité"
  }
 ]

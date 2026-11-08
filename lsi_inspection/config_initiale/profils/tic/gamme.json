@@ -3,146 +3,17 @@
   "actif": 1,
   "lignes": [
    {
-    "item_code": "Inspecteur RT niveau II",
-    "numero": "1",
-    "qty": 1,
-    "type_position": "Service à coût",
-    "uom": "Jour"
-   },
-   {
-    "designation_2": "T.N",
-    "item_code": "Inspecteur RT niveau II - Travaux de nuit",
-    "numero": "2",
-    "qty": 0,
-    "type_position": "Service à coût",
-    "uom": "Jour"
-   },
-   {
-    "designation_2": "Dimanche & jour férié",
-    "item_code": "Inspecteur RT niveau II - Dimanche & jour férié",
-    "numero": "3",
-    "qty": 0,
-    "type_position": "Service à coût",
-    "uom": "Jour"
-   },
-   {
-    "item_code": "Heure supplémentaire Inspecteur",
-    "numero": "4",
-    "qty": 0,
-    "type_position": "Article à coût",
-    "uom": "Unité"
-   },
-   {
-    "item_code": "Assistant RT",
-    "numero": "5",
-    "qty": 1,
-    "type_position": "Service à coût",
-    "uom": "Jour"
-   },
-   {
-    "designation_2": "T.N",
-    "item_code": "Assistant RT - Travaux de nuit",
-    "numero": "6",
-    "qty": 0,
-    "type_position": "Service à coût",
-    "uom": "Jour"
-   },
-   {
-    "designation_2": "Dimanche & jour férié",
-    "item_code": "Assistant RT - Dimanche & jour férié",
-    "numero": "7",
-    "qty": 0,
-    "type_position": "Service à coût",
-    "uom": "Jour"
-   },
-   {
-    "item_code": "Heure supplémentaire Assistant",
-    "numero": "8",
-    "qty": 0,
-    "type_position": "Article à coût",
-    "uom": "Unité"
-   },
-   {
-    "item_code": "PROJECTEUR GAMMA",
-    "numero": "9",
-    "qty": 1,
-    "type_position": "Durée de l'équipement à coût",
-    "uom": "Jour"
-   },
-   {
-    "designation_2": "ligne de facturation",
-    "item_code": "Film",
-    "numero": "17",
-    "qty": 3,
-    "type_position": "Prix fixe",
-    "uom": "Unité"
-   },
-   {
-    "designation_2": "sous position",
-    "item_code": "FILM MX125 RECHARGEABLE 10/40",
-    "numero": "17.1",
-    "parente": "17",
-    "qty": 1,
-    "type_position": "Article de la position à prix fixe",
-    "uom": "Unité"
-   },
-   {
-    "designation_2": "sous position",
-    "item_code": "FILM FUJIFILM RECHARGEABLE IX100 10/40",
-    "numero": "17.2",
-    "parente": "17",
-    "qty": 1,
-    "type_position": "Article de la position à prix fixe",
-    "uom": "Unité"
-   },
-   {
-    "designation_2": "sous position",
-    "item_code": "FILM FUJIFILM STANDARD IX100 10/40",
-    "numero": "17.3",
-    "parente": "17",
-    "qty": 1,
-    "type_position": "Article de la position à prix fixe",
-    "uom": "Unité"
-   },
-   {
-    "designation_2": "accessoires",
-    "item_code": "EMBOUT TEST/MDS TIF/TSI",
-    "numero": "18",
-    "qty": 1,
-    "type_position": "Article à coût",
-    "uom": "Unité"
-   },
-   {
-    "designation_2": "accessoires",
-    "item_code": "CASSETTE FILM 10/40",
-    "numero": "19",
-    "qty": 1,
-    "type_position": "Article à coût",
-    "uom": "Unité"
-   }
-  ],
-  "name": "Contrôle par Radiographie (RT)",
-  "prestation": "Contrôle par Radiographie (RT)",
-  "titre_groupe": "Contrôle par Radiographie (Vacation)"
- },
- {
-  "actif": 1,
-  "lignes": [
-   {
-    "designation_2": "ligne de facturation",
     "item_code": "Forfait /DMOS",
     "numero": "1",
-    "qty": 1,
-    "type_position": "Prix fixe",
+    "parente_ligne": 0,
+    "qty": 1.0,
     "uom": "Unité"
    },
    {
-    "designation_2": "sous position",
     "item_code": "Expert en soudage",
     "numero": "1.1",
-    "parente": "1",
-    "qty": 2,
-    "type_position": "Service de la position à prix fixe",
+    "parente_ligne": 1,
+    "qty": 2.0,
     "uom": "Jour"
    }
   ],
@@ -154,97 +25,205 @@
   "actif": 1,
   "lignes": [
    {
-    "item_code": "Usinage de traction",
+    "item_code": "Inspecteur RT niveau II",
     "numero": "1",
-    "qty": 2,
-    "type_position": "Sous-traitance à coût",
+    "parente_ligne": 0,
+    "qty": 1.0,
+    "uom": "Jour"
+   },
+   {
+    "designation_2": "T.N",
+    "item_code": "Inspecteur RT niveau II - Travaux de nuit",
+    "numero": "2",
+    "parente_ligne": 0,
+    "qty": 0.0,
+    "uom": "Jour"
+   },
+   {
+    "designation_2": "Dimanche & jour férié",
+    "item_code": "Inspecteur RT niveau II - Dimanche & jour férié",
+    "numero": "3",
+    "parente_ligne": 0,
+    "qty": 0.0,
+    "uom": "Jour"
+   },
+   {
+    "item_code": "Heure supplémentaire Inspecteur",
+    "numero": "4",
+    "parente_ligne": 0,
+    "qty": 0.0,
     "uom": "Unité"
    },
    {
-    "item_code": "Essai De Traction",
-    "numero": "2",
-    "qty": 2,
-    "type_position": "Sous-traitance à coût",
+    "item_code": "Assistant RT",
+    "numero": "5",
+    "parente_ligne": 0,
+    "qty": 1.0,
+    "uom": "Jour"
+   },
+   {
+    "designation_2": "T.N",
+    "item_code": "Assistant RT - Travaux de nuit",
+    "numero": "6",
+    "parente_ligne": 0,
+    "qty": 0.0,
+    "uom": "Jour"
+   },
+   {
+    "designation_2": "Dimanche & jour férié",
+    "item_code": "Assistant RT - Dimanche & jour férié",
+    "numero": "7",
+    "parente_ligne": 0,
+    "qty": 0.0,
+    "uom": "Jour"
+   },
+   {
+    "item_code": "Heure supplémentaire Assistant",
+    "numero": "8",
+    "parente_ligne": 0,
+    "qty": 0.0,
+    "uom": "Unité"
+   },
+   {
+    "item_code": "PROJECTEUR GAMMA",
+    "numero": "9",
+    "parente_ligne": 0,
+    "qty": 1.0,
+    "uom": "Jour"
+   },
+   {
+    "item_code": "Film",
+    "numero": "17",
+    "parente_ligne": 0,
+    "qty": 3.0,
+    "uom": "Unité"
+   },
+   {
+    "item_code": "FILM MX125 RECHARGEABLE 10/40",
+    "numero": "17.1",
+    "parente_ligne": 10,
+    "qty": 1.0,
+    "uom": "Unité"
+   },
+   {
+    "item_code": "FILM FUJIFILM RECHARGEABLE IX100 10/40",
+    "numero": "17.2",
+    "parente_ligne": 10,
+    "qty": 1.0,
+    "uom": "Unité"
+   },
+   {
+    "item_code": "FILM FUJIFILM STANDARD IX100 10/40",
+    "numero": "17.3",
+    "parente_ligne": 10,
+    "qty": 1.0,
+    "uom": "Unité"
+   },
+   {
+    "designation_2": "accessoires",
+    "item_code": "EMBOUT TEST/MDS TIF/TSI",
+    "numero": "18",
+    "parente_ligne": 0,
+    "qty": 1.0,
+    "uom": "Unité"
+   },
+   {
+    "designation_2": "accessoires",
+    "item_code": "CASSETTE FILM 10/40",
+    "numero": "19",
+    "parente_ligne": 0,
+    "qty": 1.0,
     "uom": "Unité"
    }
   ],
-  "name": "Découpages et Essais Mécaniques",
-  "prestation": "Découpages et Essais Mécaniques",
-  "titre_groupe": "Découpage et essai mécaniques & Assistance aux essais mécaniques (Vacation)"
+  "name": "Contrôle par Radiographie (RT)",
+  "prestation": "Contrôle par Radiographie (RT)",
+  "titre_groupe": "Contrôle par Radiographie (Vacation)"
  },
  {
   "actif": 1,
   "lignes": [
    {
-    "designation_2": "ligne de facturation",
     "item_code": "Inspecteur agréé B2 + Transport",
     "numero": "1",
-    "qty": 1,
-    "type_position": "Prix fixe",
+    "parente_ligne": 0,
+    "qty": 1.0,
     "uom": "Jour"
    },
    {
-    "designation_2": "sous position",
     "item_code": "Inspecteur agréé B2",
     "numero": "1.1",
-    "parente": "1",
-    "qty": 6,
-    "type_position": "Service de la position à prix fixe",
+    "parente_ligne": 1,
+    "qty": 6.0,
     "uom": "Heure"
    },
    {
-    "designation_2": "sous position",
     "item_code": "Rédaction rapport",
     "numero": "1.2",
-    "parente": "1",
-    "qty": 2,
-    "type_position": "Service de la position à prix fixe",
+    "parente_ligne": 1,
+    "qty": 2.0,
     "uom": "Heure"
    },
    {
-    "designation_2": "sous position",
     "item_code": "VEHICULE",
     "numero": "1.3",
-    "parente": "1",
-    "qty": 1,
-    "type_position": "Durée de l'équipement à coût",
+    "parente_ligne": 1,
+    "qty": 1.0,
     "uom": "Jour"
    },
    {
-    "designation_2": "sous position",
     "item_code": "CARTE CARBURANT",
     "numero": "1.4",
-    "parente": "1",
-    "qty": 1,
-    "type_position": "Durée de l'équipement à coût",
+    "parente_ligne": 1,
+    "qty": 1.0,
     "uom": "Jour"
    },
    {
-    "designation_2": "sous position",
     "item_code": "Indemnités kilométriques",
     "numero": "1.5",
-    "parente": "1",
-    "qty": 100,
-    "type_position": "Article à coût",
+    "parente_ligne": 1,
+    "qty": 100.0,
     "uom": "Kilometer"
    },
    {
     "item_code": "APPAREIL PHOTO",
     "numero": "2",
-    "qty": 1,
-    "type_position": "Durée de l'équipement à coût",
+    "parente_ligne": 0,
+    "qty": 1.0,
     "uom": "Jour"
    },
    {
     "item_code": "CONTRÔLEUR D'INSTALLATION ÉLECTRIQUE",
     "numero": "3",
-    "qty": 1,
-    "type_position": "Durée de l'équipement à coût",
+    "parente_ligne": 0,
+    "qty": 1.0,
     "uom": "Jour"
    }
   ],
   "name": "Contrôle réglementaire des installations électriques Sfax",
   "prestation": "Contrôle réglementaire des installations électriques Sfax",
   "titre_groupe": "Contrôle réglementaire des installations électriques (Tarif Journalier)"
+ },
+ {
+  "actif": 1,
+  "lignes": [
+   {
+    "item_code": "Usinage de traction",
+    "numero": "1",
+    "parente_ligne": 0,
+    "qty": 2.0,
+    "uom": "Unité"
+   },
+   {
+    "item_code": "Essai De Traction",
+    "numero": "2",
+    "parente_ligne": 0,
+    "qty": 2.0,
+    "uom": "Unité"
+   }
+  ],
+  "name": "Découpages et Essais Mécaniques",
+  "prestation": "Découpages et Essais Mécaniques",
+  "titre_groupe": "Découpage et essai mécaniques & Assistance aux essais mécaniques (Vacation)"
  }
 ]
