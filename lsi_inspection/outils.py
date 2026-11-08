@@ -39,7 +39,8 @@ def _defaut(famille, cache):
 
 def defauts_referentiel(doc, method=None):
 	"""Champs vides pointant vers le référentiel (Type Metier filtré par famille) : valeur « Par défaut » de la famille.
-	Document et lignes de ses tables. Aucune valeur en dur : la famille vient du champ, la valeur du référentiel."""
+	UNIQUEMENT sur un nouveau document ou une nouvelle ligne : un document enregistré n'est jamais modifié (un champ vidé à
+	la main reste vide). Aucune valeur en dur : la famille vient du champ, la valeur du référentiel."""
 	cache = {}
 
 	def visible(d, df):
@@ -63,7 +64,15 @@ def defauts_referentiel(doc, method=None):
 				if famille and _defaut(famille, cache):
 					d.set(df.fieldname, _defaut(famille, cache))
 
-	remplir(doc)
+	nouveau = doc.is_new()
+	if nouveau:
+		remplir(doc)
 	for tdf in doc.meta.get_table_fields():
 		for row in doc.get(tdf.fieldname) or []:
-			remplir(row)
+			if nouveau or _nouvelle_ligne(row):
+				remplir(row)
+
+
+def _nouvelle_ligne(row):
+	"""Ligne pas encore enregistrée (ajoutée côté serveur ou dans le formulaire)."""
+	return bool(row.get("__islocal")) or not row.name or str(row.name).startswith("new-") or not frappe.db.exists(row.doctype, row.name)

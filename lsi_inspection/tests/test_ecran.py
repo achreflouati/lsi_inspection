@@ -125,3 +125,35 @@ class TestEcran(TestLot2):
 	def test_famille_lue_dans_les_link_filters(self):
 		df = frappe.get_meta("Opportunity").get_field("lsi_ao_portee")
 		self.assertEqual(outils._famille(df), "PORTEE_AO")
+
+	# ------------------------------------------------------------------ défauts : nouveau document / nouvelle ligne seulement
+	def test_defaut_jamais_sur_un_document_enregistre(self):
+		resultat = self._defaut("RESULTAT_AO", f"{PREFIXE}_ATTENTE")
+		o = self.opportunite(self._type_ao(1))
+		self.assertEqual(o.lsi_ao_attribue, resultat)  # nouveau document : défaut posé
+		o.lsi_ao_attribue = None
+		o.save()
+		self.assertFalse(self.recharger(o).lsi_ao_attribue)  # vidé à la main : reste vide
+		avant = self.recharger(o).modified
+		o = self.recharger(o)
+		o.save()
+		self.assertFalse(o.lsi_ao_attribue)  # ré-enregistré sans changement : rien n'est ajouté
+		self.assertNotEqual(avant, None)
+
+	def test_defaut_sur_nouvelle_ligne_seulement(self):
+		conformite = self._defaut("CONFORMITE_CDC", f"{PREFIXE}_ANALYSE")
+		o = self.opportunite(self._type_ao(1), lsi_ao_exigences=[dict(exigence="E1")])
+		self.assertEqual(o.lsi_ao_exigences[0].conformite, conformite)
+		o.lsi_ao_exigences[0].conformite = None  # ligne existante vidée à la main
+		o.append("lsi_ao_exigences", dict(exigence="E2"))  # nouvelle ligne
+		o.save()
+		o = self.recharger(o)
+		self.assertEqual([r.conformite for r in o.lsi_ao_exigences], [None, conformite])
+
+	def test_document_existant_sans_defaut_n_est_pas_complete(self):
+		o = self.opportunite(self._type_ao(1))
+		frappe.db.set_value("Opportunity", o.name, "lsi_ao_attribue", None)  # document antérieur à la valeur par défaut
+		self._defaut("RESULTAT_AO", f"{PREFIXE}_ATTENTE")
+		o = self.recharger(o)
+		o.save()
+		self.assertFalse(self.recharger(o).lsi_ao_attribue)

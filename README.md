@@ -89,8 +89,13 @@ Mise à jour d'un lot : sauvegarde, `git pull` dans `apps/lsi_inspection`, puis 
 
 ```bash
 bench --site tic.erpsys.ovh set-config allow_tests true   # une fois
-bench --site tic.erpsys.ovh run-tests --app lsi_inspection
+bench --site tic.erpsys.ovh run-tests --app lsi_inspection --skip-test-records
 ```
+
+`--skip-test-records` est obligatoire : sans lui, le lanceur de Frappe crée et valide en base des « test records » (ex. rôles
+« _Test Role ») sur le site. Chaque test tourne dans une transaction annulée ; tout commit et tout envoi d'e-mail SMTP sont
+interdits pendant les tests, et un contrôle automatique vérifie en fin de test qu'aucun utilisateur, e-mail, notification ou
+opportunité n'a été laissé. Les tests à l'écran se font uniquement avec des comptes réels (jamais d'adresse fictive sur le site).
 
 ## Licence
 
