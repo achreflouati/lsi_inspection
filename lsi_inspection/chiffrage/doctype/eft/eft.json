@@ -30,8 +30,7 @@
   "taux_marge",
   "cout_incomplet",
   "sb_etapes",
-  "totaux_etapes",
-  "amended_from"
+  "totaux_etapes"
  ],
  "fields": [
   {
@@ -39,7 +38,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hidden": 1,
-   "label": "S\u00e9rie",
+   "label": "Série",
    "options": "EFT-.YYYY.-.####",
    "reqd": 1
   },
@@ -55,7 +54,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Opportunit\u00e9",
+   "label": "Opportunité",
    "options": "Opportunity"
   },
   {
@@ -79,7 +78,7 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
-   "label": "Soci\u00e9t\u00e9",
+   "label": "Société",
    "options": "Company",
    "reqd": 1
   },
@@ -100,24 +99,15 @@
    "read_only": 1
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amend\u00e9 depuis",
-   "no_copy": 1,
-   "options": "EFT",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
    "fieldname": "tab_structure",
    "fieldtype": "Tab Break",
    "label": "Chiffrage"
   },
   {
-   "description": "Ajouter une prestation : \u00e0 l'enregistrement, sa gamme cr\u00e9e le groupe et pr\u00e9remplit les positions (\u00d7 quantit\u00e9).",
+   "description": "Ajouter une prestation : à l'enregistrement, sa gamme crée le groupe et préremplit les positions (× quantité).",
    "fieldname": "etapes",
    "fieldtype": "Table",
-   "label": "\u00c9tapes (prestations)",
+   "label": "Étapes (prestations)",
    "options": "EFT Etape"
   },
   {
@@ -135,7 +125,7 @@
   {
    "fieldname": "repartitions",
    "fieldtype": "Table",
-   "label": "R\u00e9partition par \u00e9tape (groupes ou positions partag\u00e9s)",
+   "label": "Répartition par étape (groupes ou positions partagés)",
    "options": "EFT Repartition"
   },
   {
@@ -146,7 +136,7 @@
   {
    "fieldname": "total_cout",
    "fieldtype": "Currency",
-   "label": "Co\u00fbt total",
+   "label": "Coût total",
    "read_only": 1
   },
   {
@@ -176,18 +166,18 @@
    "default": "0",
    "fieldname": "cout_incomplet",
    "fieldtype": "Check",
-   "label": "Co\u00fbt incomplet (au moins un co\u00fbt manquant ou en attente)",
+   "label": "Coût incomplet (au moins un coût manquant ou en attente)",
    "read_only": 1
   },
   {
    "fieldname": "sb_etapes",
    "fieldtype": "Section Break",
-   "label": "Totaux par \u00e9tape"
+   "label": "Totaux par étape"
   },
   {
    "fieldname": "totaux_etapes",
    "fieldtype": "Table",
-   "label": "Totaux par \u00e9tape",
+   "label": "Totaux par étape",
    "options": "EFT Total Etape",
    "read_only": 1
   },
@@ -206,7 +196,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-08 16:00:57.980221",
+ "modified": "2026-11-08 16:26:22.279854",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "EFT",
@@ -235,7 +225,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Param\u00e9treur chiffrage",
+   "role": "Paramétreur chiffrage",
    "share": 1,
    "write": 1
   },
