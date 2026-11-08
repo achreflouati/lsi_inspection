@@ -6,6 +6,7 @@ frappe.ui.form.on("EFT", {
 	refresh(frm) {
 		if (frm.is_new()) return;
 		if (frm.doc.docstatus === 0) {
+			frm.add_custom_button(__("Ajouter depuis une gamme"), () => lsi_eft.ajouter_gamme(frm)).addClass("btn-primary");
 			const P = __("Positions");
 			frm.add_custom_button(__("Voir les ressources"), () => lsi_eft.ressources(frm), P);
 			frm.add_custom_button(__("Historique d'achat"), () => lsi_eft.historique(frm), P);
@@ -35,6 +36,19 @@ lsi_eft.choisir_position = function (frm, filtre, titre, suite) {
 	}));
 	if (!options.length) return frappe.msgprint(__("Aucune position concernée."));
 	frappe.prompt([{ fieldname: "numero", fieldtype: "Select", label: __("Position"), options, reqd: 1 }], (v) => suite(v.numero), titre);
+};
+
+lsi_eft.ajouter_gamme = function (frm) {
+	frappe.prompt(
+		[
+			{ fieldname: "gamme", fieldtype: "Link", options: "Gamme", label: __("Gamme (prestation)"), reqd: 1,
+				get_query: () => ({ filters: { actif: 1 } }) },
+			{ fieldname: "qty", fieldtype: "Float", label: __("Quantité"), default: 1, reqd: 1 },
+		],
+		(v) => frappe.call({ method: `${M}.ajouter_gamme`, args: { eft: frm.doc.name, prestation: v.gamme, qty: v.qty }, freeze: true })
+			.then(() => frm.reload_doc()),
+		__("Ajouter depuis une gamme"), __("Ajouter")
+	);
 };
 
 lsi_eft.ressources = function (frm) {

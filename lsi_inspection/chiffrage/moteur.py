@@ -64,9 +64,31 @@ def _valeur_groupe(item_code, champ):
 	return valeur
 
 
+def type_par_defaut(item_code):
+	"""Type de position par défaut : celui de l'article, sinon de son groupe d'articles (puis groupes parents)."""
+	return _valeur_groupe(item_code, "lsi_type_position") if item_code else None
+
+
 def _types(doc):
+	for p in doc.get("positions") or []:
+		if not p.type_position:
+			p.type_position = type_par_defaut(p.item_code)
+			if not p.type_position:
+				frappe.throw(_("Position {0} ({1}) : aucun type de position (ni sur la ligne, ni sur l'article, ni sur son groupe).").format(
+					p.numero, p.item_code))
 	noms = {p.type_position for p in doc.get("positions") or [] if p.type_position}
 	return {n: frappe.get_doc("Type Position", n) for n in noms}
+
+
+def valorisation(item_code):
+	"""Valorisation du stock : moyenne pondérée des entrepôts (Bin natif) ; à défaut, valorisation de la fiche article."""
+	r = frappe.db.sql("""select sum(stock_value), sum(actual_qty) from `tabBin` where item_code = %s and actual_qty > 0""", item_code)
+	valeur, qty = r[0] if r else (0, 0)
+	return flt(valeur) / flt(qty) if flt(qty) else flt(frappe.db.get_value("Item", item_code, "valuation_rate"))
+
+
+def stock_disponible(item_code):
+	return flt(frappe.db.sql("select sum(actual_qty) from `tabBin` where item_code = %s", item_code)[0][0])
 
 
 # ------------------------------------------------------------------ hooks
@@ -94,23 +116,54 @@ def _prochain_groupe(doc):
 	return max(nums, default=0) + 1
 
 
+def numeros_gamme(lignes):
+	"""N° relatif de chaque ligne : n° imposé, sinon automatique (lignes principales 1, 2, 3… ; sous-lignes <parente>.1, .2…)."""
+	nums, imposes = {}, {cstr(l.numero) for l in lignes if l.numero}
+	compteur, sous = 0, {}
+	for l in sorted(lignes, key=lambda x: x.idx):
+		if cint(l.get("parente_ligne")):
+			parent = nums.get(cint(l.parente_ligne))
+			if not parent:
+				frappe.throw(_("Gamme, ligne {0} : la ligne parente n° {1} doit précéder la sous-ligne.").format(l.idx, l.parente_ligne))
+			if l.numero:
+				nums[l.idx] = cstr(l.numero)
+			else:
+				sous[parent] = sous.get(parent, 0) + 1
+				nums[l.idx] = f"{parent}.{sous[parent]}"
+		elif l.numero:
+			nums[l.idx] = cstr(l.numero)
+		else:
+			compteur += 1
+			while str(compteur) in imposes:
+				compteur += 1
+			nums[l.idx] = str(compteur)
+	return nums
+
+
+def appliquer_gamme(doc, etape):
+	"""La gamme de la prestation crée le groupe et préremplit positions et sous-positions (× quantité de l'étape)."""
+	nom = frappe.db.get_value("Gamme", {"prestation": etape.prestation, "actif": 1})
+	if not nom:
+		return False
+	gamme = frappe.get_doc("Gamme", nom)
+	n = cstr(_prochain_groupe(doc))
+	nums = numeros_gamme(gamme.lignes)
+	doc.append("groupes", dict(numero=n, titre=gamme.titre_groupe))
+	for l in gamme.lignes:
+		parent = nums.get(cint(l.get("parente_ligne"))) if cint(l.get("parente_ligne")) else None
+		doc.append("positions", dict(numero=f"{n}.{nums[l.idx]}", groupe=n, parente=f"{n}.{parent}" if parent else None,
+			type_position=l.type_position or type_par_defaut(l.item_code), item_code=l.item_code, designation_2=l.designation_2,
+			qty=flt(l.qty) * flt(etape.qty or 1), uom=l.uom))
+	doc.append("repartitions", dict(cible=n, etape=etape.prestation))
+	etape.gamme_appliquee = 1
+	return True
+
+
 def appliquer_gammes(doc):
-	"""Étape (prestation) ajoutée : sa gamme crée le groupe et préremplit positions et sous-positions (× quantité de l'étape)."""
+	"""Étape (prestation) ajoutée : sa gamme est appliquée une seule fois."""
 	for e in doc.get("etapes") or []:
-		if cint(e.gamme_appliquee) or not e.prestation:
-			continue
-		nom = frappe.db.get_value("Gamme", {"prestation": e.prestation, "actif": 1})
-		if not nom:
-			continue
-		gamme = frappe.get_doc("Gamme", nom)
-		n = cstr(_prochain_groupe(doc))
-		doc.append("groupes", dict(numero=n, titre=gamme.titre_groupe))
-		for l in gamme.lignes:
-			doc.append("positions", dict(numero=f"{n}.{l.numero}", groupe=n, parente=f"{n}.{l.parente}" if l.parente else None,
-				type_position=l.type_position, item_code=l.item_code, designation_2=l.designation_2, qty=flt(l.qty) * flt(e.qty or 1),
-				uom=l.uom))
-		doc.append("repartitions", dict(cible=n, etape=e.prestation))
-		e.gamme_appliquee = 1
+		if not cint(e.gamme_appliquee) and e.prestation:
+			appliquer_gamme(doc, e)
 
 
 # ------------------------------------------------------------------ coûts
@@ -143,7 +196,7 @@ def _cout_article(p):
 	source = _valeur_groupe(p.item_code, "lsi_source_cout") or DERNIER_PRIX
 	item = frappe.db.get_value("Item", p.item_code, ["last_purchase_rate", "valuation_rate", "stock_uom"], as_dict=True)
 	if source == VALORISATION:
-		cout = flt(item.valuation_rate)
+		cout = valorisation(p.item_code)
 	elif source == LISTE_PRIX:
 		liste = frappe.db.get_single_value("Buying Settings", "buying_price_list")
 		cout = flt(frappe.db.get_value("Item Price", {"item_code": p.item_code, "price_list": liste, "buying": 1}, "price_list_rate"))
@@ -243,6 +296,7 @@ def calculer(doc):
 		elif p.mode == SOUS_POSITION:
 			frappe.throw(_("Position {0} : le type {1} ne s'emploie que sous une position à prix fixe.").format(p.numero, p.type_position))
 		p.tarif = 1 if not p.parente and flt(p.qty) == 0 else 0
+		p.stock_disponible = stock_disponible(p.item_code) if frappe.db.get_value("Item", p.item_code, "is_stock_item") else 0
 
 	for p in positions:  # coûts unitaires (hors prix fixe)
 		if p.mode != PRIX_FIXE and p.type_position in types:
@@ -335,6 +389,22 @@ def make_eft(opportunity):
 	for it in opp.get("items") or []:
 		doc.append("etapes", dict(prestation=it.item_code, qty=flt(it.qty) or 1, uom=it.uom))
 	doc.insert()
+	return doc.name
+
+
+@frappe.whitelist(methods=["POST"])
+def ajouter_gamme(eft, prestation, qty=1):
+	"""Bouton « Ajouter depuis une gamme » : ajoute la prestation (étape) et applique sa gamme immédiatement."""
+	doc = _eft_brouillon(eft)
+	if not frappe.db.exists("Gamme", {"prestation": prestation, "actif": 1}):
+		frappe.throw(_("Aucune gamme active pour la prestation {0}.").format(prestation))
+	etape = next((e for e in doc.etapes if e.prestation == prestation and not cint(e.gamme_appliquee)), None)
+	if not etape:
+		etape = doc.append("etapes", dict(prestation=prestation, qty=flt(qty) or 1))
+	else:
+		etape.qty = flt(qty) or etape.qty
+	appliquer_gamme(doc, etape)
+	doc.save()
 	return doc.name
 
 
