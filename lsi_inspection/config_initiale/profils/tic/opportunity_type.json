@@ -91,6 +91,7 @@
    },
    {
     "duree_cible": 0,
+    "evenement_annulation": "Opportunité rouverte",
     "evenement_fin": "Opportunité perdue",
     "obligatoire": 0,
     "ordre": 99,
