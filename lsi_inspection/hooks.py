@@ -268,7 +268,7 @@ fixtures = [
 
 # Lot 2 — opportunité : moteur générique des phases (configuration : Opportunity Type, Evenement Phase, Notification Phase)
 _phases = "lsi_inspection.commercial.phases"
-doctype_js = {"Opportunity": "public/js/opportunity.js"}
+doctype_js = {"Opportunity": "public/js/opportunity.js", "EFT": "public/js/eft.js"}
 doctype_list_js = {"Opportunity": "public/js/opportunity_list.js"}
 doc_events = {
 	"*": {
@@ -284,6 +284,10 @@ doc_events = {
 		"on_update": f"{_phases}.opportunity_on_update",
 	},
 	"Opportunity Type": {"validate": f"{_phases}.type_validate", "on_update": f"{_phases}.type_on_update"},
+	# Lot 3 — chiffrage (moteur générique : Type Position, pools, gammes, modèles)
+	"EFT": {"validate": "lsi_inspection.chiffrage.moteur.eft_validate"},
+	"Modele EFT": {"validate": "lsi_inspection.chiffrage.moteur.modele_validate"},
+	"Supplier Quotation": {"on_submit": "lsi_inspection.chiffrage.moteur.offre_fournisseur"},
 }
 # configuration initiale (commun + profil du site) : insère ce qui manque, ne modifie jamais l'existant
 after_sync = "lsi_inspection.config.charger"

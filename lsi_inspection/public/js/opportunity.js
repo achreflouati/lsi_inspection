@@ -15,6 +15,11 @@ frappe.ui.form.on("Departement Concerne", {
 frappe.ui.form.on("Opportunity", {
 	refresh(frm) {
 		lsi.phases.durees(frm);
+		if (!frm.is_new() && frappe.model.can_create("EFT")) {
+			frm.add_custom_button(__("EFT"), () =>
+				frappe.call({ method: "lsi_inspection.chiffrage.moteur.make_eft", args: { opportunity: frm.doc.name }, freeze: true })
+					.then((r) => frappe.set_route("Form", "EFT", r.message)), __("Create"));
+		}
 		if (frm.is_new() || !(frm.doc.lsi_phases || []).length) return;
 		frappe
 			.call({ method: "lsi_inspection.commercial.phases.infos_phases", args: { opportunity: frm.doc.name } })
