@@ -10,6 +10,7 @@
   "libelle",
   "declencheur",
   "document_type",
+  "champ_statut",
   "valeur",
   "champ_lien",
   "actif",
@@ -68,12 +69,21 @@
    "fieldtype": "Data",
    "label": "Valeur attendue",
    "mandatory_depends_on": "eval:['\u00c9tat du workflow','Changement de statut'].includes(doc.declencheur)"
+  },
+  {
+   "default": "status",
+   "depends_on": "eval:doc.declencheur=='Changement de statut'",
+   "description": "Nom technique du champ surveill\u00e9 (status pour le statut natif).",
+   "fieldname": "champ_statut",
+   "fieldtype": "Data",
+   "label": "Champ du statut",
+   "mandatory_depends_on": "eval:doc.declencheur=='Changement de statut'"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-08 13:41:48.380023",
+ "modified": "2026-11-08 13:50:30.086873",
  "modified_by": "Administrator",
  "module": "Commercial",
  "name": "Evenement Phase",

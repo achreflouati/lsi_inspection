@@ -14,7 +14,8 @@
   "departement",
   "duree_cible",
   "evenement_fin",
-  "obligatoire"
+  "obligatoire",
+  "phase_finale"
  ],
  "fields": [
   {
@@ -90,13 +91,20 @@
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Obligatoire"
+  },
+  {
+   "description": "Gagn\u00e9e : derni\u00e8re phase du parcours. Perdue : hors s\u00e9quence, atteinte uniquement par son \u00e9v\u00e9nement de fin (les phases restantes passent en \u00ab Saut\u00e9e (auto) \u00bb).",
+   "fieldname": "phase_finale",
+   "fieldtype": "Select",
+   "label": "Phase finale",
+   "options": "\nGagn\u00e9e\nPerdue"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-11-08 13:41:49.966242",
+ "modified": "2026-11-08 13:50:31.196743",
  "modified_by": "Administrator",
  "module": "Commercial",
  "name": "Parcours Phase",

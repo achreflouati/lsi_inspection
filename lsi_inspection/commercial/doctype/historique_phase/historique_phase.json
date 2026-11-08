@@ -14,6 +14,7 @@
   "evenement",
   "document_type",
   "document_name",
+  "motif",
   "commentaire"
  ],
  "fields": [
@@ -87,13 +88,19 @@
    "fieldtype": "Small Text",
    "label": "Commentaire",
    "read_only": 1
+  },
+  {
+   "fieldname": "motif",
+   "fieldtype": "Small Text",
+   "label": "Motif (perte)",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-11-08 13:41:50.547675",
+ "modified": "2026-11-08 13:50:31.561653",
  "modified_by": "Administrator",
  "module": "Commercial",
  "name": "Historique Phase",
