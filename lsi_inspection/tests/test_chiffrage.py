@@ -360,3 +360,13 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertLess(r["positions"][ligne["name"]]["marge"], 0)
 		essai = next(p for p in brouillon["positions"] if p["numero"] == "3.2")
 		self.assertTrue(r["positions"][essai["name"]]["cout_manquant"])
+
+	def test_apercu_ligne_en_cours_de_saisie(self):
+		"""Ligne ajoutée sans article (type seul) : l'aperçu ne plante pas, la ligne est en coût manquant."""
+		brouillon = self.eft_exemple().as_dict()
+		brouillon["positions"].append(dict(doctype="EFT Position", name="new-eft-position-1", __islocal=1, numero=None, groupe="1",
+			type_position=TYPES["Article à côut"], parenttype="EFT", parentfield="positions"))
+		r = moteur.apercu(frappe.as_json(brouillon))
+		self.assertNotIn("erreur", r)
+		self.assertTrue(r["positions"]["new-eft-position-1"]["cout_manquant"])
+		self.assertEqual(r["positions"]["new-eft-position-1"]["source_cout"], "article à choisir")

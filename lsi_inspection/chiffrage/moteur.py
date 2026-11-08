@@ -31,8 +31,11 @@ CHAMPS_COUT = ("cout_unitaire", "cout_total", "source_cout", "ressource", "resso
 
 # ------------------------------------------------------------------ outils
 def cle_numero(numero):
-	"""« 1.17.1 » → (1, 17, 1) pour trier les positions dans l'ordre naturel."""
-	return tuple(int(x) if x.isdigit() else x for x in cstr(numero).replace(" ", "").split("."))
+	"""« 1.17.1 » → ((0, 1), (0, 17), (0, 1)) : ordre naturel ; une ligne sans numéro (en cours de saisie) va à la fin."""
+	texte = cstr(numero).replace(" ", "")
+	if not texte:
+		return ((2, ""),)
+	return tuple((0, int(x)) if x.isdigit() else (1, x) for x in texte.split("."))
 
 
 def _regle(valeurs, regle):
@@ -71,7 +74,7 @@ def type_par_defaut(item_code):
 
 def _types(doc):
 	for p in doc.get("positions") or []:
-		if not p.type_position:
+		if not p.type_position and p.item_code:  # ligne en cours de saisie (sans article) : ignorée ici
 			p.type_position = type_par_defaut(p.item_code)
 			if not p.type_position:
 				frappe.throw(_("Position {0} ({1}) : aucun type de position (ni sur la ligne, ni sur l'article, ni sur son groupe).").format(
@@ -195,6 +198,8 @@ def _cout_pool(p, t):
 def _cout_article(p):
 	source = _valeur_groupe(p.item_code, "lsi_source_cout") or DERNIER_PRIX
 	item = frappe.db.get_value("Item", p.item_code, ["last_purchase_rate", "valuation_rate", "stock_uom"], as_dict=True)
+	if not item:
+		return None, _("article introuvable")
 	if source == VALORISATION:
 		cout = valorisation(p.item_code)
 	elif source == LISTE_PRIX:
@@ -278,6 +283,8 @@ def calculer(doc):
 	types = _types(doc)
 	par_num = {}
 	for p in positions:
+		if not p.numero:
+			continue  # ligne en cours de saisie (le n° est obligatoire à l'enregistrement)
 		if p.numero in par_num:
 			frappe.throw(_("Position {0} en double.").format(p.numero))
 		par_num[p.numero] = p
@@ -299,6 +306,9 @@ def calculer(doc):
 		p.stock_disponible = stock_disponible(p.item_code) if frappe.db.get_value("Item", p.item_code, "is_stock_item") else 0
 
 	for p in positions:  # coûts unitaires (hors prix fixe)
+		if not p.item_code:  # ligne en cours de saisie : pas encore d'article
+			p.cout_unitaire, p.cout_total, p.cout_manquant, p.source_cout = 0, 0, 1, _("article à choisir")
+			continue
 		if p.mode != PRIX_FIXE and p.type_position in types:
 			_cout_position(p, types[p.type_position])
 			p.cout_total = flt(p.cout_unitaire) * flt(p.qty)
