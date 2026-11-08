@@ -12,6 +12,7 @@
   "document_type",
   "champ_statut",
   "valeur",
+  "sens",
   "champ_lien",
   "actif",
   "description"
@@ -78,12 +79,21 @@
    "fieldtype": "Data",
    "label": "Champ du statut",
    "mandatory_depends_on": "eval:doc.declencheur=='Changement de statut'"
+  },
+  {
+   "default": "Atteint la valeur",
+   "depends_on": "eval:['\u00c9tat du workflow','Changement de statut'].includes(doc.declencheur)",
+   "description": "Atteint : le champ prend la valeur attendue. Quitte : le champ avait la valeur attendue et en change (ex. r\u00e9ouverture).",
+   "fieldname": "sens",
+   "fieldtype": "Select",
+   "label": "Sens",
+   "options": "Atteint la valeur\nQuitte la valeur"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-08 13:50:30.086873",
+ "modified": "2026-11-08 14:27:46.667118",
  "modified_by": "Administrator",
  "module": "Commercial",
  "name": "Evenement Phase",

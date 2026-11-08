@@ -20,12 +20,14 @@ from frappe.utils import add_to_date, cint, cstr, get_datetime, get_url_to_form,
 
 TABLE, HISTO = "lsi_phases", "lsi_historique_phases"
 A_VENIR, EN_COURS, TERMINEE, SAUTEE, SAUTEE_AUTO = "À venir", "En cours", "Terminée", "Sautée", "Sautée (auto)"
+ANNULEE = "Annulée"  # phase finale annulée par son événement d'annulation (réouverture) ; peut être de nouveau atteinte
 FAITES = (TERMINEE, SAUTEE, SAUTEE_AUTO)
 GAGNEE, PERDUE = "Gagnée", "Perdue"
 FERMEES = ("Converted", "Lost", "Closed")  # statuts natifs : opportunité close, son tableau n'est plus reconstruit
 ENTREE, FIN, RETARD = "Entrée dans la phase", "Fin de phase", "Retard"
 DECLENCHEURS = {"after_insert": "Création", "on_submit": "Validation", "on_cancel": "Annulation"}
 AVEC_VALEUR = ("État du workflow", "Changement de statut")
+QUITTE = "Quitte la valeur"
 CHAMPS_HISTO = ("date", "de_phase", "vers_phase", "action", "par", "evenement", "document_type", "document_name", "motif", "commentaire")
 CLE_CACHE = "lsi_evenements_phase"
 # statut natif de l'opportunité → document source à rattacher dans l'historique (sémantique ERPNext : devis perdu / commandé)
@@ -47,15 +49,17 @@ def phases_parcours(opportunity_type):
 		return []
 	out = {}
 	for r in frappe.get_all("Parcours Phase", filters={"parent": t, "parenttype": "Opportunity Type"}, fields=["ordre", "phase",
-			"type_responsable", "role", "utilisateur", "departement", "duree_cible", "evenement_fin", "obligatoire", "phase_finale"],
+			"type_responsable", "role", "utilisateur", "departement", "duree_cible", "evenement_fin", "obligatoire", "phase_finale",
+			"evenement_annulation"],
 			order_by="ordre asc, idx asc"):
 		ph = out.setdefault(r.phase, frappe._dict(phase=r.phase, ordre=cint(r.ordre), lignes=[], duree_cible=0, evenement_fin=None,
-			obligatoire=0, phase_finale=None))
+			obligatoire=0, phase_finale=None, evenement_annulation=None))
 		ph.lignes.append(r)
 		ph.duree_cible = ph.duree_cible or cint(r.duree_cible)
 		ph.evenement_fin = ph.evenement_fin or r.evenement_fin
 		ph.obligatoire = ph.obligatoire or cint(r.obligatoire)
 		ph.phase_finale = ph.phase_finale or r.phase_finale
+		ph.evenement_annulation = ph.evenement_annulation or r.evenement_annulation
 	return sorted(out.values(), key=lambda x: x.ordre)
 
 
@@ -199,8 +203,8 @@ def construire(opp, raison=None):
 	for ph in phases_parcours(opp.opportunity_type):
 		r = existantes.pop(ph.phase, None)
 		valeurs = dict(ordre=ph.ordre, evenement_fin=ph.evenement_fin, duree_cible=ph.duree_cible, obligatoire=ph.obligatoire,
-			phase_finale=ph.phase_finale, hors_parcours=0)
-		if r and (r.statut in FAITES or r.statut == EN_COURS):
+			phase_finale=ph.phase_finale, evenement_annulation=ph.evenement_annulation, hors_parcours=0)
+		if r and (r.statut in FAITES or r.statut in (EN_COURS, ANNULEE)):
 			if r.statut in FAITES:
 				valeurs.pop("duree_cible")
 			r.update(valeurs)
@@ -208,7 +212,7 @@ def construire(opp, raison=None):
 		else:
 			nouvelles.append(frappe._dict(phase=ph.phase, statut=A_VENIR, **valeurs))
 	for r in existantes.values():
-		if r.statut in FAITES or r.statut == EN_COURS:
+		if r.statut in FAITES or r.statut in (EN_COURS, ANNULEE):
 			r.hors_parcours = 1
 			nouvelles.append(r)
 	opp.set(TABLE, [])
@@ -390,7 +394,7 @@ def evenements():
 	def charger():
 		out = {}
 		for e in frappe.get_all("Evenement Phase", filters={"actif": 1, "declencheur": ("!=", "Manuel")},
-				fields=["name", "declencheur", "document_type", "valeur", "champ_statut", "champ_lien"]):
+				fields=["name", "declencheur", "document_type", "valeur", "champ_statut", "champ_lien", "sens"]):
 			if e.document_type:
 				out.setdefault(e.document_type, []).append(e)
 		return out
@@ -460,8 +464,12 @@ def traiter_differes():
 				champ = _champ_valeur(ev)
 				if not champ or champ not in avant:
 					continue
-				actuel = cstr(frappe.db.get_value(dt, name, champ))
-				if actuel == cstr(ev.valeur) and cstr(avant[champ]) != actuel:
+				actuel, precedent, attendu = cstr(frappe.db.get_value(dt, name, champ)), cstr(avant[champ]), cstr(ev.valeur)
+				if ev.sens == QUITTE:
+					atteint = precedent == attendu and actuel != attendu
+				else:
+					atteint = actuel == attendu and precedent != actuel
+				if atteint:
 					doc = doc or frappe.get_doc(dt, name)
 					declencher(ev, doc)
 		except Exception:
@@ -532,6 +540,13 @@ def _motif_perte(doc):
 
 def appliquer_evenement(opportunity, evenement, source):
 	opp = frappe.get_doc("Opportunity", opportunity)
+	annulees = [r for r in _lignes(opp) if r.phase_finale and r.evenement_annulation == evenement and r.statut == TERMINEE]
+	if annulees:
+		for r in annulees:
+			_rouvrir(opp, r, evenement, source)
+		opp.flags.lsi_moteur = True
+		opp.save(ignore_permissions=True)
+		return True
 	cible = next((r for r in _lignes(opp) if r.evenement_fin == evenement and r.statut not in FAITES), None)
 	if not cible:
 		return False
@@ -563,6 +578,33 @@ def appliquer_evenement(opportunity, evenement, source):
 	opp.flags.lsi_moteur = True
 	opp.save(ignore_permissions=True)
 	return True
+
+
+def _source_reouverture(opp, source):
+	"""Réouverture par le statut natif : le dernier devis modifié de l'opportunité (annulé, rouvert…), sinon l'opportunité."""
+	if source.doctype != "Opportunity":
+		return source
+	q = frappe.get_all("Quotation", filters={"opportunity": opp.name}, order_by="modified desc", limit=1, pluck="name")
+	return frappe.get_doc("Quotation", q[0]) if q else source
+
+
+def _rouvrir(opp, finale, evenement, source):
+	"""Annule une phase finale : elle passe « Annulée » ; les phases sautées par cette fin reviennent « À venir » ; la phase qui
+	était en cours avant redevient « En cours » (sinon la première phase à venir de la séquence)."""
+	fin = next((h for h in reversed(opp.get(HISTO) or []) if h.vers_phase == finale.phase and h.action in (GAGNEE, PERDUE)), None)
+	quand = get_datetime(fin.date) if fin else None
+	finale.statut = ANNULEE
+	for r in _sequence(opp):
+		if r is not finale and r.statut == SAUTEE_AUTO and quand and r.fin and get_datetime(r.fin) == quand:
+			_remettre(r)
+	reprise = next((r for r in _sequence(opp) if fin and r.phase == fin.de_phase and r is not finale), None)
+	if not reprise or reprise.statut in FAITES:
+		reprise = next((r for r in _sequence(opp) if r.statut == A_VENIR and r is not finale), None)
+	maintenant = now_datetime()
+	if reprise:
+		_demarrer(opp, reprise, maintenant)
+	_historique(opp, finale.phase, reprise.phase if reprise else None, "Réouverture", evenement=evenement,
+		source=_source_reouverture(opp, source), maintenant=maintenant)
 
 
 # ------------------------------------------------------------------ notifications par phase

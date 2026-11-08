@@ -50,7 +50,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Action",
-   "options": "Termin\u00e9e\nSaut\u00e9e\nSaut\u00e9e (auto)\nRetour arri\u00e8re\nReconstruction\nGagn\u00e9e\nPerdue",
+   "options": "Termin\u00e9e\nSaut\u00e9e\nSaut\u00e9e (auto)\nRetour arri\u00e8re\nReconstruction\nGagn\u00e9e\nPerdue\nR\u00e9ouverture",
    "read_only": 1
   },
   {
@@ -100,7 +100,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-11-08 13:50:31.561653",
+ "modified": "2026-11-08 14:27:48.570340",
  "modified_by": "Administrator",
  "module": "Commercial",
  "name": "Historique Phase",
