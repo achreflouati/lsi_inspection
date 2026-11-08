@@ -145,4 +145,5 @@ class TestNotificationsNatives(TestLot2):
 	def test_ancien_mecanisme_retire(self):
 		self.assertFalse(hasattr(phases, "notifier") or hasattr(phases, "retards_quotidiens"))
 		self.assertNotIn("lsi_inspection.commercial.phases.retards_quotidiens", str(frappe.get_hooks("scheduler_events")))
-		self.assertTrue(frappe.get_meta("Opportunity Type").get_field("lsi_notifications_phase").read_only)
+		self.assertFalse(frappe.db.exists("DocType", "Notification Phase"))
+		self.assertFalse(frappe.get_meta("Opportunity Type").get_field("lsi_notifications_phase"))

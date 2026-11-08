@@ -1,14 +1,1 @@
-[
- {
-  "name": "Phase - entree",
-  "response_html": "<p>L'opportunité <b>{{ doc.name }}</b> ({{ doc.customer_name or doc.party_name }}) entre dans la phase <b>{{ phase }}</b>.</p>{% if ligne.echeance %}<p>Échéance : {{ frappe.utils.format_datetime(ligne.echeance) }}</p>{% endif %}<p><a href=\"{{ lien }}\">Ouvrir l'opportunité</a></p>",
-  "subject": "{{ doc.name }} : phase « {{ phase }} » à traiter",
-  "use_html": 1
- },
- {
-  "name": "Phase - retard",
-  "response_html": "<p>La phase <b>{{ phase }}</b> de l'opportunité <b>{{ doc.name }}</b> ({{ doc.customer_name or doc.party_name }}) a dépassé son échéance du {{ frappe.utils.format_datetime(ligne.echeance) }}.</p><p><a href=\"{{ lien }}\">Ouvrir l'opportunité</a></p>",
-  "subject": "{{ doc.name }} : phase « {{ phase }} » en retard",
-  "use_html": 1
- }
-]
+[]

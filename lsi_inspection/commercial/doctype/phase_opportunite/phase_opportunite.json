@@ -20,8 +20,7 @@
   "echeance",
   "duree_jours",
   "hors_parcours",
-  "commentaire",
-  "retard_notifie"
+  "commentaire"
  ],
  "fields": [
   {
@@ -47,7 +46,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Statut",
-   "options": "\u00c0 venir\nEn cours\nTermin\u00e9e\nSaut\u00e9e\nSaut\u00e9e (auto)\nAnnul\u00e9e",
+   "options": "À venir\nEn cours\nTerminée\nSautée\nSautée (auto)\nAnnulée",
    "read_only": 1
   },
   {
@@ -61,14 +60,14 @@
   {
    "fieldname": "evenement_fin",
    "fieldtype": "Link",
-   "label": "\u00c9v\u00e9nement de fin",
+   "label": "Événement de fin",
    "options": "Evenement Phase",
    "read_only": 1
   },
   {
    "fieldname": "duree_cible",
    "fieldtype": "Int",
-   "label": "Dur\u00e9e cible (jours)",
+   "label": "Durée cible (jours)",
    "read_only": 1
   },
   {
@@ -81,7 +80,7 @@
   {
    "fieldname": "debut",
    "fieldtype": "Datetime",
-   "label": "D\u00e9but",
+   "label": "Début",
    "read_only": 1
   },
   {
@@ -95,7 +94,7 @@
    "fieldname": "echeance",
    "fieldtype": "Datetime",
    "in_list_view": 1,
-   "label": "\u00c9ch\u00e9ance",
+   "label": "Échéance",
    "read_only": 1
   },
   {
@@ -103,7 +102,7 @@
    "fieldname": "duree_jours",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Dur\u00e9e (jours)",
+   "label": "Durée (jours)",
    "precision": "1",
    "read_only": 1
   },
@@ -111,7 +110,7 @@
    "default": "0",
    "fieldname": "hors_parcours",
    "fieldtype": "Check",
-   "label": "Hors parcours (retir\u00e9e du type, d\u00e9j\u00e0 faite)",
+   "label": "Hors parcours (retirée du type, déjà faite)",
    "read_only": 1
   },
   {
@@ -121,24 +120,16 @@
    "read_only": 1
   },
   {
-   "default": "0",
-   "fieldname": "retard_notifie",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Retard notifi\u00e9",
-   "read_only": 1
-  },
-  {
    "fieldname": "phase_finale",
    "fieldtype": "Select",
    "label": "Phase finale",
-   "options": "\nGagn\u00e9e\nPerdue",
+   "options": "\nGagnée\nPerdue",
    "read_only": 1
   },
   {
    "fieldname": "evenement_annulation",
    "fieldtype": "Link",
-   "label": "\u00c9v\u00e9nement d'annulation",
+   "label": "Événement d'annulation",
    "options": "Evenement Phase",
    "read_only": 1
   }

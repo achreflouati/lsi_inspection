@@ -265,7 +265,7 @@ fixtures = [
 	{"dt": "Custom DocPerm", "filters": [["parent", "in", ["Opportunity", "Opportunity Type", "Sales Stage", "Email Template", "Notification"]]]},
 ]
 
-# Lot 2 — opportunité : moteur générique des phases (configuration : Opportunity Type, Evenement Phase, Notification Phase)
+# Lot 2 — opportunité : moteur générique des phases (configuration : Opportunity Type, Evenement Phase ; notifications : Notifications natives)
 _phases = "lsi_inspection.commercial.phases"
 doctype_js = {"Opportunity": "public/js/opportunity.js"}
 doctype_list_js = {"Opportunity": "public/js/opportunity_list.js"}

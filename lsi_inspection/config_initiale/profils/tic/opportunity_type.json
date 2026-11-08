@@ -2,33 +2,6 @@
  {
   "description": "Réponse à appel d'offres (parcours par défaut).",
   "lsi_dossier_ao": 1,
-  "lsi_notifications_phase": [
-   {
-    "actif": 0,
-    "destinataires": "Responsable de phase",
-    "email": 0,
-    "modele": "Phase - entree",
-    "moment": "Entrée dans la phase",
-    "systeme": 1
-   },
-   {
-    "actif": 0,
-    "destinataires": "Départements concernés (tous)",
-    "email": 1,
-    "modele": "Phase - entree",
-    "moment": "Entrée dans la phase",
-    "phase": "Étude technique",
-    "systeme": 1
-   },
-   {
-    "actif": 0,
-    "destinataires": "Responsable de phase",
-    "email": 1,
-    "modele": "Phase - retard",
-    "moment": "Retard",
-    "systeme": 1
-   }
-  ],
   "lsi_parcours": [
    {
     "duree_cible": 0,
