@@ -3,7 +3,7 @@
   "actif": 1,
   "code": "ECRITE",
   "famille": "CANAL_DEMANDE",
-  "libelle": "Demande écrite",
+  "libelle": "Consultation écrite",
   "name": "CANAL_DEMANDE-ECRITE",
   "ordre": 2
  },
@@ -11,7 +11,7 @@
   "actif": 1,
   "code": "VERBALE",
   "famille": "CANAL_DEMANDE",
-  "libelle": "Demande verbale",
+  "libelle": "Consultation verbale",
   "name": "CANAL_DEMANDE-VERBALE",
   "ordre": 1
  },

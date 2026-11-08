@@ -1,4 +1,4 @@
 [
- {"name": "CANAL_DEMANDE", "code": "CANAL_DEMANDE", "libelle": "Canal de la demande", "actif": 1},
+ {"name": "CANAL_DEMANDE", "code": "CANAL_DEMANDE", "libelle": "Type de consultation", "actif": 1},
  {"name": "MOTIF_NON_VALIDATION", "code": "MOTIF_NON_VALIDATION", "libelle": "Motif de non-validation", "actif": 1}
 ]
