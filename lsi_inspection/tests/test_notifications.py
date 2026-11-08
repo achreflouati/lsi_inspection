@@ -29,7 +29,7 @@ class TestNotificationsPhase(TestLot2):
 		frappe.get_doc(dict(doctype="Email Account", email_account_name=f"{PREFIXE} Sortant", email_id="noreply-lsi-test@example.com",
 			enable_outgoing=1, default_outgoing=1, enable_incoming=0, smtp_server="localhost", smtp_port=25, no_smtp_authentication=1)).insert(
 			ignore_permissions=True)
-		self.addCleanup(frappe.clear_cache)
+		self.addCleanup(lambda: frappe.local.__setattr__("outgoing_email_account", {}))  # cache local du compte sortant
 
 	def test_sans_compte_sortant_le_systeme_part_et_rien_ne_bloque(self):
 		dep = self._service()
@@ -40,7 +40,7 @@ class TestNotificationsPhase(TestLot2):
 			self.skipTest("le site a un compte sortant")
 		self.assertEqual(phases.terminer_phase(o.name), "T Étude")
 		self.assertTrue(self._logs(o.name))
-		self.assertTrue(frappe.db.exists("Error Log", {"reference_name": o.name}))
+		self.assertTrue(self.erreurs(o.name))
 
 	def test_parametreur_seul_ajoute_phase_et_notification(self):
 		self._compte_sortant()
@@ -88,7 +88,7 @@ class TestNotificationsPhase(TestLot2):
 		o = self.opportunite(t, lsi_departements=[dict(departement=dep, principal=1)])
 		self.assertEqual(phases.terminer_phase(o.name), "T Étude")
 		self.assertEqual(phases.courante(self.recharger(o)).phase, "T Étude")
-		self.assertTrue(frappe.db.exists("Error Log", {"reference_name": o.name}))
+		self.assertTrue(self.erreurs(o.name))
 
 	def test_destinataires(self):
 		dep = self._service()

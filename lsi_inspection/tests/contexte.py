@@ -1,6 +1,8 @@
 """Contexte des tests du lot 2 : chaque test tourne dans une transaction annulée (savepoint) et construit SA configuration
 (étapes, type, parcours, événements, modèles) : aucune dépendance aux valeurs du profil TIC."""
 
+from unittest.mock import patch
+
 import frappe
 from frappe.utils import add_days, nowdate
 
@@ -12,6 +14,10 @@ PREFIXE = "LSI-T"
 
 class TestLot2(IntegrationTestCase):
 	def setUp(self):
+		# frappe.log_error écrit hors de la transaction de test : remplacé pendant les tests (aucun journal laissé sur le site)
+		self._log_error = patch("frappe.log_error")
+		self.log_error = self._log_error.start()
+		self.addCleanup(self._log_error.stop)
 		frappe.set_user("Administrator")
 		frappe.db.savepoint("lsi_test")
 		frappe.local.lsi_evenements_differes = {}
@@ -162,6 +168,10 @@ class TestLot2(IntegrationTestCase):
 	@staticmethod
 	def statuts(opp):
 		return {r.phase: r.statut for r in opp.lsi_phases}
+
+	def erreurs(self, reference_name):
+		"""Erreurs journalisées (frappe.log_error remplacé) pour ce document."""
+		return [c for c in self.log_error.call_args_list if c.kwargs.get("reference_name") == reference_name]
 
 	@staticmethod
 	def commit_simule():

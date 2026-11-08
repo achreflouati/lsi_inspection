@@ -181,7 +181,7 @@ class TestPhases(TestLot2):
 		with patch.object(phases, "appliquer_evenement", side_effect=Exception("panne simulée")):
 			q = self.devis(o)
 		self.assertEqual(q.docstatus, 1)
-		self.assertTrue(frappe.db.exists("Error Log", {"reference_name": o.name}))
+		self.assertTrue(self.erreurs(o.name))
 
 	def test_document_hors_evenements_sans_appel_au_moteur(self):
 		self.parcours_standard()
