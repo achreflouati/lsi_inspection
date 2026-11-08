@@ -32,8 +32,10 @@ class TestLot2(IntegrationTestCase):
 		frappe.local.lsi_evenements_differes = {}
 		phases.vider_cache_evenements()
 		self.company = frappe.defaults.get_global_default("company")
+		# retour arrière en « cleanup » : exécuté même si le setUp d'une classe fille échoue (tearDown ne l'est pas)
+		self.addCleanup(self._annuler)
 
-	def tearDown(self):
+	def _annuler(self):
 		frappe.set_user("Administrator")
 		frappe.db.rollback(save_point="lsi_test")
 		frappe.local.lsi_evenements_differes = {}

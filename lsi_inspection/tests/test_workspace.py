@@ -26,10 +26,11 @@ class TestWorkspace(IntegrationTestCase):
 
 	def test_liens_vers_doctypes_existants(self):
 		d = _fichier()
-		cibles = [l["link_to"] for l in d["links"] if l["type"] == "Link"] + [s["link_to"] for s in d["shortcuts"]]
+		cibles = [(l.get("link_type") or "DocType", l["link_to"]) for l in d["links"] if l["type"] == "Link"]
+		cibles += [("DocType", s["link_to"]) for s in d["shortcuts"]]
 		self.assertTrue(cibles)
-		for dt in cibles:
-			self.assertTrue(frappe.db.exists("DocType", dt), f"doctype absent : {dt}")
+		for typ, cible in cibles:
+			self.assertTrue(frappe.db.exists(typ, cible), f"{typ} absent : {cible}")
 
 	def test_blocs_du_contenu_references(self):
 		"""Chaque bloc du contenu (carte, raccourci, graphique) correspond à un élément déclaré."""
@@ -55,6 +56,6 @@ class TestWorkspace(IntegrationTestCase):
 		from frappe.desk.desktop import get_desktop_page
 
 		page = get_desktop_page(json.dumps({"name": WORKSPACE, "title": WORKSPACE, "public": 1}))
-		self.assertEqual({c.label for c in page["cards"]["items"]}, {"Commercial", "Paramétrage commercial"})
+		self.assertTrue({"Commercial", "Paramétrage commercial", "Chiffrage", "Paramétrage chiffrage"} <= {c.label for c in page["cards"]["items"]})
 		self.assertEqual(len(page["shortcuts"]["items"]), 2)
 		self.assertEqual(len(page["charts"]["items"]), 1)

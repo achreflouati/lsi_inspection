@@ -55,6 +55,8 @@ class TestConfig(TestLot2):
 			config.exporter_profil("tic", dossier=a)
 			# base « vide » pour ces doctypes (dans la transaction de test, annulée ensuite)
 			for e in config.manifeste():
+				if e.get("single"):
+					continue  # réglage natif (document unique) : jamais supprimé
 				dt = e["doctype"]
 				noms = [d["name"] for d in config._lire(a, dt)]
 				if not noms:
