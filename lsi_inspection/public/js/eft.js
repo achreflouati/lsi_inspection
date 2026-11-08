@@ -211,27 +211,76 @@ lsi_eft.colorer = function (frm) {
 };
 
 lsi_eft.synthese = function (frm) {
+	// comme tic_demo : synthèse par type de position, par prestation (+ total), puis besoins en quantités par prestation
 	const f = frm.get_field("synthese_html");
 	if (!f) return;
 	const esc = frappe.utils.escape_html, m = (v) => format_currency(v, frappe.defaults.get_default("currency"));
-	const ligne = (titre, c, p, manquant, couleur, gras) => {
-		const marge = flt(p) - flt(c), taux = flt(p) ? (marge / flt(p)) * 100 : 0;
-		return `<tr style="${gras ? "font-weight:700;" : ""}${couleur ? `border-left:5px solid ${couleur}` : ""}"><td>${titre}</td>
-			<td class="text-right ${manquant ? "manquant" : ""}">${m(c)}${manquant ? " ⚠" : ""}</td><td class="text-right">${m(p)}</td>
-			<td class="text-right ${marge < 0 ? "perte" : ""}">${m(marge)}</td><td class="text-right ${marge < 0 ? "perte" : ""}">${format_number(taux, null, 1)} %</td></tr>`;
+	const positions = frm.doc.positions || [];
+	const vendues = positions.filter((p) => !p.parente && p.item_code);
+	if (!vendues.length) {
+		f.$wrapper.html(`<p class="text-muted">${__("Ajoutez une prestation (bouton « Ajouter depuis une gamme ») pour commencer le chiffrage.")}</p>`);
+		return;
+	}
+	const qtes = (lignes) => {
+		const par_uom = {};
+		lignes.forEach((p) => { if (flt(p.qty)) par_uom[p.uom || ""] = (par_uom[p.uom || ""] || 0) + flt(p.qty); });
+		return Object.entries(par_uom).map(([u, q]) => `${format_number(q, null, 2)} ${esc(__(u))}`).join(", ");
 	};
-	const vendues = (frm.doc.positions || []).filter((p) => !p.parente);
-	const corps = (frm.doc.totaux_etapes || []).map((t) => {
-		const manquant = vendues.some((p) => lsi_eft.etape_de(frm, p) === t.etape && (p.cout_manquant || p.cout_en_attente));
-		const libelle = ((frm.doc.etapes || []).find((e) => e.prestation === t.etape) || {}).libelle || t.etape;
-		return ligne(esc(libelle), t.cout_total, t.prix_total, manquant, lsi_eft.couleur_etape(frm, t.etape));
+	const etape_de = (p) => p.etape || lsi_eft.etape_de(frm, p);
+	const libelle = (e) => ((frm.doc.etapes || []).find((x) => x.prestation === e) || {}).libelle || e || __("(sans prestation)");
+	const ligne = (titre, q, c, pr, opts = {}) => {
+		const pb = flt(pr) - flt(c), taux = flt(pr) ? (pb / flt(pr)) * 100 : 0;
+		return `<tr style="${opts.gras ? "font-weight:700;" : ""}${opts.couleur ? `border-left:5px solid ${opts.couleur}` : ""}">
+			<td>${titre}</td><td>${q || ""}</td>
+			<td class="text-right ${opts.manquant ? "manquant" : ""}">${m(c)}${opts.manquant ? " ⚠" : ""}</td>
+			<td class="text-right">${m(pr)}</td><td class="text-right ${pb < 0 ? "perte" : ""}">${m(pb)}</td>
+			<td class="text-right ${pb < 0 ? "perte" : ""}">${format_number(taux, null, 1)} %</td></tr>`;
+	};
+	const entete = (premier) => `<thead><tr><th>${premier}</th><th>${__("Quantités")}</th><th class="text-right">${__("Coût")}</th>
+		<th class="text-right">${__("Prix")}</th><th class="text-right">${__("Produit brut")}</th>
+		<th class="text-right">${__("Marge sur prix de vente (%)")}</th></tr></thead>`;
+	const manquant = (lignes) => lignes.some((p) => p.cout_manquant || p.cout_en_attente);
+
+	// 1. par type de position (lignes vendues)
+	const types = [...new Set(vendues.map((p) => p.type_position || ""))];
+	const t1 = types.map((t) => {
+		const l = vendues.filter((p) => (p.type_position || "") === t);
+		return ligne(esc(t), qtes(l), l.reduce((s, p) => s + flt(p.cout_total), 0), l.reduce((s, p) => s + flt(p.prix_total), 0), { manquant: manquant(l) });
 	}).join("");
-	f.$wrapper.html(vendues.length ? `<table class="table table-bordered lsi-synth"><thead><tr><th>${__("Prestation (étape)")}</th>
-		<th class="text-right">${__("Coût")}</th><th class="text-right">${__("Prix")}</th><th class="text-right">${__("Marge")}</th>
-		<th class="text-right">${__("Marge %")}</th></tr></thead><tbody>${corps}
-		${ligne(__("Total de l'EFT"), frm.doc.total_cout, frm.doc.total_prix, frm.doc.cout_incomplet, null, true)}</tbody></table>
-		<p class="text-muted small">${__("Lignes : orange = coût manquant ou en attente ; rouge = vendue à perte ; gris = tarif à quantité 0. Bande de couleur = prestation.")}</p>`
-		: `<p class="text-muted">${__("Ajoutez une prestation (bouton « Ajouter depuis une gamme ») pour commencer le chiffrage.")}</p>`);
+
+	// 2. par prestation (coût et prix répartis : totaux par étape) + total
+	const t2 = (frm.doc.totaux_etapes || []).map((t) => {
+		const l = vendues.filter((p) => etape_de(p) === t.etape);
+		return ligne(esc(libelle(t.etape)), qtes(l), t.cout_total, t.prix_total, { manquant: manquant(l), couleur: lsi_eft.couleur_etape(frm, t.etape) });
+	}).join("") + ligne(__("Total de l'EFT"), "", frm.doc.total_cout, frm.doc.total_prix, { gras: true, manquant: frm.doc.cout_incomplet });
+
+	// 3. besoins (quantités) par prestation : ressources réelles = lignes à coût vendues et sous-positions (pas les prix fixes)
+	const besoins = positions.filter((p) => p.item_code && flt(p.qty) && p.mode !== "Prix fixe");
+	const etapes = [...new Set(besoins.map((p) => etape_de(p)))];
+	const t3 = etapes.map((e) => {
+		const cumul = {};
+		besoins.filter((p) => etape_de(p) === e).forEach((p) => {
+			const k = [p.type_position || "", p.item_code, p.uom || ""].join("|");
+			cumul[k] = (cumul[k] || 0) + flt(p.qty);
+		});
+		const rows = Object.entries(cumul).map(([k, q]) => {
+			const [t, a, u] = k.split("|");
+			return `<tr><td>${esc(t)}</td><td>${esc(a)}</td><td class="text-right">${format_number(q, null, 2)}</td><td>${esc(__(u))}</td></tr>`;
+		}).join("");
+		const nb = besoins.filter((p) => etape_de(p) === e).length;
+		return `<p style="margin:12px 0 4px; font-weight:600; border-left:5px solid ${lsi_eft.couleur_etape(frm, e) || "transparent"}; padding-left:6px">
+			${esc(libelle(e))} — ${nb} ${__("position(s)")}</p>
+			<table class="table table-bordered lsi-synth"><thead><tr><th>${__("Type")}</th><th>${__("Article")}</th>
+			<th class="text-right">${__("Quantité")}</th><th>${__("Unité")}</th></tr></thead><tbody>${rows}</tbody></table>`;
+	}).join("");
+
+	const taux = flt(frm.doc.total_prix) ? (flt(frm.doc.total_marge) / flt(frm.doc.total_prix)) * 100 : 0;
+	f.$wrapper.html(`
+		<table class="table table-bordered lsi-synth">${entete(__("Type de position"))}<tbody>${t1}</tbody></table>
+		<table class="table table-bordered lsi-synth">${entete(__("Prestation"))}<tbody>${t2}</tbody></table>
+		<p class="text-muted small">${__("Taux de marge de l'EFT : {0} % (marge sur prix de vente : produit brut ÷ prix).", [format_number(taux, null, 2)])}
+		${__("Lignes : orange = coût manquant ou en attente ; rouge = vendue à perte ; gris = tarif à quantité 0. Bande de couleur = prestation.")}</p>
+		<h5 style="margin-top:18px">${__("Synthèse des besoins (quantités)")}</h5>${t3}`);
 };
 
 lsi_eft.apercu = frappe.utils.debounce(function (frm) {

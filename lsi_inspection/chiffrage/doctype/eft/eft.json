@@ -18,10 +18,10 @@
   "workflow_state",
   "amended_from",
   "tab_structure",
-  "synthese_html",
   "etapes",
   "groupes",
   "positions",
+  "synthese_html",
   "repartitions",
   "tab_totaux",
   "total_cout",
@@ -197,14 +197,14 @@
   {
    "fieldname": "synthese_html",
    "fieldtype": "HTML",
-   "label": "Synth\u00e8se par prestation"
+   "label": "Synth\u00e8se du chiffrage"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-09 00:20:00.250843",
+ "modified": "2026-11-09 00:45:12.427556",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "EFT",
