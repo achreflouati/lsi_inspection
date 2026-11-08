@@ -430,7 +430,9 @@ def _noter_valeurs(doc, evs):
 	if not evs:
 		return
 	avant = doc.get_doc_before_save()
-	attente = frappe.local.__dict__.setdefault("lsi_evenements_differes", {})
+	attente = getattr(frappe.local, "lsi_evenements_differes", None)
+	if attente is None:
+		attente = frappe.local.lsi_evenements_differes = {}
 	valeurs = attente.setdefault((doc.doctype, doc.name), {})
 	for ev in evs:
 		champ = _champ_valeur(ev)
@@ -445,7 +447,7 @@ def _noter_valeurs(doc, evs):
 
 def traiter_differes():
 	"""Évalue les événements « valeur » sur la valeur finale de la transaction : valeur attendue atteinte et différente d'avant."""
-	attente = frappe.local.__dict__.get("lsi_evenements_differes") or {}
+	attente = getattr(frappe.local, "lsi_evenements_differes", None) or {}
 	frappe.local.lsi_evenements_differes = {}
 	for (dt, name), avant in attente.items():
 		try:
