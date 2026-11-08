@@ -182,6 +182,7 @@ def _terminer(opp, ligne, statut, maintenant):
 
 def _remettre(ligne):
 	ligne.statut, ligne.debut, ligne.fin, ligne.echeance, ligne.duree_jours, ligne.retard_notifie = A_VENIR, None, None, None, 0, 0
+	ligne.commentaire = None
 
 
 def _action(opp, quoi, phase):
@@ -239,11 +240,13 @@ def _entete(opp):
 			r.duree_jours = round(time_diff_in_hours(r.fin or maintenant, r.debut) / 24, 1)
 	cur = courante(opp)
 	if cur:
-		opp.lsi_echeance_phase = cur.echeance
-		opp.lsi_responsable_phase = (cstr(cur.responsables).split(", ") or [None])[0] or None
+		users = [u for u in cstr(cur.responsables).split(", ") if u]
+		opp.lsi_echeance_phase, opp.lsi_phase_depuis = cur.echeance, cur.debut
+		opp.lsi_responsable_phase = users[0] if users else None
+		opp.lsi_responsables_phase = ", ".join(frappe.utils.get_fullname(u) for u in users) or None
 		opp.sales_stage = cur.phase
 	else:
-		opp.lsi_echeance_phase = opp.lsi_responsable_phase = None
+		opp.lsi_echeance_phase = opp.lsi_responsable_phase = opp.lsi_phase_depuis = opp.lsi_responsables_phase = None
 		faites = [r for r in _lignes(opp) if r.statut == TERMINEE]
 		if faites:
 			opp.sales_stage = max(faites, key=lambda r: get_datetime(r.fin) if r.fin else get_datetime("1900-01-01")).phase
@@ -373,6 +376,7 @@ def terminer_phase(opportunity, vers=None, commentaire=None):
 		_terminer(opp, cur, TERMINEE, maintenant)
 		for r in entre:
 			_terminer(opp, r, SAUTEE, maintenant)
+			r.commentaire = _("Sautée par {0}").format(frappe.utils.get_fullname(frappe.session.user))
 		if cible:
 			_demarrer(opp, cible, maintenant)
 		texte = (_("Sautées : {0}").format(", ".join(r.phase for r in entre)) + (" — " if commentaire else "")) if entre else ""
@@ -557,6 +561,7 @@ def appliquer_evenement(opportunity, evenement, source):
 		restantes = [r for r in _sequence(opp) if r.statut in (A_VENIR, EN_COURS)]
 		for r in restantes:
 			_terminer(opp, r, SAUTEE_AUTO, maintenant)
+			r.commentaire = f"{evenement} : {origine.doctype} {origine.name}"
 		_terminer(opp, cible, TERMINEE, maintenant)
 		_historique(opp, cur.phase if cur else None, cible.phase, PERDUE, evenement=evenement, source=origine,
 			motif=_motif_perte(origine) or _motif_perte(opp),
@@ -565,6 +570,7 @@ def appliquer_evenement(opportunity, evenement, source):
 		sautees = [r for r in _sequence(opp) if r.statut in (A_VENIR, EN_COURS) and cint(r.ordre) < cint(cible.ordre)]
 		for r in sautees:
 			_terminer(opp, r, SAUTEE_AUTO, maintenant)
+			r.commentaire = f"{evenement} : {origine.doctype} {origine.name}"
 		_terminer(opp, cible, TERMINEE, maintenant)
 		suivante = None
 		if not cible.phase_finale:
