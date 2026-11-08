@@ -1,0 +1,132 @@
+[
+ {
+  "description": "Réponse à appel d'offres (parcours par défaut).",
+  "lsi_notifications_phase": [
+   {
+    "actif": 1,
+    "destinataires": "Responsable de phase",
+    "email": 0,
+    "modele": "Phase - entree",
+    "moment": "Entrée dans la phase",
+    "systeme": 1
+   },
+   {
+    "actif": 1,
+    "destinataires": "Départements concernés (tous)",
+    "email": 1,
+    "modele": "Phase - entree",
+    "moment": "Entrée dans la phase",
+    "phase": "Étude technique",
+    "systeme": 1
+   },
+   {
+    "actif": 0,
+    "destinataires": "Responsable de phase",
+    "email": 1,
+    "modele": "Phase - retard",
+    "moment": "Retard",
+    "systeme": 1
+   }
+  ],
+  "lsi_parcours": [
+   {
+    "duree_cible": 0,
+    "evenement_fin": "Manuel",
+    "obligatoire": 0,
+    "ordre": 10,
+    "phase": "Création",
+    "type_responsable": "Commercial"
+   },
+   {
+    "duree_cible": 0,
+    "evenement_fin": "Manuel",
+    "obligatoire": 0,
+    "ordre": 20,
+    "phase": "Étude technique",
+    "role": "Etude technique",
+    "type_responsable": "Rôle"
+   },
+   {
+    "duree_cible": 0,
+    "evenement_fin": "Manuel",
+    "obligatoire": 0,
+    "ordre": 30,
+    "phase": "Planification",
+    "role": "Etude technique",
+    "type_responsable": "Rôle"
+   },
+   {
+    "duree_cible": 0,
+    "evenement_fin": "Manuel",
+    "obligatoire": 0,
+    "ordre": 40,
+    "phase": "Chiffrage",
+    "type_responsable": "Commercial"
+   },
+   {
+    "duree_cible": 0,
+    "evenement_fin": "Devis validé",
+    "obligatoire": 0,
+    "ordre": 50,
+    "phase": "Validation Direction",
+    "role": "Sales Manager",
+    "type_responsable": "Rôle"
+   },
+   {
+    "duree_cible": 0,
+    "evenement_fin": "Devis envoyé",
+    "obligatoire": 0,
+    "ordre": 60,
+    "phase": "Offre envoyée",
+    "type_responsable": "Commercial"
+   },
+   {
+    "duree_cible": 0,
+    "evenement_fin": "Opportunité convertie",
+    "obligatoire": 0,
+    "ordre": 70,
+    "phase": "Gagnée",
+    "phase_finale": "Gagnée",
+    "type_responsable": "Commercial"
+   },
+   {
+    "duree_cible": 0,
+    "evenement_fin": "Opportunité perdue",
+    "obligatoire": 0,
+    "ordre": 99,
+    "phase": "Perdue",
+    "phase_finale": "Perdue",
+    "type_responsable": "Commercial"
+   }
+  ],
+  "lsi_parcours_defaut": 1,
+  "name": "Appel d'offres"
+ },
+ {
+  "lsi_parcours_defaut": 0,
+  "name": "Assistance/Support"
+ },
+ {
+  "description": "Contrat cadre.",
+  "lsi_parcours_defaut": 0,
+  "name": "Contrat cadre"
+ },
+ {
+  "lsi_parcours_defaut": 0,
+  "name": "Entretien"
+ },
+ {
+  "description": "Renouvellement d'un contrat.",
+  "lsi_parcours_defaut": 0,
+  "name": "Renouvellement"
+ },
+ {
+  "description": "Demande ponctuelle (verbale ou écrite).",
+  "lsi_parcours_defaut": 0,
+  "name": "Spot"
+ },
+ {
+  "lsi_parcours_defaut": 0,
+  "name": "Ventes"
+ }
+]

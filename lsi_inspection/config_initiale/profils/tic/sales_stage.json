@@ -1,0 +1,66 @@
+[
+ {
+  "name": "Chiffrage",
+  "stage_name": "Chiffrage"
+ },
+ {
+  "name": "Création",
+  "stage_name": "Création"
+ },
+ {
+  "name": "Gagnée",
+  "stage_name": "Gagnée"
+ },
+ {
+  "name": "Identifying Decision Makers",
+  "stage_name": "Identifying Decision Makers"
+ },
+ {
+  "name": "Needs Analysis",
+  "stage_name": "Needs Analysis"
+ },
+ {
+  "name": "Negotiation/Review",
+  "stage_name": "Negotiation/Review"
+ },
+ {
+  "name": "Offre envoyée",
+  "stage_name": "Offre envoyée"
+ },
+ {
+  "name": "Perception Analysis",
+  "stage_name": "Perception Analysis"
+ },
+ {
+  "name": "Perdue",
+  "stage_name": "Perdue"
+ },
+ {
+  "name": "Planification",
+  "stage_name": "Planification"
+ },
+ {
+  "name": "Proposal/Price Quote",
+  "stage_name": "Proposal/Price Quote"
+ },
+ {
+  "name": "Prospecting",
+  "stage_name": "Prospecting"
+ },
+ {
+  "name": "Qualification",
+  "stage_name": "Qualification"
+ },
+ {
+  "name": "Validation Direction",
+  "stage_name": "Validation Direction"
+ },
+ {
+  "name": "Value Proposition",
+  "stage_name": "Value Proposition"
+ },
+ {
+  "name": "Étude technique",
+  "stage_name": "Étude technique"
+ }
+]

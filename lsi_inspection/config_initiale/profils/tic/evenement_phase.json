@@ -1,0 +1,12 @@
+[
+ {
+  "actif": 1,
+  "champ_statut": "status",
+  "declencheur": "État du workflow",
+  "description": "Sans effet tant que le devis n'a pas de workflow avec l'état « Envoyée ».",
+  "document_type": "Quotation",
+  "libelle": "Devis envoyé",
+  "name": "Devis envoyé",
+  "valeur": "Envoyée"
+ }
+]

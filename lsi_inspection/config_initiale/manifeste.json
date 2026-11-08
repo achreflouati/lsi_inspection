@@ -1,0 +1,11 @@
+{
+ "description": "Doctypes de la configuration initiale, dans l'ordre de chargement. export = references : seuls les documents cités par les autres sont exportés.",
+ "doctypes": [
+  {"doctype": "Famille de Type"},
+  {"doctype": "Type Metier"},
+  {"doctype": "Sales Stage"},
+  {"doctype": "Evenement Phase"},
+  {"doctype": "Email Template", "export": "references"},
+  {"doctype": "Opportunity Type"}
+ ]
+}

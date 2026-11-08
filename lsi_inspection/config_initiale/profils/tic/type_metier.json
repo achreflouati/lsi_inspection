@@ -1,0 +1,58 @@
+[
+ {
+  "actif": 1,
+  "code": "ECRITE",
+  "famille": "CANAL_DEMANDE",
+  "libelle": "Demande écrite",
+  "name": "CANAL_DEMANDE-ECRITE",
+  "ordre": 2
+ },
+ {
+  "actif": 1,
+  "code": "VERBALE",
+  "famille": "CANAL_DEMANDE",
+  "libelle": "Demande verbale",
+  "name": "CANAL_DEMANDE-VERBALE",
+  "ordre": 1
+ },
+ {
+  "actif": 1,
+  "code": "AUTRE",
+  "famille": "MOTIF_NON_VALIDATION",
+  "libelle": "Autre",
+  "name": "MOTIF_NON_VALIDATION-AUTRE",
+  "ordre": 5
+ },
+ {
+  "actif": 1,
+  "code": "DELAI",
+  "famille": "MOTIF_NON_VALIDATION",
+  "libelle": "Délai insuffisant",
+  "name": "MOTIF_NON_VALIDATION-DELAI",
+  "ordre": 4
+ },
+ {
+  "actif": 1,
+  "code": "MATERIEL",
+  "famille": "MOTIF_NON_VALIDATION",
+  "libelle": "Matériel manquant",
+  "name": "MOTIF_NON_VALIDATION-MATERIEL",
+  "ordre": 2
+ },
+ {
+  "actif": 1,
+  "code": "PERIMETRE",
+  "famille": "MOTIF_NON_VALIDATION",
+  "libelle": "Hors périmètre",
+  "name": "MOTIF_NON_VALIDATION-PERIMETRE",
+  "ordre": 3
+ },
+ {
+  "actif": 1,
+  "code": "QUALIFICATION",
+  "famille": "MOTIF_NON_VALIDATION",
+  "libelle": "Qualification manquante",
+  "name": "MOTIF_NON_VALIDATION-QUALIFICATION",
+  "ordre": 1
+ }
+]
