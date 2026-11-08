@@ -5,7 +5,7 @@
    "label": "Opportunit\u00e9s ouvertes par phase"
   }
  ],
- "content": "[{\"id\": \"lsi1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Inspection</b></span>\", \"col\": 12}}, {\"id\": \"lsi2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Mes opportunit\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Opportunit\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi4\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Opportunites par phase\", \"col\": 12}}, {\"id\": \"lsi5\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Commercial</b></span>\", \"col\": 12}}, {\"id\": \"lsi6\", \"type\": \"card\", \"data\": {\"card_name\": \"Commercial\", \"col\": 4}}, {\"id\": \"lsi7\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\u00e9trage commercial\", \"col\": 4}}]",
+ "content": "[{\"id\": \"lsi1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Inspection</b></span>\", \"col\": 12}}, {\"id\": \"lsi2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Mes opportunit\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Opportunit\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi4\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Opportunites par phase\", \"col\": 12}}, {\"id\": \"lsi5\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Commercial</b></span>\", \"col\": 12}}, {\"id\": \"lsi6\", \"type\": \"card\", \"data\": {\"card_name\": \"Commercial\", \"col\": 4}}, {\"id\": \"lsi7\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\u00e9trage commercial\", \"col\": 4}}, {\"id\": \"lsi8\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Chiffrage</b></span>\", \"col\": 12}}, {\"id\": \"lsi9\", \"type\": \"card\", \"data\": {\"card_name\": \"Chiffrage\", \"col\": 4}}, {\"id\": \"lsi10\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\u00e9trage chiffrage\", \"col\": 4}}]",
  "creation": "2026-11-08 12:14:48.901026",
  "custom_blocks": [],
  "docstatus": 0,
@@ -164,9 +164,178 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Chiffrage",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "EFT (chiffrage)",
+   "link_count": 0,
+   "link_to": "EFT",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mod\u00e8le d'EFT",
+   "link_count": 0,
+   "link_to": "Modele EFT",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Besoins de l'EFT",
+   "link_count": 0,
+   "link_to": "Besoins EFT",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "EFT",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Demande de prix fournisseur",
+   "link_count": 0,
+   "link_to": "Request for Quotation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Offre fournisseur",
+   "link_count": 0,
+   "link_to": "Supplier Quotation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Param\u00e9trage chiffrage",
+   "link_count": 10,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Type de position",
+   "link_count": 0,
+   "link_to": "Type Position",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gamme",
+   "link_count": 0,
+   "link_to": "Gamme",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Conversion d'unit\u00e9s",
+   "link_count": 0,
+   "link_to": "UOM Conversion Factor",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "D\u00e9signation (pool main-d'\u0153uvre)",
+   "link_count": 0,
+   "link_to": "Designation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Salari\u00e9 (co\u00fbt journalier)",
+   "link_count": 0,
+   "link_to": "Employee",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cat\u00e9gorie d'actif (pool \u00e9quipement)",
+   "link_count": 0,
+   "link_to": "Asset Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Actif (co\u00fbt journalier)",
+   "link_count": 0,
+   "link_to": "Asset",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Article",
+   "link_count": 0,
+   "link_to": "Item",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Groupe d'articles",
+   "link_count": 0,
+   "link_to": "Item Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Prix d'article",
+   "link_count": 0,
+   "link_to": "Item Price",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-11-08 13:44:57.321406",
+ "modified": "2026-11-08 16:10:53.433856",
  "modified_by": "Administrator",
  "module": "LSI Inspection",
  "name": "Inspection",
