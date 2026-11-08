@@ -264,3 +264,26 @@ fixtures = [
 	# permissions : toutes les règles (natives recopiées + nos rôles) des doctypes dont on change les droits
 	{"dt": "Custom DocPerm", "filters": [["parent", "in", ["Opportunity", "Opportunity Type", "Sales Stage", "Email Template"]]]},
 ]
+
+# Lot 2 — opportunité : moteur générique des phases (configuration : Opportunity Type, Evenement Phase, Notification Phase)
+_phases = "lsi_inspection.commercial.phases"
+doctype_js = {"Opportunity": "public/js/opportunity.js"}
+doc_events = {
+	"*": {
+		# événements de fin de phase : sortie immédiate si le doctype n'est dans aucun Evenement Phase actif
+		"after_insert": f"{_phases}.sur_document",
+		"on_submit": f"{_phases}.sur_document",
+		"on_cancel": f"{_phases}.sur_document",
+		"on_change": f"{_phases}.sur_document",
+	},
+	"Opportunity": {
+		"validate": ["lsi_inspection.outils.verifier_obligatoires", f"{_phases}.opportunity_validate"],
+		"on_update": f"{_phases}.opportunity_on_update",
+	},
+	"Opportunity Type": {"validate": f"{_phases}.type_validate", "on_update": f"{_phases}.type_on_update"},
+}
+# règles « Retard » des notifications par phase (la Notification native « Days After » ne lit pas les règles par phase)
+scheduler_events = {"daily": [f"{_phases}.retards_quotidiens"]}
+# configuration initiale (commun + profil du site) : insère ce qui manque, ne modifie jamais l'existant
+after_sync = "lsi_inspection.config.charger"
+after_migrate = "lsi_inspection.config.charger"
