@@ -259,7 +259,7 @@ fixtures = [
 	{"dt": "Notification", "filters": [["module", "in", ["Commercial"]]]},
 	{"dt": "Role", "filters": [["name", "in", ["Validateur demande d'offre", "Etude technique", "Paramétreur commercial"]]]},
 	{"dt": "Workflow", "filters": [["name", "in", ["Validation demande d'offre"]]]},
-	{"dt": "Workflow State", "filters": [["name", "in", ["À valider", "Validée", "Non validée", "Clarification"]]]},
+	{"dt": "Workflow State", "filters": [["name", "in", ["À valider", "Validée", "Non validée", "Attente clarification client"]]]},
 	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Valider", "Refuser", "Demander clarification", "Remettre à valider"]]]},
 	# permissions : toutes les règles (natives recopiées + nos rôles) des doctypes dont on change les droits
 	{"dt": "Custom DocPerm", "filters": [["parent", "in", ["Opportunity", "Opportunity Type", "Sales Stage", "Email Template"]]]},

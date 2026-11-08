@@ -30,7 +30,7 @@ class TestValidation(TestLot2):
 		o = self._opp()
 		frappe.set_user(VALIDEUR)
 		o = apply_workflow(self.recharger(o), "Demander clarification")
-		self.assertEqual(o.lsi_statut_validation, "Clarification")
+		self.assertEqual(o.lsi_statut_validation, "Attente clarification client")
 		o = apply_workflow(self.recharger(o), "Remettre à valider")
 		o = apply_workflow(self.recharger(o), "Valider")
 		self.assertEqual(o.lsi_statut_validation, "Validée")

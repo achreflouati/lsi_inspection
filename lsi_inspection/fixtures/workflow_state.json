@@ -30,9 +30,9 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-11-08 13:44:52.576394",
-  "name": "Clarification",
+  "modified": "2026-11-08 14:57:49.269543",
+  "name": "Attente clarification client",
   "style": "",
-  "workflow_state_name": "Clarification"
+  "workflow_state_name": "Attente clarification client"
  }
 ]
