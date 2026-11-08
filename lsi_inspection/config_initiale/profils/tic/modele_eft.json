@@ -1,0 +1,63 @@
+[
+ {
+  "description": "Groupe partagé entre plusieurs prestations : indiquer les étapes dans la répartition.",
+  "groupes": [
+   {
+    "numero": "1",
+    "titre": "Transport & Indemnité"
+   }
+  ],
+  "name": "Transport & Indemnité",
+  "positions": [
+   {
+    "groupe": "1",
+    "item_code": "VEHICULE",
+    "numero": "1.1",
+    "qty": 1,
+    "type_position": "Durée de l'équipement à coût",
+    "uom": "Jour"
+   },
+   {
+    "groupe": "1",
+    "item_code": "CARTE CARBURANT",
+    "numero": "1.2",
+    "qty": 1,
+    "type_position": "Durée de l'équipement à coût",
+    "uom": "Jour"
+   },
+   {
+    "groupe": "1",
+    "item_code": "Indemnité d'hébergement",
+    "numero": "1.3",
+    "qty": 0,
+    "type_position": "Article à coût",
+    "uom": "Unité"
+   },
+   {
+    "groupe": "1",
+    "item_code": "Indemnité de Repas",
+    "numero": "1.4",
+    "qty": 0,
+    "type_position": "Article à coût",
+    "uom": "Unité"
+   },
+   {
+    "groupe": "1",
+    "item_code": "Frais kilométriques",
+    "numero": "1.5",
+    "qty": 1,
+    "type_position": "Article à coût",
+    "uom": "Kilometer"
+   },
+   {
+    "groupe": "1",
+    "item_code": "Frais de Péage",
+    "numero": "1.6",
+    "qty": 1,
+    "type_position": "Article à coût",
+    "uom": "Unité"
+   }
+  ],
+  "titre": "Transport & Indemnité"
+ }
+]

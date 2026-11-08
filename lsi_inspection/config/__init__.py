@@ -12,6 +12,7 @@ import json
 import os
 
 import frappe
+from frappe.utils import cstr
 from frappe.model import default_fields, no_value_fields, table_fields
 
 TECHNIQUES = set(default_fields) | {"parent", "parentfield", "parenttype", "amended_from", "_user_tags", "_comments", "_assign",
@@ -57,21 +58,52 @@ def charger(profil=None):
 	return n
 
 
-def charger_dossier(dossier):
+def _charger_reglages(dt, valeurs):
+	"""Réglage natif (document unique) : chaque champ n'est renseigné que s'il est encore à sa valeur d'origine."""
 	n = 0
+	meta = frappe.get_meta(dt)
+	for champ, valeur in (valeurs or {}).items():
+		df = meta.get_field(champ)
+		if not df:
+			continue
+		actuel = frappe.db.get_single_value(dt, champ)
+		if cstr(actuel) in ("", "0", cstr(df.default or "")) and cstr(actuel) != cstr(valeur):
+			frappe.db.set_single_value(dt, champ, valeur)
+			n += 1
+	return n
+
+
+def charger_dossier(dossier):
+	"""Insère les éléments absents. Un élément dont un lien n'existe pas encore (ex. gamme citant des articles à créer) est
+	mis en attente : il sera inséré au prochain chargement."""
+	n, attente = 0, []
 	frappe.flags.lsi_chargement_config = True
 	try:
 		for entree in manifeste():
 			dt = entree["doctype"]
+			if entree.get("single"):
+				chemin = _fichier(dossier, dt)
+				if os.path.exists(chemin):
+					with open(chemin) as f:
+						n += _charger_reglages(dt, json.load(f))
+				continue
 			for d in _lire(dossier, dt):
 				if frappe.db.exists(dt, d["name"]):
 					continue
 				doc = frappe.get_doc(dict(d, doctype=dt))
 				doc.flags.ignore_permissions = True
-				doc.insert(set_name=d["name"])
-				n += 1
+				frappe.db.savepoint("lsi_config")
+				try:
+					doc.insert(set_name=d["name"])
+					n += 1
+				except frappe.LinkValidationError:
+					frappe.db.rollback(save_point="lsi_config")
+					frappe.clear_messages()
+					attente.append(f"{dt} {d['name']}")
 	finally:
 		frappe.flags.lsi_chargement_config = False
+	if attente:
+		print(f"lsi_inspection : en attente (lien manquant) : {', '.join(attente)}")
 	return n
 
 
@@ -128,7 +160,7 @@ def exporter_profil(profil, dossier=None):
 	entrees = manifeste()
 	docs = {}
 	for e in entrees:
-		if e.get("export") == "references":
+		if e.get("export") == "references" or e.get("single"):
 			continue
 		exclus = {d["name"] for d in _lire(commun, e["doctype"])}
 		noms = [n for n in frappe.get_all(e["doctype"], filters=e.get("filtres"), pluck="name", order_by="name asc") if n not in exclus]
@@ -142,6 +174,12 @@ def exporter_profil(profil, dossier=None):
 	resultat = {}
 	for e in entrees:
 		dt = e["doctype"]
+		if e.get("single"):
+			valeurs = {c: frappe.db.get_single_value(dt, c) for c in e.get("champs") or []}
+			with open(_fichier(cible, dt), "w") as f:
+				f.write(json.dumps(valeurs, indent=1, ensure_ascii=False, sort_keys=True) + "\n")
+			resultat[dt] = len(valeurs)
+			continue
 		contenu = sorted((_propre(d) for d in docs.get(dt, [])), key=lambda x: x["name"])
 		chemin = _fichier(cible, dt)
 		if contenu:

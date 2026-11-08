@@ -1,5 +1,5 @@
 {
- "description": "Doctypes de la configuration initiale, dans l'ordre de chargement. export = references : seuls les documents cités par les autres sont exportés. filtres : filtres de l'export (ex. Notifications de configuration : sans module, les Notifications de structure étant livrées en fixtures).",
+ "description": "Doctypes de la configuration initiale, dans l'ordre de chargement. export = references : seuls les documents cités par les autres sont exportés. filtres : filtres de l'export (ex. Notifications de configuration : sans module, les Notifications de structure étant livrées en fixtures). single : réglage natif (document unique) : seuls les champs listés, renseignés s'ils sont à leur valeur d'origine.",
  "doctypes": [
   {
    "doctype": "Famille de Type"
@@ -34,6 +34,37 @@
      "not set"
     ]
    ]
+  },
+  {
+   "doctype": "UOM Conversion Factor",
+   "filtres": [
+    [
+     "from_uom",
+     "=",
+     "Jour"
+    ],
+    [
+     "to_uom",
+     "=",
+     "Heure"
+    ]
+   ]
+  },
+  {
+   "doctype": "Selling Settings",
+   "single": 1,
+   "champs": [
+    "allow_zero_qty_in_quotation"
+   ]
+  },
+  {
+   "doctype": "Type Position"
+  },
+  {
+   "doctype": "Gamme"
+  },
+  {
+   "doctype": "Modele EFT"
   }
  ]
 }
