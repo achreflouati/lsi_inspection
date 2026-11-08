@@ -330,3 +330,33 @@ class TestChiffrage(TestChiffrageBase):
 		o = self.recharger(o)
 		self.assertEqual(o.sales_stage, "T Chiffrage")
 		self.assertEqual(o.lsi_historique_phases[-1].document_name, eft)
+
+	# ------------------------------------------------------------------ calcul en temps réel (aperçu sans enregistrer)
+	def test_apercu_identique_a_l_enregistrement(self):
+		doc = self.eft_exemple()
+		brouillon = doc.as_dict()
+		ligne = next(p for p in brouillon["positions"] if p["numero"] == "1.1")
+		ligne["qty"] = 3
+		r = moteur.apercu(frappe.as_json(brouillon))
+		self.assertEqual(r["positions"][ligne["name"]]["cout_total"], 3 * max(DESIGNATIONS["Inspecteur RT niveau II"]))
+		self.assertEqual(r["positions"][ligne["name"]]["etape_principale"], ETAPES["Contrôle par Radiographie (RT)"])
+		self.assertEqual(frappe.db.get_value("EFT Position", ligne["name"], "qty"), 1)  # rien d'enregistré
+		self.pos(doc, "1.1").qty = 3
+		doc.save()
+		self.assertAlmostEqual(r["total_cout"], doc.total_cout, 3)
+		self.assertAlmostEqual(r["total_prix"], doc.total_prix, 3)
+		self.assertEqual([round(t["cout_total"], 3) for t in r["totaux_etapes"]], [round(t.cout_total, 3) for t in doc.totaux_etapes])
+
+	def test_apercu_erreur_de_structure_sans_planter(self):
+		brouillon = self.eft_exemple().as_dict()
+		next(p for p in brouillon["positions"] if p["numero"] == "1.18")["parente"] = "1.1"
+		self.assertIn("1.18", moteur.apercu(frappe.as_json(brouillon))["erreur"])
+
+	def test_apercu_ligne_a_perte_et_cout_manquant(self):
+		brouillon = self.eft_exemple().as_dict()
+		ligne = next(p for p in brouillon["positions"] if p["numero"] == "1.1")
+		ligne["prix_unitaire"] = 10  # vendu sous le coût
+		r = moteur.apercu(frappe.as_json(brouillon))
+		self.assertLess(r["positions"][ligne["name"]]["marge"], 0)
+		essai = next(p for p in brouillon["positions"] if p["numero"] == "3.2")
+		self.assertTrue(r["positions"][essai["name"]]["cout_manquant"])
