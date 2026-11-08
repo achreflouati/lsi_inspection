@@ -191,3 +191,34 @@ class TestPhases(TestLot2):
 		d.assert_not_called()
 		n.assert_not_called()
 		self.assertNotIn("ToDo", phases.evenements())
+
+	def test_sales_stage_natif_suit_la_phase_en_cours(self):
+		"""Le champ natif sales_stage est la seule « phase en cours » : il suit chaque transition."""
+
+		def verifier(o, attendu):
+			o = self.recharger(o)
+			cur = phases.courante(o)
+			self.assertEqual(o.sales_stage, attendu)
+			self.assertEqual(cur.phase if cur else None, attendu if cur else None)
+			self.assertEqual(sum(1 for r in o.lsi_phases if r.statut == "En cours"), 1 if cur else 0)
+			return o
+
+		o = self.opportunite(self.parcours_standard())
+		verifier(o, "T Création")
+		phases.terminer_phase(o.name)
+		verifier(o, "T Étude")
+		phases.terminer_phase(o.name, vers="T Validation")  # saut
+		verifier(o, "T Validation")
+		phases.terminer_phase(o.name, vers="T Étude")  # retour arrière
+		verifier(o, "T Étude")
+		q = self.devis(o)  # événement : Devis validé
+		verifier(o, "T Offre")
+		q.reload()
+		q.declare_enquiry_lost([{"lost_reason": self._motif()}], [])
+		self.commit_simule()
+		o = self.recharger(o)
+		self.assertEqual((o.sales_stage, phases.courante(o)), ("T Perdue", None))  # plus de phase en cours : la phase finale
+		q.reload()
+		q.cancel()
+		self.commit_simule()
+		verifier(o, "T Offre")  # réouverture

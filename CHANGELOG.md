@@ -4,6 +4,12 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/). Une entrée p
 
 ## [Non publié]
 
+### Lot 2 — notifications de phase natives (simplification)
+- Notifications d'entrée en phase : Notifications natives Value Change sur sales_stage (New pour la première phase),
+  paramétrables à l'écran par le Paramétreur commercial ; retard : Days After sur lsi_echeance_phase.
+- Retrait des règles « Notification Phase » et de la tâche quotidienne de retard (doctype conservé, en lecture seule).
+- Tests : garde-fou « aucun commit pendant un test » et aucun envoi SMTP réel.
+
 ### Lot 2 — écran Opportunité aligné sur tidemo
 - Onglet « Suivi commercial » après Détails (Détails 100 % natif), sections dans l'ordre de tidemo, libellés alignés.
 - Type de consultation (référentiel), date limite de réponse ; avancement (en cours depuis, responsables) ; tableau HTML

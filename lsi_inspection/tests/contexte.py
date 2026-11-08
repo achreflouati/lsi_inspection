@@ -18,6 +18,14 @@ class TestLot2(IntegrationTestCase):
 		self._log_error = patch("frappe.log_error")
 		self.log_error = self._log_error.start()
 		self.addCleanup(self._log_error.stop)
+		# aucun e-mail réellement envoyé (le site a un compte sortant réel) : un envoi immédiat valide aussi la transaction
+		envoi = patch("frappe.email.doctype.email_queue.email_queue.EmailQueue.send")
+		envoi.start()
+		self.addCleanup(envoi.stop)
+		# garde-fou : aucun commit pendant un test (sinon les données de test resteraient sur le site)
+		garde = patch.object(frappe.db, "commit", side_effect=AssertionError("commit interdit pendant un test"))
+		garde.start()
+		self.addCleanup(garde.stop)
 		frappe.set_user("Administrator")
 		frappe.db.savepoint("lsi_test")
 		frappe.local.lsi_evenements_differes = {}
@@ -29,6 +37,7 @@ class TestLot2(IntegrationTestCase):
 		frappe.db.rollback(save_point="lsi_test")
 		frappe.local.lsi_evenements_differes = {}
 		phases.vider_cache_evenements()
+		frappe.cache.hdel("notifications", "Opportunity")  # notifications natives créées par le test
 		frappe.clear_cache(doctype="Opportunity")
 
 	# ------------------------------------------------------------------ référentiels
@@ -49,7 +58,7 @@ class TestLot2(IntegrationTestCase):
 				ignore_permissions=True, set_name=nom)
 		return nom
 
-	def type_parcours(self, nom, lignes, notifications=None, defaut=0):
+	def type_parcours(self, nom, lignes, defaut=0):
 		"""lignes : (ordre, phase, responsable, événement, options) ; responsable = Commercial / Rôle:<rôle> / Utilisateur:<user>."""
 		doc = frappe.get_doc("Opportunity Type", nom) if frappe.db.exists("Opportunity Type", nom) else frappe.new_doc("Opportunity Type")
 		doc.name = nom
@@ -64,9 +73,6 @@ class TestLot2(IntegrationTestCase):
 			elif typ == "Utilisateur":
 				r["utilisateur"] = val
 			doc.append("lsi_parcours", r)
-		doc.set("lsi_notifications_phase", [])
-		for n in notifications or []:
-			doc.append("lsi_notifications_phase", n)
 		doc.lsi_parcours_defaut = defaut
 		if doc.is_new():
 			doc.insert(ignore_permissions=True, set_name=nom)
@@ -74,7 +80,7 @@ class TestLot2(IntegrationTestCase):
 			doc.save(ignore_permissions=True)
 		return nom
 
-	def parcours_standard(self, nom=f"{PREFIXE} Parcours", notifications=None, options=None, annulation=True):
+	def parcours_standard(self, nom=f"{PREFIXE} Parcours", options=None, annulation=True):
 		"""Parcours de test : 5 phases dans la séquence + Gagnée (finale) + Perdue (hors séquence)."""
 		o = options or {}
 		self.evenement("Manuel")
@@ -90,7 +96,7 @@ class TestLot2(IntegrationTestCase):
 				champ_statut="status", valeur="Lost"), {"phase_finale": "Perdue", "evenement_annulation": self.evenement("Opportunité rouverte",
 				"Changement de statut", document_type="Opportunity", champ_statut="status", valeur="Lost", sens="Quitte la valeur")
 				if annulation else None}),
-		], notifications)
+		])
 
 	# ------------------------------------------------------------------ données
 	def utilisateur(self, email, roles):

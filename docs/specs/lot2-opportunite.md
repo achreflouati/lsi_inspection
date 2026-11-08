@@ -108,7 +108,7 @@ Mécanisme générique : tout événement d'annulation peut être indiqué sur u
 | | Alertes codées → Notifications natives + règles par phase paramétrables |
 | | Champs créés au migrate → fixtures |
 
-## 6. Tests (63, transaction annulée, configuration propre aux tests)
+## 6. Tests (66, transaction annulée, configuration propre aux tests)
 
 `tests/test_phases.py`, `test_notifications.py`, `test_validation.py`, `test_config.py`, `test_workspace.py`,
 `test_installation.py`. Couvrent : construction, type sans parcours, Terminer ma phase + ToDo, obligatoire, historique
@@ -166,6 +166,32 @@ Opportunité OFF-2026-0001        Phase en cours : Création          [Terminer 
 Plus tard : EFT (bouton, Devis TIC, case « Créer l'EFT liée », événements EFT, masquage du devis natif) — lot EFT ;
 Avant-projet (champ, bouton, événement) — lot Avant-projet ; Veille concurrentielle — lot AO / Veille.
 
+## 9. Notifications de phase : natives (simplification)
+
+- **Le moteur ne notifie plus.** Il tient le champ natif `sales_stage` à jour (seule « phase en cours » : à chaque transition —
+  terminer, sauter, retour arrière, événement, phase finale, réouverture ; sans phase en cours, la dernière phase terminée).
+- **Entrée dans une phase** = Notification native **Value Change** sur `sales_stage` + condition
+  (`doc.sales_stage == "<phase>"`), destinataires par rôle, par champ du document (`lsi_responsable_phase`, `opportunity_owner`) ou
+  par champ de la table (`utilisateur_pilote,lsi_departements`) ; canal E-mail + notification système. Première phase : événement
+  **New** (natif : Value Change n'est pas évalué à la création).
+- **Retard** = Notification native **Days After** sur `lsi_echeance_phase` (fixture « Retard phase opportunite »).
+- Erreur dans le sujet / message d'une Notification : **journalisée par ERPNext, non bloquante** (vérifié par un test).
+- Le **Paramétreur commercial** crée les Notifications (droit ajouté). Notifications de **structure** (module Commercial) :
+  fixtures ; notifications de **configuration** (sans module, créées à l'écran) : profil (`config_initiale/profils/tic/notification.json`,
+  insertion seule, exportées). Démarrage TIC : « Phase - entree : responsable », « Phase Etude technique : pilotes des departements ».
+
+**Retiré** : fonctions `regles`, `destinataires`, `notifier`, `retards_quotidiens`, `_utilisateurs_departements` ; tâche planifiée
+quotidienne (hooks) ; écriture de `retard_notifie`.
+
+**Conservé en attente de votre accord pour suppression** (aucune donnée supprimée) :
+| Élément | État |
+|---|---|
+| Doctype enfant « Notification Phase » | conservé |
+| Champ `lsi_notifications_phase` (+ section) sur Opportunity Type | lecture seule, libellé « (obsolète) » ; règles existantes désactivées (actif = 0) |
+| Champ `retard_notifie` de Phase Opportunite | plus écrit |
+| Modèles d'e-mail « Phase - entree », « Phase - retard » | encore cités par les règles désactivées (exportés dans le profil) |
+| Scheduled Job Type `phases.retards_quotidiens` | arrêté (stopped) ; Frappe le retire à la prochaine migration (hook supprimé) |
+
 ## 7. Fiche de test (testeurs TIC)
 
 Prérequis : utilisateurs avec Sales User (commercial), Validateur demande d'offre, Etude technique, Paramétreur commercial ;
@@ -182,7 +208,7 @@ les notifications système partent).
 | T2.6 | Cocher « Obligatoire » sur Étude technique, puis Terminer ma phase vers une phase plus loin | Refus « Phase obligatoire, elle ne peut pas être sautée » |
 | T2.7 | Durée cible 1 jour sur la phase en cours ; le surlendemain (tâches planifiées actives) | Notification « Phase en retard » au responsable et au commercial |
 | T2.8 | Workspace Inspection | « Mes opportunités ouvertes » compte l'opportunité ; graphique par phase |
-| T2.9 | En **Paramétreur commercial** : type Appel d'offres → Notifications par phase → ligne « Visite de site / Entrée dans la phase / Département principal / Système + E-mail / modèle Phase - entree » ; puis (commercial) Terminer ma phase jusqu'à Visite de site | Cloche (Notification Log) et e-mail en file pour les employés du département principal ; aucun code touché |
+| T2.9 | En **Paramétreur commercial** : **Notification > Nouveau** — Document : Opportunité ; Événement : **Value Change** ; Champ : `sales_stage` ; Condition : `doc.sales_stage == "Visite de site"` ; Destinataires : champ **utilisateur_pilote (lsi_departements)** et/ou un rôle ; Canal E-mail + « Envoyer une notification système » ; sujet et message (Jinja, `doc`). Puis (commercial) Terminer ma phase jusqu'à Visite de site | Cloche (Notification Log) et e-mail pour les pilotes des départements concernés ; rien n'est envoyé pour les autres phases ; Notification décochée « Activé » : rien. Aucun code touché. *Première phase : utiliser l'événement **New** (Value Change ne se déclenche pas à la création).* |
 | T2.10 | Terminer, sauter une phase, puis **Retour à** une phase antérieure ; essayer de modifier l'historique | Une ligne par action (Terminée, Sautée, Retour arrière), les anciennes inchangées ; historique en lecture seule |
 | T2.11 | **Gagnée par la commande** : devis depuis l'opportunité → Valider (soumettre) → Commande client depuis le devis → Valider | Statut natif « Converted » ; phases restantes « Sautée (auto) », **Gagnée « Terminée »** ; historique « Gagnée » avec le devis |
 | T2.12 | **Perdue par le devis** : sur un devis validé, **Déclarer perdu** (motif + détail) ; recommencer avec deux devis ouverts dont un seul déclaré perdu | 1er cas : statut « Lost », phases restantes « Sautée (auto) », **Perdue « Terminée »**, historique « Perdue » avec le devis et le motif. 2e cas : statut « Quotation », aucune phase finale |
