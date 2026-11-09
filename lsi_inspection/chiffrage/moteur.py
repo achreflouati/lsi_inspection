@@ -75,11 +75,8 @@ def type_par_defaut(item_code):
 def _types(doc):
 	for p in doc.get("positions") or []:
 		if not p.type_position and p.item_code:  # ligne en cours de saisie (sans article) : ignorée ici
-			p.type_position = type_par_defaut(p.item_code)
-			if not p.type_position:
-				frappe.throw(_("Position {0} ({1}) : aucun type de position (ni sur la ligne, ni sur l'article, ni sur son groupe).").format(
-					p.numero, p.item_code))
-	noms = {p.type_position for p in doc.get("positions") or [] if p.type_position}
+			p.type_position = type_par_defaut(p.item_code)  # vide si ni l'article ni son groupe n'en ont : coût manquant
+	noms = {p.type_position for p in doc.get("positions") or [] if p.type_position and frappe.db.exists("Type Position", p.type_position)}
 	return {n: frappe.get_doc("Type Position", n) for n in noms}
 
 
@@ -323,6 +320,23 @@ def _cout_fournisseur(p, t):
 	return cout, _("prix fournisseurs : {0} ({1} prix)").format(_(t.regle or "Plus élevé"), len(prix))
 
 
+def _cout_securise(p, t):
+	"""Le coût d'une ligne ne bloque jamais le chiffrage : article absent, sans prix, pool vide ou mal paramétré → coût manquant,
+	avec la raison dans « Source du coût »."""
+	if not frappe.db.exists("Item", p.item_code):
+		p.cout_unitaire, p.cout_manquant, p.cout_en_attente = 0, 1, 0
+		p.source_cout = _("article introuvable : {0}").format(p.item_code)
+		return
+	frappe.db.savepoint("lsi_cout")
+	try:
+		_cout_position(p, t)
+	except Exception as e:  # paramétrage incohérent (ex. champ de coût inexistant) : signalé sur la ligne, jamais une erreur
+		frappe.db.rollback(save_point="lsi_cout")
+		frappe.clear_messages()
+		p.cout_unitaire, p.cout_manquant, p.cout_en_attente = 0, 1, 0
+		p.source_cout = _("coût non calculable ({0}) : vérifier le type de position {1}").format(cstr(e)[:140], t.name)
+
+
 def _cout_position(p, t):
 	p.cout_manquant = p.cout_en_attente = 0
 	if cint(p.cout_manuel) or t.source_cout == MANUEL:
@@ -392,8 +406,11 @@ def calculer(doc):
 			p.cout_unitaire, p.cout_total, p.cout_manquant, p.source_cout = 0, 0, 1, _("article à choisir")
 			continue
 		if p.mode != PRIX_FIXE and p.type_position in types:
-			_cout_position(p, types[p.type_position])
+			_cout_securise(p, types[p.type_position])
 			p.cout_total = flt(p.cout_unitaire) * flt(p.qty)
+		elif p.mode != PRIX_FIXE:
+			p.cout_unitaire, p.cout_total, p.cout_manquant = 0, 0, 1
+			p.source_cout = _("type de position à choisir (ni sur la ligne, ni sur l'article, ni sur son groupe)")
 	for p in positions:  # prix fixe = somme des sous-positions
 		if p.mode == PRIX_FIXE:
 			if not flt(p.qty_base):

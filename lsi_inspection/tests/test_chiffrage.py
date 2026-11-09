@@ -219,11 +219,14 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertTrue(all(p.mode == "À coût" for p in sous))  # un type « à coût » sous un prix fixe = sous-position
 		self.assertAlmostEqual(film.cout_total, sum(p.cout_total for p in sous), 3)
 
-	def test_position_sans_type_ni_defaut_refusee(self):
+	def test_position_sans_type_ni_defaut_cout_manquant(self):
+		"""Sans type (ni ligne, ni article, ni groupe) : l'EFT s'enregistre, la ligne est en coût manquant (étape 8)."""
 		doc = self.eft_exemple()
 		self.pos(doc, "1.18").type_position = None
-		with self.assertRaises(frappe.ValidationError):
-			doc.save()
+		doc.save()
+		p = self.pos(doc, "1.18")
+		self.assertTrue(p.cout_manquant)
+		self.assertTrue(doc.cout_incomplet)
 
 	def test_valorisation_du_stock_et_stock_disponible(self):
 		code = article("FILM MX125 RECHARGEABLE 10/40")
@@ -475,3 +478,51 @@ class TestChiffrage(TestChiffrageBase):
 		moteur.choisir_ressource(doc.name, film.numero, codes[0])  # l'utilisateur choisit un autre film
 		doc = frappe.get_doc("EFT", doc.name)
 		self.assertEqual((self.pos(doc, film.numero).cout_unitaire, self.pos(doc, "5.1").cout_total), (10, avant + 20))
+
+	# ------------------------------------------------------------------ étape 8 : jamais d'exception dans le chiffrage
+	def _ligne_seule(self, item_code, type_position, qty=1):
+		doc = frappe.new_doc("EFT")
+		doc.update(dict(titre=f"{P} robustesse", company=self.company, customer=self.client()))
+		doc.append("etapes", dict(prestation=ETAPES["Contrôle par Radiographie (RT)"], qty=1))
+		doc.append("positions", dict(etape=ETAPES["Contrôle par Radiographie (RT)"], item_code=item_code, type_position=type_position, qty=qty,
+			uom="Unité", prix_unitaire=10))
+		return doc
+
+	def _manquant(self, doc, motif):
+		r = moteur.apercu(frappe.as_json(doc.as_dict()))
+		self.assertNotIn("erreur", r)
+		v = next(iter(r["positions"].values()))
+		self.assertTrue(v["cout_manquant"])
+		self.assertIn(motif, v["source_cout"])
+		self.assertTrue(r["cout_incomplet"])
+
+	def test_article_absent_cout_manquant(self):
+		"""Cause de l'Error Log du 09/11 00:16 : ligne dont l'article n'existe pas (saisie en cours) → coût manquant."""
+		self._manquant(self._ligne_seule(f"{P} article inexistant", TYPES["Article à côut"]), "introuvable")
+
+	def test_article_sans_prix_cout_manquant(self):
+		code = self.item(f"{P} Sans prix", "Unité")
+		doc = self._ligne_seule(code, TYPES["Article à côut"])
+		self._manquant(doc, "aucun coût")
+		doc.insert()  # l'enregistrement passe aussi
+		self.assertTrue(doc.positions[0].cout_manquant)
+
+	def test_pool_vide_cout_manquant(self):
+		frappe.get_doc(dict(doctype="Designation", designation_name=f"{P} Personne")).insert()
+		code = self.item(f"{P} Sans ressource", "Jour", lsi_pool_doctype="Designation", lsi_pool=f"{P} Personne")
+		self._manquant(self._ligne_seule(code, TYPES["Service à côut"]), "aucune ressource")
+
+	def test_pool_mal_parametre_cout_manquant(self):
+		typ = frappe.get_doc(dict(doctype="Type Position", libelle=f"{P} Pool faux", actif=1, mode="À coût", source_cout="Pool de ressources",
+			pool_doctype="Designation", ressource_doctype="Employee", champ_appartenance="designation", champ_cout="champ_inexistant",
+			regle="Plus élevé")).insert().name
+		code = self.item(f"{P} Pool faux", "Jour", lsi_pool_doctype="Designation", lsi_pool=f"{P} Inspecteur RT niveau II")
+		self._manquant(self._ligne_seule(code, typ), "non calculable")
+
+	def test_type_absent_cout_manquant(self):
+		code = self.item(f"{P} Sans type", "Unité")
+		frappe.db.set_value("Item Group", self.groupe, "lsi_type_position", None)
+		doc = self._ligne_seule(code, None)
+		self._manquant(doc, "type de position à choisir")
+		doc.insert()
+		self.assertTrue(doc.positions[0].cout_manquant)
