@@ -10,7 +10,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt
 
-from lsi_inspection.chiffrage.moteur import PRIX_FIXE, POOL, FOURNISSEUR, _etapes_de, facteur_uom
+from lsi_inspection.chiffrage.moteur import PRIX_FIXE, POOL, FOURNISSEUR, REGLE_SOUS, _etapes_de, candidat_retenu, facteur_uom
 
 
 def execute(filters=None):
@@ -38,7 +38,21 @@ def besoins(doc):
 	types = {t: frappe.get_cached_value("Type Position", t, ["source_cout", "pool_doctype"], as_dict=True)
 		for t in {p.type_position for p in doc.positions if p.type_position}}
 	cumul = defaultdict(float)
+	# prix fixe « règle » (ex. Film et ses 3 films possibles) : seul le candidat retenu est un besoin, pour la quantité de la ligne
+	remplaces = {}
 	for p in doc.positions:
+		if p.mode == PRIX_FIXE and p.type_position and types[p.type_position].source_cout == REGLE_SOUS:
+			kids = [k for k in doc.positions if k.parente == p.numero]
+			t = frappe.get_cached_doc("Type Position", p.type_position)
+			k, _c, _l = candidat_retenu(p, kids, t)
+			for x in kids:
+				remplaces[x.name] = (k is not None and x.name == k.name, p)
+	for p in doc.positions:
+		if p.name in remplaces:
+			retenu, parent = remplaces[p.name]
+			if not retenu:
+				continue
+			p = frappe._dict(p.as_dict(), qty=flt(parent.qty) * (facteur_uom(parent.uom, p.uom) or 1) if parent.uom and p.uom else flt(parent.qty))
 		if p.mode == PRIX_FIXE or not flt(p.qty) or not p.type_position:
 			continue
 		t = types[p.type_position]

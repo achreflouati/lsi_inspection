@@ -49,7 +49,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Source du co\u00fbt",
-   "options": "Pool de ressources\nArticle\nPrix fournisseur\nSomme des sous-positions\nManuel",
+   "options": "Pool de ressources\nArticle\nPrix fournisseur\nSomme des sous-positions\nR\u00e8gle sur les sous-positions\nManuel",
    "reqd": 1
   },
   {
@@ -120,7 +120,7 @@
   },
   {
    "default": "Plus \u00e9lev\u00e9",
-   "description": "Co\u00fbt retenu parmi les ressources (pool) ou les prix fournisseurs.",
+   "description": "Pool : choix parmi les ressources. Prix fixe \u00ab R\u00e8gle sur les sous-positions \u00bb : choix parmi ses sous-lignes.",
    "fieldname": "regle",
    "fieldtype": "Select",
    "label": "R\u00e8gle par d\u00e9faut",
@@ -141,7 +141,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-09 10:35:20.154591",
+ "modified": "2026-11-09 11:41:27.824712",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "Type Position",

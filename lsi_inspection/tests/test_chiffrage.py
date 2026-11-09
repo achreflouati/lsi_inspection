@@ -549,3 +549,46 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertFalse(frappe.db.exists("Bin", {"item_code": f"{P} Film LP 2"}))  # aucun stock créé
 		r = moteur.voir_ressources(doc.name, p.numero)
 		self.assertEqual(sorted(x["cout"] for x in r["ressources"]), [10, 12, 15])
+
+	# ------------------------------------------------------------------ prix fixe « le plus élevé » : les sous-lignes sont des choix
+	def _film_max(self, regle="Plus élevé"):
+		typ = frappe.get_doc(dict(doctype="Type Position", libelle=f"{P} Prix fixe max", actif=1, mode="Prix fixe",
+			source_cout=moteur.REGLE_SOUS, regle=regle)).insert().name
+		doc = self.eft_exemple()
+		self.pos(doc, "1.17").type_position = typ  # Film (3) : films 12, 15, 10
+		doc.save()
+		return doc, typ
+
+	def test_prix_fixe_le_plus_eleve_par_defaut(self):
+		doc, _typ = self._film_max()
+		film = self.pos(doc, "1.17")
+		self.assertEqual((film.cout_unitaire, film.cout_total, film.cout_manquant), (15, 45, 0))
+		self.assertEqual([self.pos(doc, n).cout_unitaire for n in ("1.17.1", "1.17.2", "1.17.3")], [12, 15, 10])  # coûts réels gardés
+		self.assertIn("Plus élevé", film.source_cout)
+
+	def test_prix_fixe_sous_ligne_retenue(self):
+		doc, _typ = self._film_max()
+		self.pos(doc, "1.17.1").retenue = 1  # l'utilisateur choisit le film à 12
+		doc.save()
+		self.assertEqual(self.pos(doc, "1.17").cout_total, 36)
+		self.assertIn("retenue", self.pos(doc, "1.17").source_cout)
+		self.pos(doc, "1.17.3").retenue = 1  # deux cochées : une seule est gardée
+		doc.save()
+		self.assertEqual(sum(1 for n in ("1.17.1", "1.17.2", "1.17.3") if self.pos(doc, n).retenue), 1)
+
+	def test_prix_fixe_cout_manuel_et_regle(self):
+		doc, typ = self._film_max()
+		film = self.pos(doc, "1.17")
+		film.cout_manuel, film.cout_unitaire = 1, 20
+		doc.save()
+		self.assertEqual(self.pos(doc, "1.17").cout_total, 60)
+		self.pos(doc, "1.17").cout_manuel = 0
+		frappe.db.set_value("Type Position", typ, "regle", "Moins élevé")
+		doc.save()
+		self.assertEqual(self.pos(doc, "1.17").cout_total, 30)
+
+	def test_prix_fixe_le_plus_eleve_besoins(self):
+		from lsi_inspection.chiffrage.report.besoins_eft.besoins_eft import besoins
+		doc, _typ = self._film_max()
+		films = {l["ressource"]: l["quantite"] for l in besoins(doc) if "FILM" in (l["ressource"] or "") and "CASSETTE" not in l["ressource"]}
+		self.assertEqual(films, {article("FILM FUJIFILM RECHARGEABLE IX100 10/40"): 3})  # seul le film retenu, × 3

@@ -160,7 +160,7 @@ lsi_eft.charger_modele = function (frm) {
 // ------------------------------------------------------------------ temps réel, couleurs, synthèse (comme tic_demo)
 // Le calcul est fait par le MÊME moteur que l'enregistrement (méthode « apercu », sans enregistrer) : pools, conversions, stock.
 const LSI_COULEURS = ["#2563eb", "#16a34a", "#9333ea", "#ea580c", "#db2777", "#0891b2", "#ca8a04", "#4b5563"];
-const LSI_CHAMPS_POSITION = ["etape", "item_code", "type_position", "qty", "uom", "prix_unitaire", "cout_unitaire", "cout_manuel", "parente", "groupe", "numero"];
+const LSI_CHAMPS_POSITION = ["etape", "item_code", "type_position", "qty", "uom", "prix_unitaire", "cout_unitaire", "cout_manuel", "parente", "groupe", "numero", "retenue"];
 
 lsi_eft.couleur_etape = function (frm, etape) {
 	const i = (frm.doc.etapes || []).findIndex((e) => e.prestation === etape);
@@ -312,6 +312,15 @@ frappe.ui.form.on("EFT Position", Object.assign(
 	Object.fromEntries(LSI_CHAMPS_POSITION.map((c) => [c, (frm) => lsi_eft.apercu(frm)])),
 	{ positions_remove: (frm) => lsi_eft.apercu(frm) }
 ));
+// prix fixe « le plus élevé » : une seule sous-position retenue par ligne (les autres sont décochées)
+frappe.ui.form.on("EFT Position", {
+	retenue(frm, cdt, cdn) {
+		const p = locals[cdt][cdn];
+		if (!p.retenue || !p.parente) return;
+		(frm.doc.positions || []).filter((x) => x.parente === p.parente && x.name !== p.name && x.retenue)
+			.forEach((x) => frappe.model.set_value(cdt, x.name, "retenue", 0));
+	},
+});
 frappe.ui.form.on("EFT Repartition", { cible: (frm) => lsi_eft.apercu(frm), etape: (frm) => lsi_eft.apercu(frm), part: (frm) => lsi_eft.apercu(frm),
 	repartitions_remove: (frm) => lsi_eft.apercu(frm) });
 
@@ -344,6 +353,7 @@ lsi_eft.cellule = function (frm, df, p, sous, ed) {
 	const v = p[df.fieldname];
 	const c = df.fieldname;
 	if (sous && ["prix_unitaire", "prix_total", "marge", "taux_marge", "prix_conseille"].includes(c)) return `<td class="text-right text-muted">—</td>`;
+	if (c === "retenue" && !sous) return "<td></td>";  // choix d'une sous-position (prix fixe « le plus élevé »)
 	const droit = frappe.perm.get_field_display_status(df, p, frm.perm);
 	const modifiable = ed && droit === "Write" && !cint(df.read_only) && LSI_SAISIE.includes(df.fieldtype);
 	const calcule = c === "cout_unitaire" && !cint(p.cout_manuel);  // coût calculé : modifiable seulement en « Coût manuel »

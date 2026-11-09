@@ -24,6 +24,7 @@ from frappe.utils import add_days, cint, cstr, flt, getdate, nowdate
 
 A_COUT, PRIX_FIXE, SOUS_POSITION = "À coût", "Prix fixe", "Sous-position"
 POOL, ARTICLE, FOURNISSEUR, SOMME, MANUEL = "Pool de ressources", "Article", "Prix fournisseur", "Somme des sous-positions", "Manuel"
+REGLE_SOUS = "Règle sur les sous-positions"  # prix fixe : les sous-positions sont des choix ; coût = le plus élevé (règle) ou la retenue
 DERNIER_PRIX, VALORISATION, LISTE_PRIX = "Dernier prix d'achat", "Valorisation", "Liste de prix d'achat"
 CHAMPS_COUT = ("cout_unitaire", "cout_total", "source_cout", "ressource", "ressource_doctype", "cout_manquant", "cout_en_attente",
 	"demande_prix", "cout_manuel", "prix_unitaire", "prix_total", "prix_conseille", "marge", "taux_marge")
@@ -370,6 +371,45 @@ def _cout_position(p, t):
 		p.cout_unitaire = cout
 
 
+def candidat_retenu(p, kids, t):
+	"""Prix fixe « règle » : (sous-position retenue, coût ramené à l'unité de la ligne, liste des candidats).
+	La sous-position cochée « Retenue » l'emporte ; sinon la règle du type (plus élevé par défaut) sur les coûts unitaires."""
+	candidats = []
+	for k in sorted(kids, key=lambda x: cle_numero(x.numero)):
+		f = facteur_uom(p.uom, k.uom) if k.uom and p.uom else 1  # unités de la sous-position dans une unité de la ligne
+		candidats.append((k, flt(k.cout_unitaire) * f if f else None))
+	cochees = [c for c in candidats if cint(c[0].get("retenue"))]
+	for k, _v in cochees[1:]:
+		k.retenue = 0  # une seule sous-position retenue
+	if cochees:
+		return cochees[0][0], cochees[0][1], candidats
+	valeurs = [v for _k, v in candidats if v is not None and not cint(_k.cout_manquant)]
+	cible = _regle(valeurs, t.regle)
+	if cible is None:
+		return None, None, candidats
+	k = min((c for c in candidats if c[1] is not None), key=lambda c: abs(c[1] - cible))[0]
+	return k, cible, candidats
+
+
+def _cout_regle_sous(p, kids, t):
+	"""Les sous-positions (ex. 3 films) gardent leur coût réel et ne sont pas additionnées : la ligne prend le coût de la
+	retenue, sinon le plus élevé (règle du type) ; coût total = coût unitaire × quantité. « Coût manuel » reste possible."""
+	p.cout_en_attente = 1 if any(cint(k.cout_en_attente) for k in kids) else 0
+	if not kids:
+		p.cout_unitaire, p.cout_total, p.cout_manquant, p.source_cout = 0, 0, 1, _("aucune sous-position")
+		return
+	k, cout, candidats = candidat_retenu(p, kids, t)
+	if k is None or cout is None or (cint(k.get("retenue")) and cint(k.cout_manquant)):
+		p.cout_unitaire, p.cout_total, p.cout_manquant = 0, 0, 1
+		p.source_cout = _("aucune sous-position avec un coût") if k is None else _("sous-position {0} sans coût ou sans conversion d'unité").format(k.numero or k.item_code)
+		return
+	p.cout_unitaire, p.cout_manquant = cout, 0
+	p.cout_total = flt(cout) * flt(p.qty)
+	nom = k.designation or k.item_code
+	p.source_cout = (_("sous-position retenue : {0}").format(nom) if cint(k.get("retenue"))
+		else _("{0} de {1} sous-position(s) : {2}").format(_(t.regle or "Plus élevé"), len(candidats), nom))
+
+
 # ------------------------------------------------------------------ calcul complet
 def _etapes_de(doc, p, par_num):
 	"""[(étape, fraction)] : répartition de la position, sinon de son groupe, sinon l'étape unique de l'EFT."""
@@ -432,6 +472,8 @@ def calculer(doc):
 			if cint(p.cout_manuel):
 				p.source_cout = _("coût saisi")
 				p.cout_total = flt(p.cout_unitaire) * flt(p.qty)
+			elif types.get(p.type_position) and types[p.type_position].source_cout == REGLE_SOUS:
+				_cout_regle_sous(p, kids, types[p.type_position])
 			else:
 				p.cout_total = sum(flt(k.cout_total) for k in kids)
 				p.cout_unitaire = p.cout_total / flt(p.qty) if flt(p.qty) else p.cout_total
@@ -515,7 +557,7 @@ def make_eft(opportunity):
 
 
 CHAMPS_APERCU_POSITION = ("numero", "groupe", "etape", "type_position", "mode", "tarif", "stock_disponible", "etapes", "cout_unitaire", "cout_total", "source_cout",
-	"ressource", "ressource_doctype", "cout_manquant", "cout_en_attente", "prix_unitaire", "prix_total", "prix_conseille", "marge", "taux_marge")
+	"ressource", "ressource_doctype", "cout_manquant", "cout_en_attente", "prix_unitaire", "prix_total", "prix_conseille", "marge", "taux_marge", "retenue")
 
 
 @frappe.whitelist(methods=["POST"])

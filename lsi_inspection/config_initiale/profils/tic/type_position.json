@@ -71,6 +71,16 @@
  },
  {
   "actif": 1,
+  "libelle": "Prix fixe (le plus élevé)",
+  "mode": "Prix fixe",
+  "name": "Prix fixe (le plus élevé)",
+  "regle": "Plus élevé",
+  "source_cout": "Règle sur les sous-positions",
+  "uom_defaut": "Unité",
+  "description": "Ligne facturée (ex. Film) qui liste ses choix possibles en sous-lignes (ex. 3 films) : chacun garde son coût réel ; la ligne prend le plus élevé (règle modifiable), ou la sous-ligne cochée « Retenue », ou un coût manuel."
+ },
+ {
+  "actif": 1,
   "champ_appartenance": "designation",
   "champ_cout": "lsi_cout_journalier",
   "filtres_ressources": "{\"status\": \"Active\"}",
