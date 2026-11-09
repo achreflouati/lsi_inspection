@@ -1,0 +1,29 @@
+[
+ {
+  "name": "Testeur TIC",
+  "role_profile": "Testeur TIC",
+  "roles": [
+   {
+    "role": "Sales User"
+   },
+   {
+    "role": "Validateur demande d'offre"
+   },
+   {
+    "role": "Etude technique"
+   },
+   {
+    "role": "Chiffreur"
+   },
+   {
+    "role": "Paramétreur commercial"
+   },
+   {
+    "role": "Paramétreur chiffrage"
+   },
+   {
+    "role": "Retour de test"
+   }
+  ]
+ }
+]
