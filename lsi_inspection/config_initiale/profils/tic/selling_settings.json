@@ -1,3 +1,5 @@
 {
- "allow_zero_qty_in_quotation": 1
+ "allow_zero_qty_in_quotation": 1,
+ "customer_group": "Commercial",
+ "territory": "Tunisia"
 }

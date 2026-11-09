@@ -59,18 +59,31 @@ def charger(profil=None):
 
 
 def _charger_reglages(dt, valeurs):
-	"""Réglage natif (document unique) : chaque champ n'est renseigné que s'il est encore à sa valeur d'origine."""
-	n = 0
+	"""Réglage natif (document unique) : chaque champ n'est renseigné que s'il est encore à sa valeur d'origine (vide, défaut
+	du champ, ou racine d'un arbre comme « Tous les groupes clients »). Enregistré par le document natif : ses propres
+	règles s'appliquent (ex. Selling Settings recopie groupe client et territoire dans les valeurs par défaut globales)."""
 	meta = frappe.get_meta(dt)
+	doc = frappe.get_single(dt)
+	changes = {}
 	for champ, valeur in (valeurs or {}).items():
 		df = meta.get_field(champ)
 		if not df:
 			continue
-		actuel = frappe.db.get_single_value(dt, champ)
-		if cstr(actuel) in ("", "0", cstr(df.default or "")) and cstr(actuel) != cstr(valeur):
-			frappe.db.set_single_value(dt, champ, valeur)
-			n += 1
-	return n
+		actuel = doc.get(champ)
+		if cstr(actuel) != cstr(valeur) and (cstr(actuel) in ("", "0", cstr(df.default or "")) or _racine(df, actuel)):
+			changes[champ] = valeur
+	if changes:
+		doc.update(changes)
+		doc.flags.ignore_permissions = True
+		doc.save()
+	return len(changes)
+
+
+def _racine(df, valeur):
+	if df.fieldtype != "Link" or not valeur or not frappe.get_meta(df.options).is_tree:
+		return False
+	parent = frappe.get_meta(df.options).get("nsm_parent_field") or f"parent_{frappe.scrub(df.options)}"
+	return not frappe.db.get_value(df.options, valeur, parent)
 
 
 def charger_dossier(dossier):

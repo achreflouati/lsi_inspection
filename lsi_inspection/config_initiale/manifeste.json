@@ -92,7 +92,9 @@
    "doctype": "Selling Settings",
    "single": 1,
    "champs": [
-    "allow_zero_qty_in_quotation"
+    "allow_zero_qty_in_quotation",
+    "customer_group",
+    "territory"
    ]
   },
   {

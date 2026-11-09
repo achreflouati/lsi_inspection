@@ -68,3 +68,15 @@ class TestConfig(TestLot2):
 			self.assertGreater(config.charger_dossier(a), 0)
 			config.exporter_profil("tic", dossier=b)
 			self.assertTrue(_identiques(a, b))
+
+	def test_reglage_unique_racine_remplacee_par_le_profil(self):
+		"""Un réglage à la racine d'un arbre (« tous les groupes ») est une valeur d'origine : le profil la remplace, par
+		l'enregistrement natif (qui recopie aussi la valeur par défaut globale). Une valeur choisie à l'écran est conservée."""
+		racine = frappe.db.get_value("Customer Group", {"is_group": 1, "parent_customer_group": ("in", ["", None])})
+		feuille = frappe.db.get_value("Customer Group", {"is_group": 0})
+		autre = frappe.db.get_value("Customer Group", {"is_group": 0, "name": ("!=", feuille)})
+		frappe.db.set_single_value("Selling Settings", "customer_group", racine)
+		self.assertEqual(config._charger_reglages("Selling Settings", {"customer_group": feuille}), 1)
+		self.assertEqual(frappe.db.get_single_value("Selling Settings", "customer_group"), feuille)
+		self.assertEqual(frappe.db.get_default("customer_group"), feuille)
+		self.assertEqual(config._charger_reglages("Selling Settings", {"customer_group": autre}), 0)  # déjà choisi : conservé
