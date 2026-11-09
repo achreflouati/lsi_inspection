@@ -20,7 +20,6 @@
  {
   "actif": 1,
   "champ_appartenance": "item_group",
-  "champ_cout": "last_purchase_rate",
   "filtres_ressources": "{\"disabled\": 0}",
   "libelle": "Consommable de la position à prix fixe (pool)",
   "mode": "Sous-position",
@@ -30,12 +29,11 @@
   "ressource_doctype": "Item",
   "source_cout": "Pool de ressources",
   "uom_defaut": "Unité",
-  "description": "Sous-ligne d'un prix fixe (ex. Film) : coût pris parmi les articles d'un groupe (ex. Films), le plus élevé par défaut ; un autre peut être choisi (Voir les ressources)."
+  "description": "Sous-ligne d'un prix fixe (ex. Film) : coût pris parmi les articles d'un groupe (ex. Films), le plus élevé par défaut (coût de chaque article selon sa source du coût : article ou groupe) ; un autre peut être choisi (Voir les ressources)."
  },
  {
   "actif": 1,
   "champ_appartenance": "item_group",
-  "champ_cout": "last_purchase_rate",
   "filtres_ressources": "{\"disabled\": 0}",
   "libelle": "Consommable à coût (pool)",
   "mode": "À coût",
@@ -45,7 +43,7 @@
   "ressource_doctype": "Item",
   "source_cout": "Pool de ressources",
   "uom_defaut": "Unité",
-  "description": "Ligne facturée (ex. Film) dont le coût est pris parmi les articles d'un groupe (ex. Films 1, 2, 3) selon la règle : dernier prix d'achat."
+  "description": "Ligne facturée (ex. Film) dont le coût est pris parmi les articles d'un groupe (ex. Films 1, 2, 3) selon la règle : source du coût de chaque article."
  },
  {
   "actif": 1,

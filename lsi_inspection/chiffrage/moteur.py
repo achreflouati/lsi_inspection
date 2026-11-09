@@ -249,13 +249,25 @@ def appliquer_gammes(doc):
 
 
 # ------------------------------------------------------------------ coûts
+def _ressources(t, pool, titre=None):
+	"""Ressources du pool avec leur coût. Pool d'articles sans champ de coût : coût de chaque article selon sa propre
+	« Source du coût » (article, sinon groupe : dernier prix d'achat, valorisation ou liste de prix d'achat)."""
+	filtres = {t.champ_appartenance: pool}
+	filtres.update(json.loads(t.filtres_ressources or "{}") or {})
+	champs = ["name"] + ([f"{titre} as titre"] if titre else [])
+	if t.ressource_doctype == "Item" and not t.champ_cout:
+		lignes = frappe.get_all("Item", filters=filtres, fields=champs)
+		for r in lignes:
+			r.cout = (_cout_article(frappe._dict(item_code=r.name, uom=None))[0]) or 0
+		return lignes
+	return frappe.get_all(t.ressource_doctype, filters=filtres, fields=champs + [f"{t.champ_cout} as cout"])
+
+
 def _cout_pool(p, t):
 	pool_dt, pool = frappe.db.get_value("Item", p.item_code, ["lsi_pool_doctype", "lsi_pool"]) or (None, None)
 	if pool_dt != t.pool_doctype or not pool:
 		return None, _("article sans pool {0}").format(_(t.pool_doctype))
-	filtres = {t.champ_appartenance: pool}
-	filtres.update(json.loads(t.filtres_ressources or "{}") or {})
-	ressources = [r for r in frappe.get_all(t.ressource_doctype, filters=filtres, fields=["name", f"{t.champ_cout} as cout"]) if flt(r.cout) > 0]
+	ressources = [r for r in _ressources(t, pool) if flt(r.cout) > 0]
 	p.ressource_doctype = t.ressource_doctype
 	choisie = next((r for r in ressources if p.ressource and r.name == p.ressource), None)
 	if choisie:
@@ -559,13 +571,11 @@ def voir_ressources(eft, numero):
 	if t.source_cout != POOL:
 		frappe.throw(_("La position {0} n'est pas chiffrée par un pool de ressources.").format(numero))
 	pool = frappe.db.get_value("Item", p.item_code, "lsi_pool")
-	filtres = {t.champ_appartenance: pool}
-	filtres.update(json.loads(t.filtres_ressources or "{}") or {})
 	meta = frappe.get_meta(t.ressource_doctype)
-	df = meta.get_field(t.champ_cout)
+	df = meta.get_field(t.champ_cout) if t.champ_cout else None
 	voit = (df.permlevel if df else 0) in meta.get_permlevel_access("read")
 	titre = meta.get_title_field()
-	lignes = frappe.get_all(t.ressource_doctype, filters=filtres, fields=["name", f"{titre} as titre", f"{t.champ_cout} as cout"])
+	lignes = _ressources(t, pool, titre)
 	return dict(pool=pool, regle=t.regle, choisie=p.ressource, voit_couts=voit, cout_retenu=p.cout_unitaire, uom_cout=t.uom_cout,
 		ressources=[dict(name=r.name, titre=r.titre or r.name, cout=flt(r.cout) if voit else None) for r in lignes])
 

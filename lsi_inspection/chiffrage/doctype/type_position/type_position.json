@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "field:libelle",
- "creation": "2026-11-08 16:00:54.683340",
+ "creation": "2026-11-09 02:34:52.271040",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -93,11 +93,11 @@
    "fieldtype": "Column Break"
   },
   {
-   "description": "Ex. lsi_cout_journalier.",
+   "description": "Ex. lsi_cout_journalier. Pool d'articles (Item) : laisser vide pour prendre le co\u00fbt de chaque article selon sa source du co\u00fbt (article ou groupe : dernier prix d'achat, valorisation, liste de prix d'achat).",
    "fieldname": "champ_cout",
    "fieldtype": "Data",
    "label": "Champ du co\u00fbt de la ressource",
-   "mandatory_depends_on": "eval:doc.source_cout=='Pool de ressources'"
+   "mandatory_depends_on": "eval:doc.source_cout=='Pool de ressources' && doc.ressource_doctype!='Item'"
   },
   {
    "description": "Unit\u00e9 dans laquelle le co\u00fbt de la ressource est exprim\u00e9 (ex. Jour).",
@@ -141,7 +141,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-08 16:00:54.683340",
+ "modified": "2026-11-09 10:35:20.154591",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "Type Position",

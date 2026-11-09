@@ -526,3 +526,26 @@ class TestChiffrage(TestChiffrageBase):
 		self._manquant(doc, "type de position à choisir")
 		doc.insert()
 		self.assertTrue(doc.positions[0].cout_manquant)
+
+	def test_pool_d_articles_source_du_cout_de_chaque_article(self):
+		"""Pool d'articles sans champ de coût : chaque film est chiffré selon la source de son groupe (liste de prix d'achat),
+		sans achat ni stock ; la ligne prend le plus élevé."""
+		racine = frappe.db.get_value("Item Group", {"is_group": 1, "parent_item_group": ("in", ["", None])})
+		films = frappe.get_doc(dict(doctype="Item Group", item_group_name=f"{P} Films LP", parent_item_group=racine, is_group=0,
+			lsi_source_cout="Liste de prix d'achat")).insert().name
+		typ = frappe.get_doc(dict(doctype="Type Position", libelle=f"{P} Consommable pool LP", actif=1, mode="À coût", source_cout="Pool de ressources",
+			pool_doctype="Item Group", ressource_doctype="Item", champ_appartenance="item_group", filtres_ressources='{"disabled": 0}',
+			regle="Plus élevé")).insert().name
+		for i, prix in enumerate([12, 15, 10], 1):
+			code = f"{P} Film LP {i}"
+			frappe.get_doc(dict(doctype="Item", item_code=code, item_name=code, item_group=films, stock_uom="Unité", is_stock_item=1,
+				include_item_in_manufacturing=0)).insert()
+			frappe.get_doc(dict(doctype="Item Price", item_code=code, price_list=self.liste, price_list_rate=prix, uom="Unité")).insert()
+		self.item(f"{P} Film LP", "Unité", lsi_pool_doctype="Item Group", lsi_pool=films)
+		doc = self._ligne_seule(f"{P} Film LP", typ, qty=3)
+		doc.insert()
+		p = doc.positions[0]
+		self.assertEqual((p.cout_unitaire, p.cout_total, p.cout_manquant), (15, 45, 0))
+		self.assertFalse(frappe.db.exists("Bin", {"item_code": f"{P} Film LP 2"}))  # aucun stock créé
+		r = moteur.voir_ressources(doc.name, p.numero)
+		self.assertEqual(sorted(x["cout"] for x in r["ressources"]), [10, 12, 15])
