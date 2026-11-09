@@ -218,7 +218,7 @@ lsi_eft.synthese = function (frm) {
 	const positions = frm.doc.positions || [];
 	const vendues = positions.filter((p) => !p.parente && p.item_code);
 	if (!vendues.length) {
-		f.$wrapper.html(`<p class="text-muted">${__("Ajoutez une prestation (bouton « Ajouter depuis une gamme ») pour commencer le chiffrage.")}</p>`);
+		f.$wrapper.html("");  // le message d'accueil est affiché par le tableau de chiffrage
 		return;
 	}
 	const qtes = (lignes) => {
