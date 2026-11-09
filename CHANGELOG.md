@@ -4,6 +4,13 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/). Une entrée p
 
 ## [Non publié]
 
+### Lot 3b — EFT unique, variantes de chiffrage (branche lot3b-variantes)
+- EFT = étude technique (une par opportunité) ; Chiffrage = variante (A, B, C…), un devis par variante, variante retenue.
+- Phases automatiques par configuration (EFT validée, Chiffrage validé, Variante retenue, Devis envoyé, Commande validée…) et
+  notifications natives (profil tic).
+- Reprise : renommage natif EFT → Chiffrage, chaque ancienne EFT → EFT + variante A (comptes contrôlés).
+- Code modulaire (constants.py, chiffrage/moteur/, commercial/phases/, JS commun), docs/dev/ARCHITECTURE.md et CONVENTIONS.md.
+
 ### Lot 3 — EFT / chiffrage (branche lot3-eft)
 - Module Chiffrage : EFT (groupes, positions vendues, sous-positions, tarifs à 0, répartition par étape), types de position
   configurables (pool générique Designation/Employee, Asset Category/Asset ; articles ; prix fournisseurs), gammes, modèles.

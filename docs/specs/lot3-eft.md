@@ -1,3 +1,5 @@
+> **Remplacé en partie par [lot3b-variantes.md](lot3b-variantes.md)** : l'« EFT » de ce document est devenue le **Chiffrage** (une variante) ; l'EFT est désormais l'étude technique.
+
 # Lot 3 — EFT / chiffrage (branche lot3-eft)
 
 Référence métier : `docs/references/exemple_projet.csv` (feuille Projet + 3 missions de TIC). Le modèle reproduit exactement la
