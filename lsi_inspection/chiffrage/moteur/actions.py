@@ -1,6 +1,7 @@
 """Actions de l'écran de chiffrage (menu Positions) : ressources, historique d'achat, demande de prix, prorata, partage."""
 
 import frappe
+from frappe.query_builder import Order
 from frappe import _
 from frappe.utils import add_days, cint, cstr, flt, getdate, nowdate
 
@@ -77,9 +78,12 @@ def historique_achat(item_code, limite=10):
 	frappe.has_permission("Item", "read", throw=True)
 	out = []
 	for dt, champ_date in (("Purchase Invoice", "posting_date"), ("Purchase Order", "transaction_date"), ("Supplier Quotation", "transaction_date")):
-		out += frappe.db.sql(f"""select '{dt}' as doctype, p.name, p.supplier, p.{champ_date} as date, i.rate, i.uom, i.qty
-			from `tab{dt} Item` i join `tab{dt}` p on p.name = i.parent
-			where i.item_code = %s and p.docstatus = 1 order by p.{champ_date} desc limit %s""", (item_code, cint(limite)), as_dict=True)
+		doc, ligne = frappe.qb.DocType(dt), frappe.qb.DocType(f"{dt} Item")
+		lignes = (frappe.qb.from_(ligne).join(doc).on(doc.name == ligne.parent)
+			.select(doc.name, doc.supplier, doc[champ_date].as_("date"), ligne.rate, ligne.uom, ligne.qty)
+			.where((ligne.item_code == item_code) & (doc.docstatus == 1)).orderby(doc[champ_date], order=Order.desc).limit(cint(limite))
+			).run(as_dict=True)
+		out += [frappe._dict(r, doctype=dt) for r in lignes]
 	return sorted(out, key=lambda r: getdate(r.date), reverse=True)[: cint(limite)]
 
 

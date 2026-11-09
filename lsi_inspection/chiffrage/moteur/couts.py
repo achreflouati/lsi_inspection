@@ -4,6 +4,7 @@ prix fixe « règle » (candidat retenu). Jamais d'exception : un coût introuva
 import json
 
 import frappe
+from frappe.query_builder.functions import Sum
 from frappe import _
 from frappe.utils import cint, cstr, flt, nowdate
 
@@ -47,13 +48,17 @@ def _types(doc):
 
 def valorisation(item_code):
 	"""Valorisation du stock : moyenne pondérée des entrepôts (Bin natif) ; à défaut, valorisation de la fiche article."""
-	r = frappe.db.sql("""select sum(stock_value), sum(actual_qty) from `tabBin` where item_code = %s and actual_qty > 0""", item_code)
+	Bin = frappe.qb.DocType("Bin")
+	r = (frappe.qb.from_(Bin).select(Sum(Bin.stock_value), Sum(Bin.actual_qty))
+		.where((Bin.item_code == item_code) & (Bin.actual_qty > 0))).run()
 	valeur, qty = r[0] if r else (0, 0)
 	return flt(valeur) / flt(qty) if flt(qty) else flt(frappe.db.get_value("Item", item_code, "valuation_rate"))
 
 
 def stock_disponible(item_code):
-	return flt(frappe.db.sql("select sum(actual_qty) from `tabBin` where item_code = %s", item_code)[0][0])
+	"""Quantité en stock de l'article, tous entrepôts (Bin natif)."""
+	Bin = frappe.qb.DocType("Bin")
+	return flt(frappe.qb.from_(Bin).select(Sum(Bin.actual_qty)).where(Bin.item_code == item_code).run()[0][0])
 
 
 def _ressources(t, pool, titre=None):
@@ -117,13 +122,14 @@ def _cout_article(p):
 
 
 def prix_fournisseurs(item_code):
+	"""Prix d'achat par fournisseur (Item Price) et offres fournisseurs validées encore valables de l'article."""
 	prix = [dict(fournisseur=r.supplier, prix=flt(r.price_list_rate), origine=_("Prix d'achat"), reference=r.name)
 		for r in frappe.get_all("Item Price", filters={"item_code": item_code, "buying": 1, "supplier": ("is", "set")},
 			fields=["name", "supplier", "price_list_rate"])]
-	for r in frappe.db.sql("""select sq.name, sq.supplier, sqi.rate from `tabSupplier Quotation Item` sqi
-			join `tabSupplier Quotation` sq on sq.name = sqi.parent
-			where sqi.item_code = %s and sq.docstatus = 1 and (sq.valid_till is null or sq.valid_till >= %s)""",
-			(item_code, nowdate()), as_dict=True):
+	sq, sqi = frappe.qb.DocType("Supplier Quotation"), frappe.qb.DocType("Supplier Quotation Item")
+	offres = (frappe.qb.from_(sqi).join(sq).on(sq.name == sqi.parent).select(sq.name, sq.supplier, sqi.rate)
+		.where((sqi.item_code == item_code) & (sq.docstatus == 1) & (sq.valid_till.isnull() | (sq.valid_till >= nowdate())))).run(as_dict=True)
+	for r in offres:
 		prix.append(dict(fournisseur=r.supplier, prix=flt(r.rate), origine=_("Offre fournisseur"), reference=r.name))
 	return [x for x in prix if x["prix"] > 0]
 

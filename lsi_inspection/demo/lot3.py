@@ -13,7 +13,7 @@ import json
 import os
 
 import frappe
-from frappe.utils import add_days, nowdate
+
 
 DEMO = "DÉMO lot 3"
 MARQUE = f"[{DEMO}]"
@@ -91,21 +91,30 @@ def _creer(dt, name, valeurs, champ_nom=None):
 
 # ------------------------------------------------------------------ données de base
 def _base():
+	"""Référentiels de l'exemple : groupes, liste d'achat, employés et immobilisations avec leur coût, articles et prix."""
 	company = frappe.defaults.get_global_default("company")
-	compte = frappe.get_all("Account", filters={"account_type": "Fixed Asset", "is_group": 0, "company": company}, pluck="name", limit=1)
+	liste = _groupes_et_liste(company)
+	_employes(company)
+	_immobilisations(company)
+	_articles(liste)
+	return company
+
+
+def _groupes_et_liste(company):
 	racine = frappe.db.get_value("Item Group", {"is_group": 1, "parent_item_group": ("in", ["", None])})
 	_creer("Item Group", GROUPE, dict(item_group_name=GROUPE, parent_item_group=racine, is_group=0, lsi_source_cout="Liste de prix d'achat",
 		lsi_marge_cible=30))
 	if not frappe.db.get_single_value("Buying Settings", "buying_price_list"):  # liste d'achat par défaut : réglage natif
 		_creer("Price List", ACHAT, dict(price_list_name=ACHAT, buying=1, selling=0, currency=frappe.db.get_value("Company", company, "default_currency")))
 		frappe.db.set_single_value("Buying Settings", "buying_price_list", ACHAT)
-	liste = frappe.db.get_single_value("Buying Settings", "buying_price_list")
 	for g, (type_pos, source, marge) in GROUPES.items():
 		_creer("Item Group", g, dict(item_group_name=g, parent_item_group=racine, is_group=0, lsi_type_position=type_pos,
 			lsi_source_cout=source, lsi_marge_cible=marge))
-	location = _creer("Location", "DÉMO Dépôt", dict(location_name="DÉMO Dépôt"))
-	genre = frappe.get_all("Gender", pluck="name", limit=1)[0]
+	return frappe.db.get_single_value("Buying Settings", "buying_price_list")
 
+
+def _employes(company):
+	genre = frappe.get_all("Gender", pluck="name", limit=1)[0]
 	for d, couts in DESIGNATIONS.items():
 		_creer("Designation", d, dict(designation_name=d, description=MARQUE))
 		for i, cout in enumerate(couts, 1):
@@ -116,6 +125,11 @@ def _base():
 				e.flags.ignore_permissions = True
 				e.insert()
 				_noter("Employee", e.name)
+
+
+def _immobilisations(company):
+	compte = frappe.get_all("Account", filters={"account_type": "Fixed Asset", "is_group": 0, "company": company}, pluck="name", limit=1)
+	location = _creer("Location", "DÉMO Dépôt", dict(location_name="DÉMO Dépôt"))
 	for cat, couts in CATEGORIES.items():
 		_creer("Asset Category", cat, dict(asset_category_name=cat, accounts=[dict(company_name=company, fixed_asset_account=compte[0])]))
 		materiel = f"DÉMO Matériel {cat}"
@@ -131,31 +145,34 @@ def _base():
 				a.insert()
 				_noter("Asset", a.name)
 
-	def article(code, uom, **kw):
-		valeurs = dict(item_code=code, item_name=code, item_group=_groupe_de(code) or GROUPE, stock_uom=uom, is_stock_item=0,
-			include_item_in_manufacturing=0, description=MARQUE)
-		valeurs.update(kw)
-		return _creer("Item", code, valeurs)
 
+def _article(code, uom, **kw):
+	valeurs = dict(item_code=code, item_name=code, item_group=_groupe_de(code) or GROUPE, stock_uom=uom, is_stock_item=0,
+		include_item_in_manufacturing=0, description=MARQUE)
+	valeurs.update(kw)
+	return _creer("Item", code, valeurs)
+
+
+def _articles(liste):
+	groupe_fournisseurs = frappe.get_all("Supplier Group", pluck="name", limit=1)[0]
 	for p in PRESTATIONS:
-		article(p, "Unité")
+		_article(p, "Unité")
 	for code, uom, pool_dt, pool in SERVICES:
-		article(code, uom, lsi_pool_doctype=pool_dt, lsi_pool=pool)
+		_article(code, uom, lsi_pool_doctype=pool_dt, lsi_pool=pool)
 	for code, uom in PRIX_FIXE:
-		article(code, uom)
+		_article(code, uom)
 	for code, uom, prix in ARTICLES:
-		article(code, uom, is_stock_item=1 if code in CONSOMMABLES else 0)
+		_article(code, uom, is_stock_item=1 if code in CONSOMMABLES else 0)
 		if not frappe.db.exists("Item Price", {"item_code": code, "price_list": liste}):
 			_creer("Item Price", None, dict(item_code=code, price_list=liste, price_list_rate=prix, uom=uom), champ_nom=True)
 	for code, prix_fournisseurs in SOUS_TRAITANCE.items():
-		article(code, "Unité")
+		_article(code, "Unité")
 		for fournisseur, prix in prix_fournisseurs:
-			_creer("Supplier", fournisseur, dict(supplier_name=fournisseur, supplier_group=frappe.get_all("Supplier Group", pluck="name", limit=1)[0]))
+			_creer("Supplier", fournisseur, dict(supplier_name=fournisseur, supplier_group=groupe_fournisseurs))
 			if not frappe.db.exists("Item Price", {"item_code": code, "supplier": fournisseur}):
 				_creer("Item Price", None, dict(item_code=code, price_list=liste, supplier=fournisseur, price_list_rate=prix, uom="Unité"), champ_nom=True)
 	for fournisseur in ("DÉMO Laboratoire d'essais",):  # pour la demande de prix (T3.7)
-		_creer("Supplier", fournisseur, dict(supplier_name=fournisseur, supplier_group=frappe.get_all("Supplier Group", pluck="name", limit=1)[0]))
-	return company
+		_creer("Supplier", fournisseur, dict(supplier_name=fournisseur, supplier_group=groupe_fournisseurs))
 
 
 # ------------------------------------------------------------------ groupes d'articles (type de position par défaut) et stock

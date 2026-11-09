@@ -66,7 +66,14 @@ class TestChiffrageBase(TestLot2):
 
 	# ------------------------------------------------------------------ configuration et données de test
 	def construire(self):
-		company = self.company
+		"""Configuration et données du test : types de position, groupe et liste d'achat, ressources (employés, immobilisations),
+		fournisseurs, articles de l'exemple."""
+		self._types_de_test()
+		self._groupe_et_liste()
+		self._ressources()
+		self._articles_exemple()
+
+	def _types_de_test(self):
 		frappe.db.set_single_value("Selling Settings", "allow_zero_qty_in_quotation", 1)
 		if not frappe.db.exists("UOM Conversion Factor", {"from_uom": "Jour", "to_uom": "Heure"}):
 			frappe.get_doc(dict(doctype="UOM Conversion Factor", category="Temps", from_uom="Jour", to_uom="Heure", value=8)).insert()
@@ -87,10 +94,15 @@ class TestChiffrageBase(TestLot2):
 			if "de la position" in cle:
 				v["mode"] = "Sous-position"
 			frappe.get_doc(dict(doctype="Type Position", libelle=nom, actif=1, **v)).insert()
+
+	def _groupe_et_liste(self):
 		racine = frappe.db.get_value("Item Group", {"is_group": 1, "parent_item_group": ("in", ["", None])})
 		self.groupe = frappe.get_doc(dict(doctype="Item Group", item_group_name=f"{P} Groupe", parent_item_group=racine, is_group=0,
 			lsi_source_cout="Liste de prix d'achat", lsi_marge_cible=30)).insert().name
 		self.liste = frappe.db.get_single_value("Buying Settings", "buying_price_list")
+
+	def _ressources(self):
+		company = self.company
 		self.employes, self.actifs = {}, {}
 		genre = frappe.get_all("Gender", pluck="name", limit=1)[0]
 		for d, couts in DESIGNATIONS.items():
@@ -111,6 +123,8 @@ class TestChiffrageBase(TestLot2):
 					purchase_date="2024-01-01", available_for_use_date="2024-01-01", gross_purchase_amount=1000, is_existing_asset=1,
 					calculate_depreciation=0, lsi_cout_journalier=cout)).insert()
 				self.actifs.setdefault(cat, []).append(a.name)
+
+	def _articles_exemple(self):
 		groupe_fournisseurs = frappe.get_all("Supplier Group", pluck="name", limit=1)[0]
 		self.fournisseurs = []
 		for i in range(1, 4):
@@ -176,7 +190,6 @@ class TestChiffrageBase(TestLot2):
 			if l["type"] == "En-tête groupe":
 				groupe = l["pos"]
 				doc.append("groupes", dict(numero=groupe, titre=l["d1"]))
-				etapes = []
 				continue
 			parente = l["pos"].rsplit(".", 1)[0] if l["pos"].count(".") == 2 else None
 			doc.append("positions", dict(numero=l["pos"], groupe=groupe, parente=parente, type_position=TYPES[l["type"]], item_code=article(l["d1"]),
