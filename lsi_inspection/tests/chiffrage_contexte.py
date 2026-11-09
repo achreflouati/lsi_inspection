@@ -146,6 +146,13 @@ class TestChiffrageBase(TestLot2):
 			self._etude = frappe.get_doc(dict(doctype="EFT", opportunity=opp.name, company=self.company, customer=self.client())).insert().name
 		return self._etude
 
+	def valider_chiffrage(self, doc):
+		"""Brouillon → Chiffrée → Validée (workflow natif)."""
+		from frappe.model.workflow import apply_workflow
+
+		apply_workflow(frappe.get_doc("Chiffrage", doc.name), "Chiffrer")
+		return apply_workflow(frappe.get_doc("Chiffrage", doc.name), "Valider")
+
 	def nouveau_chiffrage(self):
 		"""Chiffrage (variante) vide rattaché à l'EFT du test."""
 		doc = frappe.new_doc("Chiffrage")

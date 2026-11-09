@@ -12,7 +12,7 @@ from lsi_inspection.chiffrage.variantes import lettre_suivante
 
 
 def execute():
-	if frappe.db.exists("Chiffrage", {"eft": ("is", "set")}) or not frappe.db.count("Chiffrage"):
+	if not frappe.db.exists("Chiffrage", {"eft": ("is", "not set")}):
 		return  # déjà repris, ou rien à reprendre
 	avant = _comptes("lsi_eft")  # avant reprise, lsi_eft du devis désigne l'ancienne EFT (le chiffrage)
 	_champs()
@@ -52,7 +52,7 @@ def _chaine(racine):
 
 def _reprendre_chiffrages():
 	"""Une EFT par opportunité (ou par ancienne EFT sans opportunité) ; variantes A, B… dans l'ordre de création."""
-	racines = frappe.get_all("Chiffrage", filters={"amended_from": ("is", "not set")}, order_by="creation asc",
+	racines = frappe.get_all("Chiffrage", filters={"amended_from": ("is", "not set"), "eft": ("is", "not set")}, order_by="creation asc",
 		fields=["name", "opportunity", "customer", "company", "bu", "service", "titre", "date"])
 	groupes = {}
 	for r in racines:
