@@ -15,6 +15,7 @@ frappe.ui.form.on("Departement Concerne", {
 frappe.ui.form.on("Opportunity", {
 	refresh(frm) {
 		lsi.phases.durees(frm);
+		lsi.devis_hors_eft(frm);
 		if (!frm.is_new() && frappe.model.can_create("EFT")) {
 			frm.add_custom_button(__("EFT"), () =>
 				frappe.call({ method: "lsi_inspection.chiffrage.moteur.make_eft", args: { opportunity: frm.doc.name }, freeze: true })
@@ -151,4 +152,12 @@ lsi.phases.durees = function (frm) {
 		<p class="text-muted small">${__(
 			"* phase obligatoire (ne peut pas être sautée à la main). Survol d'une phase sautée : le document qui a provoqué le saut."
 		)}</p>`);
+};
+
+// Le devis se crée depuis l'EFT (« Créer le devis »). Le bouton natif Créer > Devis de l'opportunité (et le « + » Devis des
+// connexions) ne sont visibles qu'avec le rôle « Devis hors EFT » : réactivable en donnant ce rôle, sans toucher au code.
+lsi.devis_hors_eft = function (frm) {
+	if (frappe.user.has_role("Devis hors EFT")) return;
+	frm.remove_custom_button(__("Quotation"), __("Create"));
+	setTimeout(() => $(frm.wrapper).find('.document-link[data-doctype="Quotation"] .btn-new').hide(), 500);
 };
