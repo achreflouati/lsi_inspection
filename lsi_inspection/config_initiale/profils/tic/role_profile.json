@@ -23,6 +23,21 @@
    },
    {
     "role": "Retour de test"
+   },
+   {
+    "role": "Sales Manager"
+   },
+   {
+    "role": "Item Manager"
+   },
+   {
+    "role": "Stock User"
+   },
+   {
+    "role": "Purchase User"
+   },
+   {
+    "role": "Purchase Manager"
    }
   ]
  }
