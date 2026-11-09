@@ -1,0 +1,18 @@
+[
+ {
+  "name": "Erreur",
+  "description": "Le logiciel fait quelque chose de faux ou affiche une erreur."
+ },
+ {
+  "name": "Manque",
+  "description": "Une fonction ou une information attendue n'existe pas."
+ },
+ {
+  "name": "Mauvaise compréhension",
+  "description": "Le comportement est correct mais pas celui attendu par le métier, ou l'écran n'est pas clair."
+ },
+ {
+  "name": "Suggestion",
+  "description": "Idée d'amélioration."
+ }
+]

@@ -42,5 +42,42 @@
   "send_to_all_assignees": 0,
   "subject": "{{ doc.name }} : étude technique — départements concernés",
   "value_changed": "sales_stage"
+ },
+ {
+  "channel": "Email",
+  "document_type": "Issue",
+  "enabled": 1,
+  "is_standard": 0,
+  "condition": "doc.priority == \"Bloquant\"",
+  "message": "<p>Retour <b>{{ doc.priority }}</b> ({{ doc.issue_type or '' }}) signalé par {{ doc.owner }}.</p><p><b>{{ doc.subject }}</b></p>{% if doc.lsi_document_type %}<p>Document : {{ doc.lsi_document_type }} {{ doc.lsi_document or '' }}{% if doc.lsi_etape_test %} — étape de test {{ doc.lsi_etape_test }}{% endif %}</p>{% endif %}<div>{{ doc.description or '' }}</div><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">Ouvrir le retour {{ doc.name }}</a></p>",
+  "message_type": "HTML",
+  "recipients": [
+   {
+    "cc": "lsi.louati@gmail.com"
+   }
+  ],
+  "subject": "Retour bloquant {{ doc.name }} : {{ doc.subject }}",
+  "send_system_notification": 0,
+  "name": "Retour de test bloquant",
+  "event": "New"
+ },
+ {
+  "channel": "Email",
+  "document_type": "Issue",
+  "enabled": 1,
+  "is_standard": 0,
+  "condition": "doc.priority == \"Bloquant\"",
+  "message": "<p>Retour <b>{{ doc.priority }}</b> ({{ doc.issue_type or '' }}) signalé par {{ doc.owner }}.</p><p><b>{{ doc.subject }}</b></p>{% if doc.lsi_document_type %}<p>Document : {{ doc.lsi_document_type }} {{ doc.lsi_document or '' }}{% if doc.lsi_etape_test %} — étape de test {{ doc.lsi_etape_test }}{% endif %}</p>{% endif %}<div>{{ doc.description or '' }}</div><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">Ouvrir le retour {{ doc.name }}</a></p>",
+  "message_type": "HTML",
+  "recipients": [
+   {
+    "cc": "lsi.louati@gmail.com"
+   }
+  ],
+  "subject": "Retour bloquant {{ doc.name }} : {{ doc.subject }}",
+  "send_system_notification": 0,
+  "name": "Retour de test passé en bloquant",
+  "event": "Value Change",
+  "value_changed": "priority"
  }
 ]

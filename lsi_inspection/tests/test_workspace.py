@@ -57,5 +57,5 @@ class TestWorkspace(IntegrationTestCase):
 
 		page = get_desktop_page(json.dumps({"name": WORKSPACE, "title": WORKSPACE, "public": 1}))
 		self.assertTrue({"Commercial", "Paramétrage commercial", "Chiffrage", "Paramétrage chiffrage"} <= {c.label for c in page["cards"]["items"]})
-		self.assertEqual(len(page["shortcuts"]["items"]), 2)
+		self.assertEqual(len(page["shortcuts"]["items"]), 4)
 		self.assertEqual(len(page["charts"]["items"]), 1)

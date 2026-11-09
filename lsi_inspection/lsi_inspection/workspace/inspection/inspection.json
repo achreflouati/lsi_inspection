@@ -5,7 +5,7 @@
    "label": "Opportunit\u00e9s ouvertes par phase"
   }
  ],
- "content": "[{\"id\": \"lsi1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Inspection</b></span>\", \"col\": 12}}, {\"id\": \"lsi2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Mes opportunit\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Opportunit\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi4\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Opportunites par phase\", \"col\": 12}}, {\"id\": \"lsi5\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Commercial</b></span>\", \"col\": 12}}, {\"id\": \"lsi6\", \"type\": \"card\", \"data\": {\"card_name\": \"Commercial\", \"col\": 4}}, {\"id\": \"lsi7\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\u00e9trage commercial\", \"col\": 4}}, {\"id\": \"lsi8\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Chiffrage</b></span>\", \"col\": 12}}, {\"id\": \"lsi9\", \"type\": \"card\", \"data\": {\"card_name\": \"Chiffrage\", \"col\": 4}}, {\"id\": \"lsi10\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\u00e9trage chiffrage\", \"col\": 4}}]",
+ "content": "[{\"id\": \"lsi1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Inspection</b></span>\", \"col\": 12}}, {\"id\": \"lsi2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Mes opportunit\\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Opportunit\\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi_retour\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Signaler un retour\", \"col\": 3}}, {\"id\": \"lsi_retours\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Retours de test\", \"col\": 3}}, {\"id\": \"lsi4\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Opportunites par phase\", \"col\": 12}}, {\"id\": \"lsi5\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Commercial</b></span>\", \"col\": 12}}, {\"id\": \"lsi6\", \"type\": \"card\", \"data\": {\"card_name\": \"Commercial\", \"col\": 4}}, {\"id\": \"lsi7\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\\u00e9trage commercial\", \"col\": 4}}, {\"id\": \"lsi8\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Chiffrage</b></span>\", \"col\": 12}}, {\"id\": \"lsi9\", \"type\": \"card\", \"data\": {\"card_name\": \"Chiffrage\", \"col\": 4}}, {\"id\": \"lsi10\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\\u00e9trage chiffrage\", \"col\": 4}}]",
  "creation": "2026-11-08 12:14:48.901026",
  "custom_blocks": [],
  "docstatus": 0,
@@ -372,6 +372,24 @@
    "label": "Opportunit\u00e9s ouvertes",
    "link_to": "Opportunity",
    "stats_filter": "[[\"Opportunity\",\"status\",\"=\",\"Open\"]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "New",
+   "format": "",
+   "label": "Signaler un retour",
+   "link_to": "Issue",
+   "stats_filter": "",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "format": "{} ouvert(s)",
+   "label": "Retours de test",
+   "link_to": "Issue",
+   "stats_filter": "[[\"Issue\",\"status\",\"=\",\"Open\"]]",
    "type": "DocType"
   }
  ],

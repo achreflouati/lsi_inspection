@@ -48,7 +48,8 @@ class TestLot2(IntegrationTestCase):
 	@staticmethod
 	def etat_site():
 		return dict(utilisateurs=frappe.db.count("User"), email_queue=frappe.db.count("Email Queue"),
-			notification_log=frappe.db.count("Notification Log"), opportunites=frappe.db.count("Opportunity"))
+			notification_log=frappe.db.count("Notification Log"), opportunites=frappe.db.count("Opportunity"),
+			retours=frappe.db.count("Issue"))
 
 	# ------------------------------------------------------------------ référentiels
 	def etape(self, nom):

@@ -1,0 +1,14 @@
+[
+ {
+  "name": "Bloquant",
+  "description": "Empêche de continuer le test."
+ },
+ {
+  "name": "Important",
+  "description": "Gênant, contournement possible."
+ },
+ {
+  "name": "Mineur",
+  "description": "Détail."
+ }
+]

@@ -63,8 +63,11 @@
    "filtres": [
     [
      "document_type",
-     "=",
-     "Opportunity"
+     "in",
+     [
+      "Opportunity",
+      "Issue"
+     ]
     ],
     [
      "module",
@@ -105,6 +108,22 @@
   },
   {
    "doctype": "Modele EFT"
+  },
+  {
+   "doctype": "Issue Type"
+  },
+  {
+   "doctype": "Issue Priority"
+  },
+  {
+   "doctype": "Role Profile",
+   "filtres": [
+    [
+     "name",
+     "=",
+     "Testeur TIC"
+    ]
+   ]
   }
  ]
 }
