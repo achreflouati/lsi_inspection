@@ -139,6 +139,19 @@ class TestChiffrageBase(TestLot2):
 			else:
 				self.item(article(d1), l["uom"] or "Unité")  # article à prix fixe (ligne de facturation)
 
+	def etude(self):
+		"""EFT (étude technique) du test : une opportunité minimale et son EFT, créées une fois par test."""
+		if not getattr(self, "_etude", None):
+			opp = frappe.get_doc(dict(doctype="Opportunity", opportunity_from="Customer", party_name=self.client(), company=self.company)).insert()
+			self._etude = frappe.get_doc(dict(doctype="EFT", opportunity=opp.name, company=self.company, customer=self.client())).insert().name
+		return self._etude
+
+	def nouveau_chiffrage(self):
+		"""Chiffrage (variante) vide rattaché à l'EFT du test."""
+		doc = frappe.new_doc("Chiffrage")
+		doc.eft = self.etude()
+		return doc
+
 	def item(self, code, uom, **kw):
 		if not frappe.db.exists("Item", code):
 			frappe.get_doc(dict(doctype="Item", item_code=code, item_name=code, item_group=self.groupe, stock_uom=uom, is_stock_item=0,
@@ -147,7 +160,7 @@ class TestChiffrageBase(TestLot2):
 
 	# ------------------------------------------------------------------ EFT de l'exemple (directement depuis la feuille Projet)
 	def eft_exemple(self, prix=True, **kw):
-		doc = frappe.new_doc("EFT")
+		doc = self.nouveau_chiffrage()
 		doc.update(dict(titre=f"{P} exemple", company=self.company, customer=self.client(), **kw))
 		for e in ETAPES.values():
 			doc.append("etapes", dict(prestation=e, qty=1, gamme_appliquee=1))

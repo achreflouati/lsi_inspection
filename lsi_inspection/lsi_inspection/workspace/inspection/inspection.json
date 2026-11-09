@@ -70,7 +70,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Param\u00e9trage commercial",
-   "link_count": 10,
+   "link_count": 9,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -169,7 +169,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Chiffrage",
-   "link_count": 5,
+   "link_count": 7,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -187,7 +187,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "EFT (chiffrage)",
+   "label": "EFT (\u00e9tude technique)",
    "link_count": 0,
    "link_to": "EFT",
    "link_type": "DocType",
@@ -197,9 +197,19 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Mod\u00e8le d'EFT",
+   "label": "Chiffrage (variantes)",
    "link_count": 0,
-   "link_to": "Modele EFT",
+   "link_to": "Chiffrage",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mod\u00e8le de chiffrage",
+   "link_count": 0,
+   "link_to": "Modele Chiffrage",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -207,9 +217,9 @@
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Besoins de l'EFT",
+   "label": "Besoins du chiffrage",
    "link_count": 0,
-   "link_to": "Besoins EFT",
+   "link_to": "Besoins Chiffrage",
    "link_type": "Report",
    "onboard": 0,
    "report_ref_doctype": "EFT",
@@ -345,7 +355,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-09 00:55:45.248069",
+ "modified": "2026-11-09 17:00:00.000000",
  "modified_by": "Administrator",
  "module": "LSI Inspection",
  "name": "Inspection",

@@ -4,7 +4,7 @@ import frappe
 from frappe.model.workflow import apply_workflow
 from frappe.utils import flt
 
-from lsi_inspection.chiffrage import devis, etude, moteur
+from lsi_inspection.chiffrage import devis, etude, moteur, variantes
 from lsi_inspection.constants import REGLE_SOUS
 from lsi_inspection.tests.chiffrage_contexte import (
 	CATEGORIES, DESIGNATIONS, ETAPES, PRIX, TYPES, TestChiffrageBase, article, lire_projet,
@@ -51,11 +51,11 @@ class TestChiffrage(TestChiffrageBase):
 		doc = self.eft_exemple()
 		moins_cher = self.employes["Inspecteur RT niveau II"][0]
 		moteur.choisir_ressource(doc.name, "1.1", moins_cher)
-		p = self.pos(frappe.get_doc("EFT", doc.name), "1.1")
+		p = self.pos(frappe.get_doc("Chiffrage", doc.name), "1.1")
 		self.assertEqual((p.cout_unitaire, p.ressource), (DESIGNATIONS["Inspecteur RT niveau II"][0], moins_cher))
 		self.assertIn(moins_cher, p.source_cout)
 		moteur.choisir_ressource(doc.name, "1.1", None)  # retour à la règle du pool
-		self.assertEqual(self.pos(frappe.get_doc("EFT", doc.name), "1.1").cout_unitaire, max(DESIGNATIONS["Inspecteur RT niveau II"]))
+		self.assertEqual(self.pos(frappe.get_doc("Chiffrage", doc.name), "1.1").cout_unitaire, max(DESIGNATIONS["Inspecteur RT niveau II"]))
 
 	def test_regle_moyenne_type_ajoute_a_l_ecran_sans_code(self):
 		self.utilisateur(f"param.{P.lower()}@example.com", ["Paramétreur chiffrage"])
@@ -126,10 +126,10 @@ class TestChiffrage(TestChiffrageBase):
 
 		doc = self.eft_exemple()
 		rfq_name = moteur.demander_prix(doc.name, "3.2", frappe.as_json([self.fournisseurs[2]]))
-		p = self.pos(frappe.get_doc("EFT", doc.name), "3.2")
+		p = self.pos(frappe.get_doc("Chiffrage", doc.name), "3.2")
 		self.assertEqual((p.demande_prix, p.cout_en_attente, p.cout_manquant), (rfq_name, 1, 0))
 		rfq = frappe.get_doc("Request for Quotation", rfq_name)
-		self.assertEqual(rfq.lsi_eft, doc.name)
+		self.assertEqual(rfq.lsi_chiffrage, doc.name)
 		for s in rfq.suppliers:
 			s.send_email = 0
 		rfq.save()
@@ -139,13 +139,13 @@ class TestChiffrage(TestChiffrageBase):
 			it.rate = 75
 		sq.insert()
 		sq.submit()  # hook : l'EFT (brouillon) est recalculée
-		p = self.pos(frappe.get_doc("EFT", doc.name), "3.2")
+		p = self.pos(frappe.get_doc("Chiffrage", doc.name), "3.2")
 		self.assertEqual((p.cout_unitaire, p.cout_en_attente, p.cout_manquant), (75, 0, 0))
 
 	# ------------------------------------------------------------------ fraîcheur
 	def _valider(self, doc):
-		doc = apply_workflow(frappe.get_doc("EFT", doc.name), "Chiffrer")
-		return apply_workflow(frappe.get_doc("EFT", doc.name), "Valider")
+		doc = apply_workflow(frappe.get_doc("Chiffrage", doc.name), "Chiffrer")
+		return apply_workflow(frappe.get_doc("Chiffrage", doc.name), "Valider")
 
 	def test_recalcul_en_brouillon_sauf_cout_manuel(self):
 		doc = self.eft_exemple()
@@ -160,7 +160,7 @@ class TestChiffrage(TestChiffrageBase):
 		doc = self._valider(self.eft_exemple())
 		self.assertEqual((doc.docstatus, doc.workflow_state), (1, "Validée"))
 		frappe.db.set_value("Asset", {"asset_name": f"{P} PROJECTEUR GAMMA 2"}, "lsi_cout_journalier", 130)
-		doc = frappe.get_doc("EFT", doc.name)
+		doc = frappe.get_doc("Chiffrage", doc.name)
 		self.assertEqual(self.pos(doc, "1.9").cout_unitaire, max(CATEGORIES["PROJECTEUR GAMMA"]))
 
 	def test_dupliquer_et_amend_recalculent(self):
@@ -170,12 +170,12 @@ class TestChiffrage(TestChiffrageBase):
 		copie.docstatus = 0
 		copie.insert()
 		self.assertEqual(self.pos(copie, "1.9").cout_unitaire, 130)
-		doc = apply_workflow(frappe.get_doc("EFT", doc.name), "Annuler")
+		doc = apply_workflow(frappe.get_doc("Chiffrage", doc.name), "Annuler")
 		amende = frappe.copy_doc(doc, ignore_no_copy=False)  # comme « Amender » dans l'interface
 		amende.docstatus = 0
 		amende.amended_from = doc.name
 		amende.insert()
-		self.assertEqual(frappe.db.get_value("EFT", amende.name, "amended_from"), doc.name)  # version d'origine tracée
+		self.assertEqual(frappe.db.get_value("Chiffrage", amende.name, "amended_from"), doc.name)  # version d'origine tracée
 		self.assertEqual(self.pos(amende, "1.9").cout_unitaire, 130)
 
 	# ------------------------------------------------------------------ gammes, modèles, prorata
@@ -191,7 +191,7 @@ class TestChiffrage(TestChiffrageBase):
 
 	def test_gamme_fois_quantite(self):
 		rt, lignes = self._gamme_rt()
-		doc = frappe.get_doc(dict(doctype="EFT", titre=f"{P} gamme", company=self.company, etapes=[dict(prestation=rt, qty=2)])).insert()
+		doc = frappe.get_doc(dict(doctype="Chiffrage", eft=self.etude(), titre=f"{P} gamme", company=self.company, etapes=[dict(prestation=rt, qty=2)])).insert()
 		self.assertEqual([g.titre for g in doc.groupes], ["Contrôle par Radiographie (Vacation)"])
 		self.assertEqual([p.numero for p in doc.positions], [l["pos"] for l in lignes])
 		self.assertEqual(self.pos(doc, "1.17").qty, 6)  # 3 × 2
@@ -207,9 +207,9 @@ class TestChiffrage(TestChiffrageBase):
 			if l["type"] not in ("En-tête groupe", "Article à côut", "Article de la position à prix fixe"):
 				frappe.db.set_value("Item", article(l["d1"]), "lsi_type_position", TYPES[l["type"]])
 		rt, lignes = self._gamme_rt(avec_numeros=False, avec_types=False)
-		doc = frappe.get_doc(dict(doctype="EFT", titre=f"{P} bouton", company=self.company)).insert()
+		doc = frappe.get_doc(dict(doctype="Chiffrage", eft=self.etude(), titre=f"{P} bouton", company=self.company)).insert()
 		moteur.ajouter_gamme(doc.name, rt, 1)
-		doc = frappe.get_doc("EFT", doc.name)
+		doc = frappe.get_doc("Chiffrage", doc.name)
 		principales = [p for p in doc.positions if not p.parente]
 		self.assertEqual([p.numero for p in principales], [f"1.{i}" for i in range(1, len(principales) + 1)])  # 1.1 … 1.12
 		film = next(p for p in principales if p.item_code == article("Film"))
@@ -246,12 +246,12 @@ class TestChiffrage(TestChiffrageBase):
 
 	def test_modele_sans_couts_et_chargement(self):
 		doc = self.eft_exemple()
-		m = frappe.get_doc("Modele EFT", moteur.enregistrer_modele(doc.name, f"{P} modèle"))
+		m = frappe.get_doc("Modele Chiffrage", moteur.enregistrer_modele(doc.name, f"{P} modèle"))
 		self.assertEqual(len(m.positions), 33)
 		self.assertFalse(any(flt(p.cout_unitaire) or flt(p.prix_unitaire) or p.ressource for p in m.positions))
-		cible = frappe.get_doc(dict(doctype="EFT", titre=f"{P} cible", company=self.company)).insert()
+		cible = frappe.get_doc(dict(doctype="Chiffrage", eft=self.etude(), titre=f"{P} cible", company=self.company)).insert()
 		moteur.charger_modele(cible.name, m.name)
-		cible = frappe.get_doc("EFT", cible.name)
+		cible = frappe.get_doc("Chiffrage", cible.name)
 		self.assertEqual(len(cible.positions), 33)
 		self.assertEqual(self.pos(cible, "1.1").cout_unitaire, max(DESIGNATIONS["Inspecteur RT niveau II"]))  # recalcul immédiat
 
@@ -260,7 +260,7 @@ class TestChiffrage(TestChiffrageBase):
 		self.pos(doc, "1.17").qty = 6
 		doc.save()
 		moteur.repartir_prorata(doc.name, "1.17")
-		doc = frappe.get_doc("EFT", doc.name)
+		doc = frappe.get_doc("Chiffrage", doc.name)
 		self.assertEqual([self.pos(doc, n).qty for n in ("1.17.1", "1.17.2", "1.17.3")], [2, 2, 2])
 
 	def test_structure_invalide(self):
@@ -276,7 +276,7 @@ class TestChiffrage(TestChiffrageBase):
 		vendues = [p for p in doc.positions if not p.parente]
 		self.assertEqual([i.lsi_numero_position for i in q.items], [p.numero for p in vendues])
 		self.assertFalse([i for i in q.items if i.lsi_numero_position.count(".") == 2])  # aucune sous-position
-		self.assertEqual(q.lsi_eft, doc.name)
+		self.assertEqual(q.lsi_chiffrage, doc.name)
 		tarif = next(i for i in q.items if i.lsi_numero_position == "1.2")
 		self.assertEqual((tarif.qty, tarif.rate, tarif.amount, tarif.lsi_tarif), (0, PRIX["1.2"], 0, 1))
 		self.assertAlmostEqual(q.net_total, doc.total_prix, 2)
@@ -309,7 +309,7 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertEqual(sorted(x["cout"] for x in r["ressources"]), sorted(DESIGNATIONS["Inspecteur RT niveau II"]))
 
 	def test_rapport_besoins(self):
-		from lsi_inspection.chiffrage.report.besoins_eft.besoins_eft import besoins
+		from lsi_inspection.chiffrage.report.besoins_chiffrage.besoins_chiffrage import besoins
 
 		doc = self.eft_exemple()
 		lignes = besoins(doc)
@@ -330,7 +330,7 @@ class TestChiffrage(TestChiffrageBase):
 			(20, "T Étude", "Commercial", evt), (30, "T Chiffrage", "Commercial", "Manuel")])
 		o = self.opportunite(t)
 		phases.terminer_phase(o.name)  # → T Étude
-		eft = etude.make_eft(o.name)
+		eft = etude.ouvrir_ou_creer(o.name)
 		o = self.recharger(o)
 		self.assertEqual(o.sales_stage, "T Chiffrage")
 		self.assertEqual(o.lsi_historique_phases[-1].document_name, eft)
@@ -344,7 +344,7 @@ class TestChiffrage(TestChiffrageBase):
 		r = moteur.apercu(frappe.as_json(brouillon))
 		self.assertEqual(r["positions"][ligne["name"]]["cout_total"], 3 * max(DESIGNATIONS["Inspecteur RT niveau II"]))
 		self.assertEqual(r["positions"][ligne["name"]]["etape_principale"], ETAPES["Contrôle par Radiographie (RT)"])
-		self.assertEqual(frappe.db.get_value("EFT Position", ligne["name"], "qty"), 1)  # rien d'enregistré
+		self.assertEqual(frappe.db.get_value("Chiffrage Position", ligne["name"], "qty"), 1)  # rien d'enregistré
 		self.pos(doc, "1.1").qty = 3
 		doc.save()
 		self.assertAlmostEqual(r["total_cout"], doc.total_cout, 3)
@@ -368,8 +368,8 @@ class TestChiffrage(TestChiffrageBase):
 	def test_apercu_ligne_en_cours_de_saisie(self):
 		"""Ligne ajoutée sans article (type seul) : l'aperçu ne plante pas, la ligne est en coût manquant."""
 		brouillon = self.eft_exemple().as_dict()
-		brouillon["positions"].append(dict(doctype="EFT Position", name="new-eft-position-1", __islocal=1, numero=None, groupe="1",
-			type_position=TYPES["Article à côut"], parenttype="EFT", parentfield="positions"))
+		brouillon["positions"].append(dict(doctype="Chiffrage Position", name="new-eft-position-1", __islocal=1, numero=None, groupe="1",
+			type_position=TYPES["Article à côut"], parenttype="Chiffrage", parentfield="positions"))
 		r = moteur.apercu(frappe.as_json(brouillon))
 		self.assertNotIn("erreur", r)
 		self.assertTrue(r["positions"]["new-eft-position-1"]["cout_manquant"])
@@ -395,7 +395,7 @@ class TestChiffrage(TestChiffrageBase):
 
 	def test_prestation_sans_gamme_cree_son_groupe(self):
 		rt = ETAPES["Contrôle par Radiographie (RT)"]
-		doc = frappe.get_doc(dict(doctype="EFT", titre=f"{P} sans gamme", company=self.company, etapes=[dict(prestation=rt, qty=1)])).insert()
+		doc = frappe.get_doc(dict(doctype="Chiffrage", eft=self.etude(), titre=f"{P} sans gamme", company=self.company, etapes=[dict(prestation=rt, qty=1)])).insert()
 		self.assertEqual([(g.numero, g.titre) for g in doc.groupes], [("1", rt)])
 		doc.append("positions", dict(item_code=article("PROJECTEUR GAMMA"), type_position=TYPES["Durée de l'équipement à coût"], qty=2, uom="Jour"))
 		doc.save()  # une seule prestation : la ligne y est rattachée
@@ -406,7 +406,7 @@ class TestChiffrage(TestChiffrageBase):
 		doc = self.eft_exemple()
 		rt, dmos = ETAPES["Contrôle par Radiographie (RT)"], ETAPES["Approbation d'un DMOS"]
 		moteur.partager_groupe(doc.name, "4", frappe.as_json([rt, dmos]))
-		doc = frappe.get_doc("EFT", doc.name)
+		doc = frappe.get_doc("Chiffrage", doc.name)
 		self.assertEqual(sorted(r.etape for r in doc.repartitions if r.cible == "4"), sorted([rt, dmos]))
 		g4 = next(g for g in doc.groupes if g.numero == "4")
 		t = {x.etape: x.cout_total for x in doc.totaux_etapes}
@@ -418,7 +418,7 @@ class TestChiffrage(TestChiffrageBase):
 		bu = frappe.get_doc(dict(doctype="Branch", branch=f"{P} BU")).insert().name
 		service = self.departement(f"{P} SERVICE")
 		o = self.opportunite(self.parcours_standard(), lsi_bu=bu, lsi_service=service)
-		e = frappe.get_doc("EFT", etude.make_eft(o.name))
+		e = frappe.get_doc("EFT", etude.ouvrir_ou_creer(o.name))
 		self.assertEqual((e.bu, e.service), (bu, service))
 		doc = self.eft_exemple(bu=bu, service=service)
 		doc = self._valider(doc)
@@ -441,7 +441,7 @@ class TestChiffrage(TestChiffrageBase):
 			frappe.db.set_value("Item", code, "last_purchase_rate", prix)  # (normalement mis à jour par les achats)
 			ressources.append(code)
 		self.item(f"{P} Film RTX", "Unité", lsi_pool_doctype="Item Group", lsi_pool=films)
-		doc = frappe.new_doc("EFT")
+		doc = self.nouveau_chiffrage()
 		doc.update(dict(titre=f"{P} film", company=self.company, customer=self.client()))
 		doc.append("etapes", dict(prestation=ETAPES["Contrôle par Radiographie (RT)"], qty=1))
 		doc.append("positions", dict(etape=ETAPES["Contrôle par Radiographie (RT)"], item_code=f"{P} Film RTX", type_position=typ, qty=3, uom="Unité",
@@ -452,7 +452,7 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertIn("Plus élevé", p.source_cout)
 		self.assertEqual(sorted(r["name"] for r in moteur.voir_ressources(doc.name, p.numero)["ressources"]), ressources)
 		moteur.choisir_ressource(doc.name, p.numero, ressources[0])  # le chiffreur peut retenir un film précis
-		self.assertEqual(frappe.get_doc("EFT", doc.name).positions[0].cout_unitaire, 10)
+		self.assertEqual(frappe.get_doc("Chiffrage", doc.name).positions[0].cout_unitaire, 10)
 
 	def test_sous_position_consommable_pool_dans_prix_fixe(self):
 		"""Prix fixe = somme ; sa sous-ligne « Film » prend le film le plus cher du groupe, ou celui choisi par l'utilisateur."""
@@ -477,12 +477,12 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertEqual((film.cout_unitaire, film.cout_total), (20, 40))  # le plus élevé par défaut
 		self.assertEqual(self.pos(doc, "5.1").cout_total, avant + 40)  # le prix fixe fait toujours la somme
 		moteur.choisir_ressource(doc.name, film.numero, codes[0])  # l'utilisateur choisit un autre film
-		doc = frappe.get_doc("EFT", doc.name)
+		doc = frappe.get_doc("Chiffrage", doc.name)
 		self.assertEqual((self.pos(doc, film.numero).cout_unitaire, self.pos(doc, "5.1").cout_total), (10, avant + 20))
 
 	# ------------------------------------------------------------------ étape 8 : jamais d'exception dans le chiffrage
 	def _ligne_seule(self, item_code, type_position, qty=1):
-		doc = frappe.new_doc("EFT")
+		doc = self.nouveau_chiffrage()
 		doc.update(dict(titre=f"{P} robustesse", company=self.company, customer=self.client()))
 		doc.append("etapes", dict(prestation=ETAPES["Contrôle par Radiographie (RT)"], qty=1))
 		doc.append("positions", dict(etape=ETAPES["Contrôle par Radiographie (RT)"], item_code=item_code, type_position=type_position, qty=qty,
@@ -589,7 +589,7 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertEqual(self.pos(doc, "1.17").cout_total, 30)
 
 	def test_prix_fixe_le_plus_eleve_besoins(self):
-		from lsi_inspection.chiffrage.report.besoins_eft.besoins_eft import besoins
+		from lsi_inspection.chiffrage.report.besoins_chiffrage.besoins_chiffrage import besoins
 		doc, _typ = self._film_max()
 		films = {l["ressource"]: l["quantite"] for l in besoins(doc) if "FILM" in (l["ressource"] or "") and "CASSETTE" not in l["ressource"]}
 		self.assertEqual(films, {article("FILM FUJIFILM RECHARGEABLE IX100 10/40"): 3})  # seul le film retenu, × 3
@@ -599,14 +599,14 @@ class TestChiffrage(TestChiffrageBase):
 		"""Ligne prix fixe ajoutée puis sous-ligne : l'aperçu donne les n° (1.20, puis 1.20.1) sans enregistrer."""
 		doc = self.eft_exemple()
 		brouillon = doc.as_dict()
-		brouillon["positions"].append(dict(doctype="EFT Position", name="new-pf", __islocal=1, groupe="1", item_code=article("Film"),
-			type_position=TYPES["Prix fixe"], qty=1, uom="Unité", parenttype="EFT", parentfield="positions"))
+		brouillon["positions"].append(dict(doctype="Chiffrage Position", name="new-pf", __islocal=1, groupe="1", item_code=article("Film"),
+			type_position=TYPES["Prix fixe"], qty=1, uom="Unité", parenttype="Chiffrage", parentfield="positions"))
 		r = moteur.apercu(frappe.as_json(brouillon))
 		self.assertEqual(r["positions"]["new-pf"]["numero"], "1.20")
 		brouillon["positions"][-1]["numero"] = "1.20"
-		brouillon["positions"].append(dict(doctype="EFT Position", name="new-sp", __islocal=1, parente="1.20",
+		brouillon["positions"].append(dict(doctype="Chiffrage Position", name="new-sp", __islocal=1, parente="1.20",
 			item_code=article("FILM MX125 RECHARGEABLE 10/40"), type_position=TYPES["Article de la position à prix fixe"], qty=1, uom="Unité",
-			parenttype="EFT", parentfield="positions"))
+			parenttype="Chiffrage", parentfield="positions"))
 		r = moteur.apercu(frappe.as_json(brouillon))
 		self.assertEqual(r["positions"]["new-sp"]["numero"], "1.20.1")
 		self.assertEqual(r["positions"]["new-pf"]["cout_total"], 12)  # somme calculée en direct
@@ -629,9 +629,10 @@ class TestChiffrage(TestChiffrageBase):
 		o.save()
 		frappe.get_doc(dict(doctype="File", file_name="cdc-client.pdf", file_url="https://example.com/cdc-client.pdf",
 			attached_to_doctype="Opportunity", attached_to_name=o.name)).insert()
-		e = frappe.get_doc("EFT", etude.make_eft(o.name))  # la ligne sans article ne bloque pas
+		e = frappe.get_doc("EFT", etude.ouvrir_ou_creer(o.name))
 		self.assertEqual(e.demande_client, texte)
-		self.assertEqual(len(e.etapes), 1)  # seule la ligne avec un article devient une prestation
+		c = frappe.get_doc("Chiffrage", variantes.nouvelle_variante(e.name, "opportunite"))  # la ligne sans article ne bloque pas
+		self.assertEqual(len(c.etapes), 1)  # seule la ligne avec un article devient une prestation
 		d = etude.demande_opportunite(o.name)
 		self.assertIn("Contrôle à préciser", [a["item_name"] for a in d["articles"]])
 		self.assertEqual([f["file_name"] for f in d["fichiers"]], ["cdc-client.pdf"])

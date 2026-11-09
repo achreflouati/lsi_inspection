@@ -142,5 +142,59 @@
   "name": "RESULTAT_AO-OUI",
   "ordre": 2,
   "par_defaut": 0
+ },
+ {
+  "actif": 1,
+  "code": "HORS_COMPETENCE",
+  "famille": "MOTIF_FAISABILITE",
+  "libelle": "Hors domaine de compétence",
+  "name": "MOTIF_FAISABILITE-HORS_COMPETENCE",
+  "ordre": 1,
+  "par_defaut": 0
+ },
+ {
+  "actif": 1,
+  "code": "MOYENS_HUMAINS",
+  "famille": "MOTIF_FAISABILITE",
+  "libelle": "Inspecteurs qualifiés indisponibles",
+  "name": "MOTIF_FAISABILITE-MOYENS_HUMAINS",
+  "ordre": 2,
+  "par_defaut": 0
+ },
+ {
+  "actif": 1,
+  "code": "EQUIPEMENT",
+  "famille": "MOTIF_FAISABILITE",
+  "libelle": "Équipement indisponible",
+  "name": "MOTIF_FAISABILITE-EQUIPEMENT",
+  "ordre": 3,
+  "par_defaut": 0
+ },
+ {
+  "actif": 1,
+  "code": "DELAI",
+  "famille": "MOTIF_FAISABILITE",
+  "libelle": "Délai irréalisable",
+  "name": "MOTIF_FAISABILITE-DELAI",
+  "ordre": 4,
+  "par_defaut": 0
+ },
+ {
+  "actif": 1,
+  "code": "DEMANDE_INCOMPLETE",
+  "famille": "MOTIF_FAISABILITE",
+  "libelle": "Demande incomplète ou à préciser",
+  "name": "MOTIF_FAISABILITE-DEMANDE_INCOMPLETE",
+  "ordre": 5,
+  "par_defaut": 0
+ },
+ {
+  "actif": 1,
+  "code": "ACCES_SITE",
+  "famille": "MOTIF_FAISABILITE",
+  "libelle": "Accès au site impossible",
+  "name": "MOTIF_FAISABILITE-ACCES_SITE",
+  "ordre": 6,
+  "par_defaut": 0
  }
 ]

@@ -1,0 +1,301 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-08 16:00:56.402601",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "numero",
+  "etape",
+  "groupe",
+  "parente",
+  "type_position",
+  "mode",
+  "item_code",
+  "designation",
+  "designation_2",
+  "cb1",
+  "qty",
+  "qty_base",
+  "uom",
+  "tarif",
+  "stock_disponible",
+  "etapes",
+  "sb_cout",
+  "cout_manuel",
+  "retenue",
+  "cout_unitaire",
+  "cout_total",
+  "source_cout",
+  "cb2",
+  "ressource_doctype",
+  "ressource",
+  "cout_manquant",
+  "cout_en_attente",
+  "demande_prix",
+  "sb_prix",
+  "prix_unitaire",
+  "prix_total",
+  "prix_conseille",
+  "cb3",
+  "marge",
+  "taux_marge"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "description": "Vide : n° automatique (&lt;groupe&gt;.&lt;suivant&gt;, ou &lt;parente&gt;.&lt;suivant&gt; pour une sous-position).",
+   "fieldname": "numero",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "N°"
+  },
+  {
+   "description": "Mis automatiquement d'après la prestation.",
+   "fieldname": "groupe",
+   "fieldtype": "Data",
+   "label": "Groupe",
+   "read_only": 1
+  },
+  {
+   "description": "Renseigné pour une sous-position (ex. 1.17 pour 1.17.1).",
+   "fieldname": "parente",
+   "fieldtype": "Data",
+   "label": "Position parente (prix fixe)"
+  },
+  {
+   "columns": 1,
+   "description": "Vide : type par défaut de l'article ou de son groupe.",
+   "fetch_from": "item_code.lsi_type_position",
+   "fetch_if_empty": 1,
+   "fieldname": "type_position",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Type de position",
+   "options": "Type Position"
+  },
+  {
+   "fetch_from": "type_position.mode",
+   "fieldname": "mode",
+   "fieldtype": "Data",
+   "label": "Mode",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Article",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "label": "Désignation",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "designation_2",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Désignation 2"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantité"
+  },
+  {
+   "fieldname": "qty_base",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Quantité de référence (prorata)",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fetch_from": "item_code.stock_uom",
+   "fetch_if_empty": 1,
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Unité",
+   "options": "UOM"
+  },
+  {
+   "default": "0",
+   "fieldname": "tarif",
+   "fieldtype": "Check",
+   "label": "Tarif annoncé (quantité 0)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "etapes",
+   "fieldtype": "Small Text",
+   "label": "Étapes",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_cout",
+   "fieldtype": "Section Break",
+   "label": "Coût"
+  },
+  {
+   "default": "0",
+   "fieldname": "cout_manuel",
+   "fieldtype": "Check",
+   "label": "Coût manuel"
+  },
+  {
+   "columns": 1,
+   "fieldname": "cout_unitaire",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Coût unitaire",
+   "read_only_depends_on": "eval:!doc.cout_manuel"
+  },
+  {
+   "fieldname": "cout_total",
+   "fieldtype": "Currency",
+   "label": "Coût total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "source_cout",
+   "fieldtype": "Small Text",
+   "label": "Source du coût",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ressource_doctype",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Doctype de la ressource",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ressource",
+   "fieldtype": "Dynamic Link",
+   "label": "Ressource choisie",
+   "options": "ressource_doctype",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "cout_manquant",
+   "fieldtype": "Check",
+   "label": "Coût manquant",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "cout_en_attente",
+   "fieldtype": "Check",
+   "label": "Coût en attente (demande de prix)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "demande_prix",
+   "fieldtype": "Link",
+   "label": "Demande de prix",
+   "options": "Request for Quotation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_prix",
+   "fieldtype": "Section Break",
+   "label": "Prix"
+  },
+  {
+   "columns": 1,
+   "fieldname": "prix_unitaire",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Prix unitaire"
+  },
+  {
+   "fieldname": "prix_total",
+   "fieldtype": "Currency",
+   "label": "Prix total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "prix_conseille",
+   "fieldtype": "Currency",
+   "label": "Prix conseillé (indicatif)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "marge",
+   "fieldtype": "Currency",
+   "label": "Marge",
+   "read_only": 1
+  },
+  {
+   "fieldname": "taux_marge",
+   "fieldtype": "Percent",
+   "label": "Marge %",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.stock_disponible",
+   "description": "Articles stockés : quantité en stock (tous entrepôts).",
+   "fieldname": "stock_disponible",
+   "fieldtype": "Float",
+   "label": "Stock disponible",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "description": "Prestation (étape) de la ligne : le groupe et le n° sont mis automatiquement.",
+   "fieldname": "etape",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Prestation",
+   "options": "Item"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.parente",
+   "description": "Sous-ligne d'un prix fixe « le plus élevé » : cochée, son coût est retenu à la place du plus élevé.",
+   "fieldname": "retenue",
+   "fieldtype": "Check",
+   "label": "Retenue"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-09 11:41:29.317100",
+ "modified_by": "Administrator",
+ "module": "Chiffrage",
+ "name": "Chiffrage Position",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

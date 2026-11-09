@@ -4,12 +4,12 @@ import frappe
 from frappe.utils import cstr
 
 from lsi_inspection.constants import CHAMPS_COUT
-from lsi_inspection.chiffrage.moteur.actions import _eft_brouillon
+from lsi_inspection.chiffrage.moteur.actions import _chiffrage_brouillon
 from lsi_inspection.chiffrage.moteur.organisation import _prochain_groupe
 
 
 def modele_validate(doc, method=None):
-	"""Un modèle d'EFT ne garde jamais de coût ni de prix."""
+	"""Un modèle de chiffrage ne garde jamais de coût ni de prix."""
 	for p in doc.get("positions") or []:
 		for c in CHAMPS_COUT:
 			p.set(c, None if c in ("source_cout", "ressource", "ressource_doctype", "demande_prix") else 0)
@@ -20,10 +20,10 @@ def modele_validate(doc, method=None):
 
 
 @frappe.whitelist(methods=["POST"])
-def enregistrer_modele(eft, titre):
-	doc = frappe.get_doc("EFT", eft)
+def enregistrer_modele(chiffrage, titre):
+	doc = frappe.get_doc("Chiffrage", chiffrage)
 	doc.check_permission("read")
-	m = frappe.new_doc("Modele EFT")
+	m = frappe.new_doc("Modele Chiffrage")
 	m.titre = titre
 	for champ in ("etapes", "groupes", "positions", "repartitions"):
 		for r in doc.get(champ) or []:
@@ -36,10 +36,10 @@ def enregistrer_modele(eft, titre):
 
 
 @frappe.whitelist(methods=["POST"])
-def charger_modele(eft, modele):
+def charger_modele(chiffrage, modele):
 	"""Ajoute la structure du modèle (groupes renumérotés après les groupes existants) ; coûts recalculés immédiatement."""
-	doc = _eft_brouillon(eft)
-	m = frappe.get_doc("Modele EFT", modele)
+	doc = _chiffrage_brouillon(chiffrage)
+	m = frappe.get_doc("Modele Chiffrage", modele)
 	decalage, correspondance = _prochain_groupe(doc) - 1, {}
 	for g in m.groupes:
 		nouveau = cstr(int(g.numero) + decalage) if cstr(g.numero).isdigit() else g.numero

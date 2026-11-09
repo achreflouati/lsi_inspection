@@ -1,6 +1,8 @@
 [pre_model_sync]
 # Patches added in this section will be executed before doctypes are migrated
 # Read docs to understand patches: https://frappeframework.com/docs/v14/user/en/database-migrations
+lsi_inspection.patches.lot3b_renommer_eft_en_chiffrage
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
+lsi_inspection.patches.lot3b_reprise_eft_variantes

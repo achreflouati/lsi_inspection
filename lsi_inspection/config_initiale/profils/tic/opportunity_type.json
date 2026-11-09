@@ -40,7 +40,7 @@
    },
    {
     "duree_cible": 0,
-    "evenement_fin": "Manuel",
+    "evenement_fin": "EFT validée",
     "obligatoire": 0,
     "ordre": 20,
     "phase": "Étude technique",
@@ -58,7 +58,7 @@
    },
    {
     "duree_cible": 0,
-    "evenement_fin": "Manuel",
+    "evenement_fin": "Chiffrage validé",
     "obligatoire": 0,
     "ordre": 40,
     "phase": "Chiffrage",
@@ -66,7 +66,7 @@
    },
    {
     "duree_cible": 0,
-    "evenement_fin": "Devis validé",
+    "evenement_fin": "Variante retenue",
     "obligatoire": 0,
     "ordre": 50,
     "phase": "Validation Direction",
@@ -83,7 +83,7 @@
    },
    {
     "duree_cible": 0,
-    "evenement_fin": "Opportunité convertie",
+    "evenement_fin": "Commande validée",
     "obligatoire": 0,
     "ordre": 70,
     "phase": "Gagnée",

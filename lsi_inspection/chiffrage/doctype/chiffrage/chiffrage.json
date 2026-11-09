@@ -1,0 +1,387 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "",
+ "creation": "2026-11-08 16:00:57.980221",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "eft",
+  "variante",
+  "libelle_variante",
+  "titre",
+  "opportunity",
+  "customer",
+  "customer_name",
+  "bu",
+  "service",
+  "commercial",
+  "cb_entete",
+  "company",
+  "date",
+  "workflow_state",
+  "amended_from",
+  "tab_structure",
+  "etapes",
+  "groupes",
+  "positions",
+  "repartitions",
+  "tab_totaux",
+  "total_cout",
+  "total_prix",
+  "cb_totaux",
+  "total_marge",
+  "taux_marge",
+  "cout_incomplet",
+  "sb_etapes",
+  "totaux_etapes",
+  "synthese_html",
+  "tableau_html",
+  "sb_demande",
+  "demande_client",
+  "demande_html",
+  "sb_prestations"
+ ],
+ "fields": [
+  {
+   "fieldname": "eft",
+   "fieldtype": "Link",
+   "options": "EFT",
+   "label": "EFT (étude technique)",
+   "reqd": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "variante",
+   "fieldtype": "Data",
+   "label": "Variante",
+   "read_only": 1,
+   "in_list_view": 1,
+   "bold": 1,
+   "description": "Lettre automatique (A, B, C…) ; une nouvelle version (amend) garde sa lettre.",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "libelle_variante",
+   "fieldtype": "Data",
+   "label": "Libellé de la variante"
+  },
+  {
+   "fieldname": "titre",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Titre",
+   "reqd": 1
+  },
+  {
+   "fieldname": "opportunity",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Opportunité",
+   "options": "Opportunity",
+   "read_only": 1,
+   "fetch_from": "eft.opportunity"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Client",
+   "options": "Customer",
+   "fetch_from": "eft.customer",
+   "fetch_if_empty": 1
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Nom du client",
+   "read_only": 1
+  },
+  {
+   "fieldname": "bu",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "BU",
+   "options": "Branch",
+   "fetch_from": "eft.bu",
+   "fetch_if_empty": 1
+  },
+  {
+   "fieldname": "service",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Service",
+   "options": "Department",
+   "fetch_from": "eft.service",
+   "fetch_if_empty": 1
+  },
+  {
+   "fieldname": "commercial",
+   "fieldtype": "Link",
+   "options": "User",
+   "label": "Commercial",
+   "read_only": 1,
+   "fetch_from": "opportunity.opportunity_owner",
+   "description": "Propriétaire de l'opportunité (destinataire des notifications)."
+  },
+  {
+   "fieldname": "cb_entete",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Société",
+   "options": "Company",
+   "reqd": 1,
+   "fetch_from": "eft.company",
+   "fetch_if_empty": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Statut",
+   "no_copy": 1,
+   "options": "Workflow State",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Chiffrage",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "tab_structure",
+   "fieldtype": "Tab Break",
+   "label": "Chiffrage"
+  },
+  {
+   "description": "Ajoutez une prestation : sa gamme crée son groupe et ses lignes à l'enregistrement (ou bouton « Ajouter depuis une gamme »).",
+   "fieldname": "etapes",
+   "fieldtype": "Table",
+   "label": "Étapes (prestations)",
+   "options": "Chiffrage Etape"
+  },
+  {
+   "fieldname": "groupes",
+   "fieldtype": "Table",
+   "label": "Groupes (automatiques : créés par les gammes et les prestations)",
+   "options": "Chiffrage Groupe",
+   "read_only": 1
+  },
+  {
+   "fieldname": "positions",
+   "fieldtype": "Table",
+   "label": "Positions et sous-positions",
+   "options": "Chiffrage Position"
+  },
+  {
+   "fieldname": "repartitions",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Répartition par étape (groupes ou positions partagés)",
+   "options": "Chiffrage Repartition"
+  },
+  {
+   "fieldname": "tab_totaux",
+   "fieldtype": "Tab Break",
+   "label": "Totaux"
+  },
+  {
+   "fieldname": "total_cout",
+   "fieldtype": "Currency",
+   "label": "Coût total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_prix",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Prix total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_totaux",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_marge",
+   "fieldtype": "Currency",
+   "label": "Marge",
+   "read_only": 1
+  },
+  {
+   "fieldname": "taux_marge",
+   "fieldtype": "Percent",
+   "label": "Marge %",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "cout_incomplet",
+   "fieldtype": "Check",
+   "label": "Coût incomplet (au moins un coût manquant ou en attente)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_etapes",
+   "fieldtype": "Section Break",
+   "label": "Totaux par étape"
+  },
+  {
+   "fieldname": "totaux_etapes",
+   "fieldtype": "Table",
+   "label": "Totaux par étape",
+   "options": "Chiffrage Total Etape",
+   "read_only": 1
+  },
+  {
+   "fieldname": "synthese_html",
+   "fieldtype": "HTML",
+   "label": "Synthèse du chiffrage"
+  },
+  {
+   "fieldname": "tableau_html",
+   "fieldtype": "HTML",
+   "label": "Tableau de chiffrage"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.opportunity",
+   "fieldname": "sb_demande",
+   "fieldtype": "Section Break",
+   "label": "Demande du client (opportunité)"
+  },
+  {
+   "fetch_from": "opportunity.lsi_demande_client",
+   "fieldname": "demande_client",
+   "fieldtype": "Text Editor",
+   "label": "Demande du client (telle qu'exprimée)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "demande_html",
+   "fieldtype": "HTML",
+   "label": "Articles demandés et pièces jointes de l'opportunité"
+  },
+  {
+   "fieldname": "sb_prestations",
+   "fieldtype": "Section Break",
+   "label": "Prestations à chiffrer"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-11-09 17:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "Chiffrage",
+ "name": "Chiffrage",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "share": 1,
+   "create": 1,
+   "write": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Sales Manager",
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "share": 1,
+   "create": 1,
+   "write": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Chiffreur",
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "share": 1,
+   "create": 1,
+   "write": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Paramétreur chiffrage",
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "share": 1,
+   "create": 1,
+   "write": 1
+  },
+  {
+   "role": "Sales User",
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "share": 1,
+   "create": 1,
+   "write": 1
+  },
+  {
+   "role": "Etude technique",
+   "read": 1,
+   "report": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "eft,variante,titre,opportunity,customer",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "titre",
+ "track_changes": 1,
+ "naming_rule": "By script",
+ "show_title_field_in_link": 0
+}

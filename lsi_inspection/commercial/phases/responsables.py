@@ -3,6 +3,7 @@
 import frappe
 from frappe.utils import cint
 
+from lsi_inspection.outils import utilisateur_responsable
 from lsi_inspection.constants import RESP_PILOTE, RESP_ROLE, RESP_UTILISATEUR
 
 
@@ -24,8 +25,7 @@ def _pilote(opp, departement=None):
 		r = next((r for r in opp.get("lsi_departements") or [] if r.departement == departement), None)
 		if r and r.utilisateur_pilote:
 			return r.utilisateur_pilote
-		emp = frappe.db.get_value("Department", departement, "lsi_responsable")
-		return frappe.db.get_value("Employee", emp, "user_id") if emp else None
+		return utilisateur_responsable(departement)
 	r = _ligne_principale(opp)
 	return r.utilisateur_pilote if r else None
 

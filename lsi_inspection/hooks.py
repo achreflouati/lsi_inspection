@@ -259,9 +259,11 @@ fixtures = [
 	{"dt": "Notification", "filters": [["module", "in", ["Commercial"]]]},
 	{"dt": "Role", "filters": [["name", "in", ["Validateur demande d'offre", "Etude technique", "Paramétreur commercial", "Chiffreur", "Paramétreur chiffrage",
 		"Devis hors EFT", "Retour de test"]]]},
-	{"dt": "Workflow", "filters": [["name", "in", ["Validation demande d'offre", "EFT"]]]},
-	{"dt": "Workflow State", "filters": [["name", "in", ["À valider", "Validée", "Non validée", "Attente clarification client", "Brouillon", "Chiffrée", "Annulée"]]]},
-	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Valider", "Refuser", "Demander clarification", "Remettre à valider", "Chiffrer", "Revenir en brouillon", "Annuler"]]]},
+	{"dt": "Workflow", "filters": [["name", "in", ["Validation demande d'offre", "EFT", "Chiffrage"]]]},
+	{"dt": "Workflow State", "filters": [["name", "in", ["À valider", "Validée", "Non validée", "Attente clarification client", "Brouillon", "Chiffrée", "Annulée",
+		"Retenue", "Non retenue"]]]},
+	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Valider", "Refuser", "Demander clarification", "Remettre à valider", "Chiffrer", "Revenir en brouillon", "Annuler",
+		"Retenir", "Ne pas retenir"]]]},
 	# permissions : toutes les règles (natives recopiées + nos rôles) des doctypes dont on change les droits
 	{"dt": "Custom DocPerm", "filters": [["parent", "in", ["Opportunity", "Opportunity Type", "Sales Stage", "Email Template", "Notification",
 		"Employee", "Asset", "Item", "Item Group", "UOM Conversion Factor", "Designation", "Asset Category",
@@ -269,7 +271,13 @@ fixtures = [
 ]
 
 # ------------------------------------------------------------------ écrans (JS par doctype)
-doctype_js = {"Opportunity": "public/js/opportunity.js", "EFT": "public/js/eft.js"}
+doctype_js = {
+	"Opportunity": "public/js/opportunity.js",
+	"EFT": ["public/js/commun/demande_client.js", "public/js/eft.js"],
+	# Chiffrage : actions.js définit lsi_chiffrage (API), puis aperçu, tableau et boutons de l'écran
+	"Chiffrage": ["public/js/commun/demande_client.js", "public/js/chiffrage/actions.js", "public/js/chiffrage/apercu.js",
+		"public/js/chiffrage/tableau.js", "public/js/chiffrage/chiffrage.js"],
+}
 doctype_list_js = {"Opportunity": "public/js/opportunity_list.js"}
 
 # ------------------------------------------------------------------ événements des documents
@@ -287,6 +295,7 @@ doc_events = {
 		"validate": [
 			"lsi_inspection.outils.defauts_referentiel",  # valeurs par défaut du référentiel (nouveau document seulement)
 			"lsi_inspection.outils.verifier_obligatoires",  # « obligatoire si » vérifié aussi côté serveur
+			"lsi_inspection.outils.responsable_service",  # utilisateur responsable du service (destinataire de notifications natives)
 			f"{_PHASES}.ecran.opportunity_validate",  # tableau des phases, en-tête (sales_stage), historique en ajout seul
 		],
 		"on_update": f"{_PHASES}.ecran.opportunity_on_update",  # ToDo des responsables à l'entrée / la sortie d'une phase
@@ -295,11 +304,19 @@ doc_events = {
 		"validate": f"{_PHASES}.parcours.type_validate",  # contrôle du parcours configuré
 		"on_update": f"{_PHASES}.ecran.type_on_update",  # parcours modifié : tableaux des opportunités ouvertes reconstruits
 	},
-	# Chiffrage : calcul complet à chaque enregistrement d'un brouillon (gammes, organisation, coûts, totaux)
-	"EFT": {"validate": "lsi_inspection.chiffrage.moteur.calcul.eft_validate"},
-	"Modele EFT": {"validate": "lsi_inspection.chiffrage.moteur.modeles.modele_validate"},  # un modèle ne garde ni coût ni prix
+	# EFT, Chiffrage et Modele Chiffrage : contrôleurs des doctypes (chiffrage/doctype/*), pas de hook ici.
+	# Devis commandé → sa variante de chiffrage devient « Retenue », les autres « Non retenue »
+	"Sales Order": {"on_submit": "lsi_inspection.chiffrage.devis.commande_validee"},
+	# E-mail envoyé depuis un devis → devis marqué envoyé (événement de phase « Devis envoyé », notification native)
+	"Communication": {"after_insert": "lsi_inspection.chiffrage.devis.devis_envoye"},
 	# Offre fournisseur validée en réponse à une demande de prix : le chiffrage en attente est recalculé
 	"Supplier Quotation": {"on_submit": "lsi_inspection.chiffrage.moteur.actions.offre_fournisseur"},
+}
+
+# ------------------------------------------------------------------ connexions natives (onglet Connexions)
+override_doctype_dashboards = {
+	"Opportunity": "lsi_inspection.chiffrage.devis.connexions_opportunite",  # EFT et chiffrages de l'opportunité
+	"Quotation": "lsi_inspection.chiffrage.devis.connexions_devis",  # chiffrage et EFT du devis
 }
 
 # ------------------------------------------------------------------ configuration initiale (commun + profil du site)

@@ -14,8 +14,8 @@ from lsi_inspection.chiffrage.moteur.gammes import appliquer_gammes
 from lsi_inspection.chiffrage.moteur.organisation import organiser
 
 
-def eft_validate(doc, method=None):
-	"""Hook validate : brouillon → gammes appliquées, organisation, calcul ; document validé : coûts figés."""
+def valider_chiffrage(doc, method=None):
+	"""Chiffrage.validate : brouillon → gammes appliquées, organisation, calcul ; document validé : coûts figés."""
 	if doc.docstatus != 0:
 		return
 	appliquer_gammes(doc)
@@ -157,7 +157,7 @@ def _totaux_document(doc, vendues):
 
 
 def _etapes_de(doc, p, par_num):
-	"""[(étape, fraction)] : répartition de la position, sinon de son groupe, sinon l'étape unique de l'EFT."""
+	"""[(étape, fraction)] : répartition de la position, sinon de son groupe, sinon l'étape unique du chiffrage."""
 	if p.parente and p.parente in par_num:
 		return _etapes_de(doc, par_num[p.parente], par_num)
 	for cible in (p.numero, p.groupe):

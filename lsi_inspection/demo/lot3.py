@@ -245,71 +245,101 @@ def run():
 		o.insert()
 		_noter("Opportunity", o.name)
 		opp = o.name
-	eft = frappe.db.get_value("EFT", {"opportunity": opp, "docstatus": ("<", 2)})
-	if not eft:
-		from lsi_inspection.chiffrage import moteur
-
-		# ordre de l'exemple : groupes 1-3 (gammes), 4 = Transport & Indemnité (modèle, partagé RT + Découpage), 5 = Électricité Sfax
-		e = frappe.get_doc(dict(doctype="EFT", titre=f"{DEMO} — exemple de projet TIC", opportunity=opp, customer=client, company=company,
-			etapes=[dict(prestation=p, qty=1) for p in PRESTATIONS[:3]]))
-		e.flags.ignore_permissions = True
-		e.insert()
-		_noter("EFT", e.name)
-		moteur.charger_modele(e.name, "Transport & Indemnité")
-		e = frappe.get_doc("EFT", e.name)
-		e.append("etapes", dict(prestation=PRESTATIONS[3], qty=1))
-		for r in [r for r in e.repartitions if r.cible == "4"]:
-			e.remove(r)
-		e.append("repartitions", dict(cible="4", etape=PRESTATIONS[0]))
-		e.append("repartitions", dict(cible="4", etape=PRESTATIONS[2]))
-		e.save(ignore_permissions=True)
-		for p in e.positions:
-			if not p.parente and p.numero in PRIX:
-				p.prix_unitaire = PRIX[p.numero]
-		e.save(ignore_permissions=True)
-		eft = e.name
-	else:
-		e = frappe.get_doc("EFT", eft)
-		if e.docstatus == 0:
-			e.flags.ignore_permissions = True
-			e.save()  # recalcul (brouillon) : valorisation du stock, types par défaut
+	chiffrage = _chiffrage_demo(opp, client, company)
 	frappe.db.commit()
-	e = frappe.get_doc("EFT", eft)
-	print(f"{DEMO} : opportunité {opp}, EFT {eft} — {len(e.groupes)} groupes, {len(e.positions)} positions ; "
+	e = frappe.get_doc("Chiffrage", chiffrage)
+	print(f"{DEMO} : opportunité {opp}, EFT {e.eft}, chiffrage {chiffrage} — {len(e.groupes)} groupes, {len(e.positions)} positions ; "
 		f"coût {e.total_cout:.3f}, prix {e.total_prix:.3f}, marge {e.taux_marge:.1f} %, coût incomplet : {e.cout_incomplet}")
 	for t in e.totaux_etapes:
 		print(f"  étape {t.etape} : coût {t.cout_total:.3f}, prix {t.prix_total:.3f}")
-	return eft
+	return chiffrage
+
+
+def _chiffrage_demo(opp, client, company):
+	"""EFT de l'opportunité DÉMO et sa variante A (ordre de l'exemple : groupes 1-3 par gammes, 4 = Transport & Indemnité par
+	modèle, partagé RT + Découpage, 5 = Électricité Sfax) ; brouillon existant : simplement recalculé."""
+	from lsi_inspection.chiffrage import etude, moteur
+
+	eft = etude.ouvrir_ou_creer(opp)
+	if ("EFT", eft) not in [tuple(x) for x in _registre()]:
+		_noter("EFT", eft)
+	existant = frappe.db.get_value("Chiffrage", {"eft": eft, "docstatus": ("<", 2)})
+	if existant:
+		c = frappe.get_doc("Chiffrage", existant)
+		if c.docstatus == 0:
+			c.flags.ignore_permissions = True
+			c.save()  # recalcul (brouillon) : valorisation du stock, types par défaut
+		return existant
+	c = frappe.get_doc(dict(doctype="Chiffrage", eft=eft, titre=f"{DEMO} — exemple de projet TIC", customer=client, company=company,
+		etapes=[dict(prestation=p, qty=1) for p in PRESTATIONS[:3]]))
+	c.flags.ignore_permissions = True
+	c.insert()
+	_noter("Chiffrage", c.name)
+	moteur.charger_modele(c.name, "Transport & Indemnité")
+	c = frappe.get_doc("Chiffrage", c.name)
+	c.append("etapes", dict(prestation=PRESTATIONS[3], qty=1))
+	for r in [r for r in c.repartitions if r.cible == "4"]:
+		c.remove(r)
+	c.append("repartitions", dict(cible="4", etape=PRESTATIONS[0]))
+	c.append("repartitions", dict(cible="4", etape=PRESTATIONS[2]))
+	c.save(ignore_permissions=True)
+	for p in c.positions:
+		if not p.parente and p.numero in PRIX:
+			p.prix_unitaire = PRIX[p.numero]
+	c.save(ignore_permissions=True)
+	return c.name
 
 
 def annuler():
-	"""Supprime tout ce que la démo a créé (registre, ordre inverse), avec les documents qui en dépendent (EFT, devis, demandes de prix)."""
+	"""Supprime tout ce que la démo a créé (registre, ordre inverse), avec les documents qui en dépendent (EFT, chiffrages, devis,
+	demandes de prix)."""
 	frappe.flags.mute_emails = True
 	reg = _registre()
-	efts = [n for dt, n in reg if dt == "EFT"]
 	opps = [n for dt, n in reg if dt == "Opportunity"]
-	efts += frappe.get_all("EFT", filters={"opportunity": ("in", opps or [""])}, pluck="name")
+	efts = [n for dt, n in reg if dt == "EFT"] + frappe.get_all("EFT", filters={"opportunity": ("in", opps or [""])}, pluck="name")
+	chiffrages = [n for dt, n in reg if dt == "Chiffrage"] + frappe.get_all("Chiffrage", filters={"eft": ("in", efts or [""])}, pluck="name")
 	dependants = []
-	for dt, champ, valeurs in (("Quotation", "lsi_eft", efts), ("Quotation", "opportunity", opps), ("Request for Quotation", "lsi_eft", efts)):
+	for dt, champ, valeurs in (("Quotation", "lsi_chiffrage", chiffrages), ("Quotation", "opportunity", opps),
+			("Request for Quotation", "lsi_chiffrage", chiffrages)):
 		dependants += [(dt, n) for n in frappe.get_all(dt, filters={champ: ("in", valeurs or [""])}, pluck="name")]
 	for rfq in [n for dt, n in dependants if dt == "Request for Quotation"]:
 		dependants += [("Supplier Quotation", n) for n in frappe.get_all("Supplier Quotation Item", filters={"request_for_quotation": rfq},
 			pluck="parent", distinct=True)]
-	dependants += [("Modele EFT", n) for n in frappe.get_all("Modele EFT", filters={"titre": ("like", f"{DEMO}%")}, pluck="name")]
+	dependants += [("Modele Chiffrage", n) for n in frappe.get_all("Modele Chiffrage", filters={"titre": ("like", f"{DEMO}%")}, pluck="name")]
 	articles = [n for dt, n in reg if dt == "Item"]
 	gammes = [("Gamme", n) for n in frappe.get_all("Gamme", filters={"prestation": ("in", articles or [""])}, pluck="name")]
-	n = 0
-	for dt, name in list(dict.fromkeys(dependants)) + [("EFT", x) for x in sorted(set(efts), reverse=True)] + gammes + list(reversed(reg)):
-		if not frappe.db.exists(dt, name):
-			continue
-		doc = frappe.get_doc(dt, name)
-		if doc.docstatus == 1:
-			doc.flags.ignore_permissions = True
-			doc.cancel()
-		frappe.delete_doc(dt, name, ignore_permissions=True, force=True)
-		n += 1
+	ordre = (list(dict.fromkeys(dependants)) + [("Chiffrage", x) for x in sorted(set(chiffrages), reverse=True)]
+		+ [("EFT", x) for x in sorted(set(efts), reverse=True)] + gammes + list(reversed(reg)))
+	n = sum(_supprimer(dt, name) for dt, name in ordre)
 	if os.path.exists(_registre_chemin()):
 		os.remove(_registre_chemin())
 	frappe.db.commit()
 	print(f"« {DEMO} » retirée : {n} document(s) supprimé(s)")
 	return n
+
+
+def _supprimer(dt, name):
+	if not frappe.db.exists(dt, name):
+		return 0
+	doc = frappe.get_doc(dt, name)
+	if doc.docstatus == 1:
+		doc.flags.ignore_permissions = True
+		doc.cancel()
+	frappe.delete_doc(dt, name, ignore_permissions=True, force=True)
+	return 1
+
+
+def renommer_registre(correspondance):
+	"""Reprise lot 3b : {ancien nom d'EFT: (chiffrage, eft)} ; « Modele EFT » devient « Modele Chiffrage »."""
+	reg = _registre()
+	if not reg:
+		return
+	nouveau = []
+	for dt, name in reg:
+		if dt == "EFT" and name in correspondance:
+			chiffrage, eft = correspondance[name]
+			nouveau += [["EFT", eft], ["Chiffrage", chiffrage]]
+		else:
+			nouveau.append(["Modele Chiffrage" if dt == "Modele EFT" else dt, name])
+	with open(_registre_chemin(), "w") as f:
+		json.dump(nouveau, f, ensure_ascii=False)

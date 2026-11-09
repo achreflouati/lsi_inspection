@@ -18,6 +18,12 @@ DERNIER_PRIX, VALORISATION, LISTE_PRIX = "Dernier prix d'achat", "Valorisation",
 CHAMPS_COUT = ("cout_unitaire", "cout_total", "source_cout", "ressource", "ressource_doctype", "cout_manquant", "cout_en_attente",
 	"demande_prix", "cout_manuel", "prix_unitaire", "prix_total", "prix_conseille", "marge", "taux_marge")
 
+# ------------------------------------------------------------------ états de workflow (fixtures Workflow « EFT » et « Chiffrage »)
+BROUILLON, CHIFFREE, VALIDEE, RETENUE, NON_RETENUE, ANNULEE_WF = "Brouillon", "Chiffrée", "Validée", "Retenue", "Non retenue", "Annulée"
+
+# ------------------------------------------------------------------ EFT (étude technique)
+FAISABLE, NON_FAISABLE, A_CLARIFIER = "Faisable", "Non faisable", "À clarifier"
+
 # ------------------------------------------------------------------ phases commerciales (Opportunity.lsi_phases)
 A_VENIR, EN_COURS, TERMINEE, SAUTEE, SAUTEE_AUTO = "À venir", "En cours", "Terminée", "Sautée", "Sautée (auto)"
 ANNULEE = "Annulée"  # phase finale annulée par son événement d'annulation (réouverture) ; peut être de nouveau atteinte

@@ -18,8 +18,8 @@ def apercu(doc):
 	"""Calcul en temps réel (sans enregistrer) : même moteur qu'à l'enregistrement. Renvoie les valeurs calculées par ligne,
 	l'étape principale de chaque position (couleurs) et les totaux. Une erreur de structure est renvoyée comme message."""
 	d = frappe.get_doc(frappe.parse_json(doc))
-	if not frappe.has_permission("EFT", "write") and not frappe.has_permission("EFT", "create"):
-		frappe.throw(_("Pas de droit sur l'EFT."), frappe.PermissionError)
+	if not frappe.has_permission("Chiffrage", "write") and not frappe.has_permission("Chiffrage", "create"):
+		frappe.throw(_("Pas de droit sur le chiffrage."), frappe.PermissionError)
 	if d.docstatus != 0:
 		return {}
 	try:

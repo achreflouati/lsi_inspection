@@ -4,7 +4,7 @@ import frappe
 from frappe import _
 from frappe.utils import cint, cstr, flt
 
-from lsi_inspection.chiffrage.moteur.actions import _eft_brouillon
+from lsi_inspection.chiffrage.moteur.actions import _chiffrage_brouillon
 from lsi_inspection.chiffrage.moteur.couts import type_par_defaut
 from lsi_inspection.chiffrage.moteur.organisation import _prochain_groupe
 
@@ -60,9 +60,9 @@ def appliquer_gammes(doc):
 
 
 @frappe.whitelist(methods=["POST"])
-def ajouter_gamme(eft, prestation, qty=1):
+def ajouter_gamme(chiffrage, prestation, qty=1):
 	"""Bouton « Ajouter depuis une gamme » : ajoute la prestation (étape) et applique sa gamme immédiatement."""
-	doc = _eft_brouillon(eft)
+	doc = _chiffrage_brouillon(chiffrage)
 	if not frappe.db.exists("Gamme", {"prestation": prestation, "actif": 1}):
 		frappe.throw(_("Aucune gamme active pour la prestation {0}.").format(prestation))
 	etape = next((e for e in doc.etapes if e.prestation == prestation and not cint(e.gamme_appliquee)), None)

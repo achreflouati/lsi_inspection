@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-08 16:00:56.781592",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "etape",
+  "cout_total",
+  "prix_total",
+  "marge",
+  "taux_marge"
+ ],
+ "fields": [
+  {
+   "columns": 4,
+   "fieldname": "etape",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Étape",
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "cout_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Coût",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "prix_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Prix",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "marge",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Marge",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "taux_marge",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Marge %",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-08 16:00:56.781592",
+ "modified_by": "Administrator",
+ "module": "Chiffrage",
+ "name": "Chiffrage Total Etape",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

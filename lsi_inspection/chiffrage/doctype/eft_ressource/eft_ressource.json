@@ -1,0 +1,68 @@
+{
+ "actions": [],
+ "creation": "2026-11-09 17:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "istable": 1,
+ "module": "Chiffrage",
+ "name": "EFT Ressource",
+ "owner": "Administrator",
+ "modified": "2026-11-09 17:00:00.000000",
+ "modified_by": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "field_order": [
+  "ressource_doctype",
+  "ressource",
+  "quantite",
+  "uom",
+  "remarque"
+ ],
+ "fields": [
+  {
+   "fieldname": "ressource_doctype",
+   "fieldtype": "Select",
+   "label": "Type de ressource",
+   "options": "\nEmployee\nDesignation\nAsset\nAsset Category",
+   "in_list_view": 1,
+   "columns": 2,
+   "reqd": 1,
+   "description": "Employé, désignation (compétence), immobilisation ou catégorie d'équipement."
+  },
+  {
+   "fieldname": "ressource",
+   "fieldtype": "Dynamic Link",
+   "options": "ressource_doctype",
+   "label": "Ressource",
+   "in_list_view": 1,
+   "columns": 3,
+   "reqd": 1
+  },
+  {
+   "fieldname": "quantite",
+   "fieldtype": "Float",
+   "label": "Quantité",
+   "in_list_view": 1,
+   "columns": 1,
+   "default": "1"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "options": "UOM",
+   "label": "Unité",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "remarque",
+   "fieldtype": "Data",
+   "label": "Remarque",
+   "in_list_view": 1,
+   "columns": 3
+  }
+ ]
+}

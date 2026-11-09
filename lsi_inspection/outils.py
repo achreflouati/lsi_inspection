@@ -76,3 +76,17 @@ def defauts_referentiel(doc, method=None):
 def _nouvelle_ligne(row):
 	"""Ligne pas encore enregistrée (ajoutée côté serveur ou dans le formulaire)."""
 	return bool(row.get("__islocal")) or not row.name or str(row.name).startswith("new-") or not frappe.db.exists(row.doctype, row.name)
+
+
+def utilisateur_responsable(departement):
+	"""Utilisateur de l'employé « Responsable (pilote par défaut) » du département ; None si absent."""
+	if not departement:
+		return None
+	employe = frappe.db.get_value("Department", departement, "lsi_responsable")
+	return frappe.db.get_value("Employee", employe, "user_id") if employe else None
+
+
+def responsable_service(doc, method=None):
+	"""Opportunity.validate : utilisateur responsable du service (destinataire des notifications natives)."""
+	if doc.meta.has_field("lsi_responsable_service"):
+		doc.lsi_responsable_service = utilisateur_responsable(doc.get("lsi_service"))

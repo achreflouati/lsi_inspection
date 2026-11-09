@@ -1,5 +1,130 @@
 [
  {
+  "name": "Chiffrage validé",
+  "channel": "Email",
+  "document_type": "Chiffrage",
+  "enabled": 1,
+  "is_standard": 0,
+  "event": "Value Change",
+  "condition": "doc.workflow_state == \"Validée\"",
+  "recipients": [
+   {
+    "receiver_by_document_field": "commercial"
+   },
+   {
+    "receiver_by_role": "Sales Manager"
+   }
+  ],
+  "subject": "Chiffrage validé : {{ doc.name }} ({{ doc.libelle_variante }})",
+  "message": "<p>La variante {{ doc.variante }} de l'EFT {{ doc.eft }} est validée : prix {{ doc.get_formatted('total_prix') }}, marge {{ doc.get_formatted('taux_marge') }}.</p><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">{{ doc.doctype }} {{ doc.name }}</a></p>",
+  "message_type": "HTML",
+  "send_system_notification": 1,
+  "value_changed": "workflow_state"
+ },
+ {
+  "name": "Devis envoyé",
+  "channel": "Email",
+  "document_type": "Quotation",
+  "enabled": 1,
+  "is_standard": 0,
+  "event": "Value Change",
+  "condition": "doc.lsi_envoye",
+  "recipients": [
+   {
+    "receiver_by_document_field": "lsi_commercial"
+   }
+  ],
+  "subject": "Devis envoyé : {{ doc.name }} — {{ doc.customer_name }}",
+  "message": "<p>Le devis {{ doc.name }} a été envoyé au client.</p><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">{{ doc.doctype }} {{ doc.name }}</a></p>",
+  "message_type": "HTML",
+  "send_system_notification": 1,
+  "value_changed": "lsi_envoye"
+ },
+ {
+  "name": "Devis validé",
+  "channel": "Email",
+  "document_type": "Quotation",
+  "enabled": 1,
+  "is_standard": 0,
+  "event": "Submit",
+  "condition": null,
+  "recipients": [
+   {
+    "receiver_by_document_field": "lsi_commercial"
+   }
+  ],
+  "subject": "Devis validé : {{ doc.name }} — {{ doc.customer_name }}",
+  "message": "<p>Le devis {{ doc.name }} ({{ doc.get_formatted('grand_total') }}) est validé.</p><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">{{ doc.doctype }} {{ doc.name }}</a></p>",
+  "message_type": "HTML",
+  "send_system_notification": 1
+ },
+ {
+  "name": "EFT non faisable",
+  "channel": "Email",
+  "document_type": "EFT",
+  "enabled": 1,
+  "is_standard": 0,
+  "event": "Value Change",
+  "condition": "doc.faisabilite == \"Non faisable\"",
+  "recipients": [
+   {
+    "receiver_by_document_field": "commercial"
+   },
+   {
+    "receiver_by_document_field": "responsable_service"
+   }
+  ],
+  "subject": "EFT non faisable : {{ doc.opportunity }} — {{ doc.customer_name or '' }}",
+  "message": "<p>L'étude technique {{ doc.name }} conclut : <b>non faisable</b> ({{ doc.motif_faisabilite or '' }}).</p><p>{{ doc.commentaire_faisabilite or '' }}</p><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">{{ doc.doctype }} {{ doc.name }}</a></p>",
+  "message_type": "HTML",
+  "send_system_notification": 1,
+  "value_changed": "faisabilite"
+ },
+ {
+  "name": "Opportunité gagnée",
+  "channel": "Email",
+  "document_type": "Opportunity",
+  "enabled": 1,
+  "is_standard": 0,
+  "event": "Value Change",
+  "condition": "doc.status == \"Converted\"",
+  "recipients": [
+   {
+    "receiver_by_document_field": "opportunity_owner"
+   },
+   {
+    "receiver_by_document_field": "lsi_responsable_service"
+   }
+  ],
+  "subject": "Commande validée : {{ doc.name }} — {{ doc.customer_name or doc.party_name }}",
+  "message": "<p>La commande du client est validée : l'opportunité {{ doc.name }} est gagnée.</p><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">{{ doc.doctype }} {{ doc.name }}</a></p>",
+  "message_type": "HTML",
+  "send_system_notification": 1,
+  "value_changed": "status"
+ },
+ {
+  "name": "Opportunité perdue",
+  "channel": "Email",
+  "document_type": "Opportunity",
+  "enabled": 1,
+  "is_standard": 0,
+  "event": "Value Change",
+  "condition": "doc.status == \"Lost\"",
+  "recipients": [
+   {
+    "receiver_by_document_field": "opportunity_owner"
+   },
+   {
+    "receiver_by_document_field": "utilisateur_pilote,lsi_departements"
+   }
+  ],
+  "subject": "Opportunité perdue : {{ doc.name }} — {{ doc.customer_name or doc.party_name }}",
+  "message": "<p>L'opportunité {{ doc.name }} est perdue. {{ doc.order_lost_reason or '' }}</p><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">{{ doc.doctype }} {{ doc.name }}</a></p>",
+  "message_type": "HTML",
+  "send_system_notification": 1,
+  "value_changed": "status"
+ },
+ {
   "attach_print": 0,
   "channel": "Email",
   "condition": "doc.sales_stage and doc.lsi_responsable_phase and doc.status not in ('Converted', 'Lost', 'Closed')",
@@ -79,5 +204,27 @@
   "name": "Retour de test passé en bloquant",
   "event": "Value Change",
   "value_changed": "priority"
+ },
+ {
+  "name": "Variante retenue",
+  "channel": "Email",
+  "document_type": "Chiffrage",
+  "enabled": 1,
+  "is_standard": 0,
+  "event": "Value Change",
+  "condition": "doc.workflow_state == \"Retenue\"",
+  "recipients": [
+   {
+    "receiver_by_document_field": "commercial"
+   },
+   {
+    "receiver_by_role": "Sales Manager"
+   }
+  ],
+  "subject": "Variante retenue : {{ doc.name }} ({{ doc.libelle_variante }})",
+  "message": "<p>La variante {{ doc.variante }} est retenue pour l'EFT {{ doc.eft }}.</p><p><a href=\"{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}\">{{ doc.doctype }} {{ doc.name }}</a></p>",
+  "message_type": "HTML",
+  "send_system_notification": 1,
+  "value_changed": "workflow_state"
  }
 ]

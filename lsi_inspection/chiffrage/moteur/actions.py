@@ -8,11 +8,11 @@ from lsi_inspection.constants import POOL, PRIX_FIXE
 from lsi_inspection.chiffrage.moteur.couts import _ressources
 
 
-def _eft_brouillon(eft):
-	doc = frappe.get_doc("EFT", eft)
+def _chiffrage_brouillon(chiffrage):
+	doc = frappe.get_doc("Chiffrage", chiffrage)
 	doc.check_permission("write")
 	if doc.docstatus != 0:
-		frappe.throw(_("L'EFT {0} n'est plus en brouillon.").format(eft))
+		frappe.throw(_("Le chiffrage {0} n'est plus en brouillon.").format(chiffrage))
 	return doc
 
 
@@ -24,9 +24,9 @@ def _position(doc, numero):
 
 
 @frappe.whitelist(methods=["POST"])
-def partager_groupe(eft, groupe, etapes):
+def partager_groupe(chiffrage, groupe, etapes):
 	"""Un groupe partagé entre plusieurs prestations (parts égales) : cocher les prestations concernées."""
-	doc = _eft_brouillon(eft)
+	doc = _chiffrage_brouillon(chiffrage)
 	etapes = frappe.parse_json(etapes) or []
 	if not etapes:
 		frappe.throw(_("Cochez au moins une prestation."))
@@ -44,9 +44,9 @@ def partager_groupe(eft, groupe, etapes):
 
 
 @frappe.whitelist()
-def voir_ressources(eft, numero):
+def voir_ressources(chiffrage, numero):
 	"""Ressources du pool de la position. Les coûts individuels ne sont renvoyés qu'aux rôles qui ont le droit de lire le champ de coût."""
-	doc = frappe.get_doc("EFT", eft)
+	doc = frappe.get_doc("Chiffrage", chiffrage)
 	doc.check_permission("read")
 	p = _position(doc, numero)
 	t = frappe.get_doc("Type Position", p.type_position)
@@ -63,8 +63,8 @@ def voir_ressources(eft, numero):
 
 
 @frappe.whitelist(methods=["POST"])
-def choisir_ressource(eft, numero, ressource=None):
-	doc = _eft_brouillon(eft)
+def choisir_ressource(chiffrage, numero, ressource=None):
+	doc = _chiffrage_brouillon(chiffrage)
 	p = _position(doc, numero)
 	p.ressource = ressource or None
 	doc.save()
@@ -84,15 +84,15 @@ def historique_achat(item_code, limite=10):
 
 
 @frappe.whitelist(methods=["POST"])
-def demander_prix(eft, numero, fournisseurs):
+def demander_prix(chiffrage, numero, fournisseurs):
 	"""Demande de prix native (Request for Quotation, brouillon) ; la position passe « coût en attente » jusqu'à l'offre."""
-	doc = _eft_brouillon(eft)
+	doc = _chiffrage_brouillon(chiffrage)
 	p = _position(doc, numero)
 	fournisseurs = frappe.parse_json(fournisseurs) or []
 	if not fournisseurs:
 		frappe.throw(_("Choisissez au moins un fournisseur."))
 	rfq = frappe.new_doc("Request for Quotation")
-	rfq.update(dict(company=doc.company, transaction_date=nowdate(), lsi_eft=doc.name,
+	rfq.update(dict(company=doc.company, transaction_date=nowdate(), lsi_chiffrage=doc.name,
 		message_for_supplier=_("Merci de nous adresser votre meilleure offre.")))
 	for f in fournisseurs:
 		rfq.append("suppliers", dict(supplier=f))
@@ -107,19 +107,19 @@ def demander_prix(eft, numero, fournisseurs):
 
 
 def offre_fournisseur(doc, method=None):
-	"""Supplier Quotation validée en réponse à une demande de prix d'une EFT : l'EFT (brouillon) est recalculée."""
+	"""Supplier Quotation validée en réponse à une demande de prix d'un chiffrage : le chiffrage (brouillon) est recalculée."""
 	for rfq in {i.request_for_quotation for i in doc.items if i.get("request_for_quotation")}:
-		eft = frappe.db.get_value("Request for Quotation", rfq, "lsi_eft")
-		if eft and frappe.db.get_value("EFT", eft, "docstatus") == 0:
-			e = frappe.get_doc("EFT", eft)
+		chiffrage = frappe.db.get_value("Request for Quotation", rfq, "lsi_chiffrage")
+		if chiffrage and frappe.db.get_value("Chiffrage", chiffrage, "docstatus") == 0:
+			e = frappe.get_doc("Chiffrage", chiffrage)
 			e.flags.ignore_permissions = True
 			e.save()
 
 
 @frappe.whitelist(methods=["POST"])
-def repartir_prorata(eft, numero):
+def repartir_prorata(chiffrage, numero):
 	"""Position à prix fixe dont la quantité a changé : ses sous-positions sont mises à l'échelle (nouvelle / ancienne quantité)."""
-	doc = _eft_brouillon(eft)
+	doc = _chiffrage_brouillon(chiffrage)
 	p = _position(doc, numero)
 	if p.mode != PRIX_FIXE:
 		frappe.throw(_("La position {0} n'est pas à prix fixe.").format(numero))
