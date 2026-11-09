@@ -124,6 +124,8 @@
   },
   {
    "columns": 1,
+   "fetch_from": "item_code.stock_uom",
+   "fetch_if_empty": 1,
    "fieldname": "uom",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -276,7 +278,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-11-09 00:19:58.678682",
+ "modified": "2026-11-09 01:09:34.686134",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "EFT Position",

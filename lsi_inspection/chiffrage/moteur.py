@@ -127,7 +127,7 @@ def _suivant(prefixe, numeros):
 	return f"{prefixe}.{max(ks, default=0) + 1}"
 
 
-def organiser(doc):
+def organiser(doc, numeroter=True):
 	"""L'utilisateur ne travaille que sur les prestations (étapes) : les groupes, la répartition et les n° suivent.
 	- une prestation sans groupe (sans gamme) reçoit un groupe vide ;
 	- une position reçoit le groupe de sa prestation (ou la prestation de son groupe) ; une sous-position suit sa parente ;
@@ -155,6 +155,8 @@ def organiser(doc):
 		elif not p.etape and not p.groupe and len(presentes) == 1:
 			p.etape = presentes[0]
 			p.groupe = groupe_de_etape(doc, p.etape) or _creer_groupe(doc, p.etape)
+	if not numeroter:
+		return  # aperçu : les n° ne sont donnés qu'à l'enregistrement (la ligne parente peut encore être choisie)
 	numeros = {p.numero for p in positions if p.numero}
 	for p in positions:
 		if not p.numero and (p.parente or p.groupe):
@@ -497,7 +499,7 @@ def apercu(doc):
 	if d.docstatus != 0:
 		return {}
 	try:
-		organiser(d)
+		organiser(d, numeroter=False)
 		calculer(d)
 	except frappe.ValidationError as e:
 		frappe.clear_messages()

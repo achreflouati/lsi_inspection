@@ -22,6 +22,7 @@
   "tab_structure",
   "etapes",
   "groupes",
+  "tableau_html",
   "positions",
   "synthese_html",
   "repartitions",
@@ -214,13 +215,18 @@
    "in_standard_filter": 1,
    "label": "Service",
    "options": "Department"
+  },
+  {
+   "fieldname": "tableau_html",
+   "fieldtype": "HTML",
+   "label": "Tableau de chiffrage"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-09 00:54:40.365144",
+ "modified": "2026-11-09 01:09:36.928435",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "EFT",
