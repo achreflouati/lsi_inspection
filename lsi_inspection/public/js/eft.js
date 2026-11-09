@@ -21,10 +21,7 @@ frappe.ui.form.on("EFT", {
 		}
 		frm.add_custom_button(__("Enregistrer comme modèle"), () => lsi_eft.enregistrer_modele(frm), __("Modèle"));
 		if (frm.doc.docstatus === 1) {
-			frm.add_custom_button(__("Créer le devis"), () =>
-				frappe.call({ method: `${M}.creer_devis`, args: { eft: frm.doc.name }, freeze: true }).then((r) =>
-					frappe.set_route("Form", "Quotation", r.message)
-				), __("Créer"));
+			frm.add_custom_button(__("Créer l'offre client"), () => lsi_eft.offre_client(frm), __("Créer"));
 		}
 		if (frm.doc.cout_incomplet) {
 			frm.dashboard.set_headline(`<span class="text-danger">${__("Coût incomplet : au moins une position a un coût manquant ou en attente.")}</span>`);
@@ -598,5 +595,76 @@ frappe.ui.form.on("EFT", {
 		}
 		frm.toggle_display(["positions", "groupes"], false);  // la saisie se fait dans le tableau (grille accessible par le lien)
 		lsi_eft.tableau(frm);
+		lsi_eft.demande(frm);
 	},
 });
+
+// Demande du client (opportunité) : articles demandés et pièces jointes, pour que l'équipe technique traduise la demande en prestations
+lsi_eft.demande = function (frm) {
+	const f = frm.get_field("demande_html");
+	if (!f || !frm.doc.opportunity) return;
+	const esc = frappe.utils.escape_html;
+	frappe.call({ method: `${M}.demande_opportunite`, args: { opportunity: frm.doc.opportunity } }).then((r) => {
+		const d = r.message || {};
+		const articles = (d.articles || []).map((a) => `<tr><td>${a.item_code ? `<a href="/app/item/${encodeURIComponent(a.item_code)}">${esc(a.item_code)}</a>`
+			: `<span class="text-muted">${__("(sans article)")}</span>`}</td><td>${esc(a.item_name || "")}</td>
+			<td class="text-right">${format_number(a.qty, null, 2)} ${esc(__(a.uom || ""))}</td><td>${esc(strip_html(a.description || ""))}</td></tr>`).join("");
+		const fichiers = (d.fichiers || []).map((x) => `<li><a href="${encodeURI(x.file_url)}" target="_blank" rel="noopener">${esc(x.file_name || x.file_url)}</a>
+			${x.is_private ? `<span class="text-muted small">(${__("privé")})</span>` : ""}</li>`).join("");
+		f.$wrapper.html(`
+			<p><a href="/app/opportunity/${encodeURIComponent(frm.doc.opportunity)}">${__("Ouvrir l'opportunité {0}", [esc(frm.doc.opportunity)])}</a></p>
+			<p class="text-muted small" style="margin:8px 0 4px">${__("Articles demandés par le commercial")}</p>
+			${articles ? `<table class="table table-bordered table-sm"><tr><th>${__("Article")}</th><th>${__("Désignation")}</th><th class="text-right">${__("Quantité")}</th><th>${__("Description")}</th></tr>${articles}</table>`
+				: `<p class="text-muted">${__("Aucun article : la demande est décrite en texte ci-dessus.")}</p>`}
+			<p class="text-muted small" style="margin:8px 0 4px">${__("Pièces jointes de l'opportunité")}</p>
+			${fichiers ? `<ul>${fichiers}</ul>` : `<p class="text-muted">${__("Aucune pièce jointe.")}</p>`}
+			<p class="text-muted small">${__("Traduisez la demande en prestations ci-dessous (tableau « Étapes » ou bouton « Ajouter depuis une gamme »).")}</p>`);
+	});
+};
+
+// « Créer l'offre client » (comme MARI) : cocher les lignes vendues qui iront dans le devis, remise sur le total
+lsi_eft.offre_client = function (frm) {
+	const esc = frappe.utils.escape_html;
+	const vendues = (frm.doc.positions || []).filter((p) => !p.parente && p.item_code).sort((a, b) => (lsi_eft.cle(a.numero) < lsi_eft.cle(b.numero) ? -1 : 1));
+	const sans_valeur = (p) => !flt(p.prix_unitaire);
+	const d = new frappe.ui.Dialog({
+		title: __("Créer l'offre client"), size: "extra-large",
+		fields: [
+			{ fieldname: "remise", fieldtype: "Percent", label: __("Remise (%)"), default: 0, description: __("Remise native du devis, sur le total net.") },
+			{ fieldtype: "Column Break" },
+			{ fieldname: "sans_valeur", fieldtype: "Check", label: __("Afficher les positions sans valeur"), default: 0 },
+			{ fieldtype: "Section Break" },
+			{ fieldname: "lignes_html", fieldtype: "HTML" },
+		],
+		primary_action_label: __("Créer l'offre client"),
+		primary_action(v) {
+			const lignes = d.$wrapper.find(".lsi-oc:checked").map(function () { return $(this).data("name"); }).get();
+			if (!lignes.length) return frappe.msgprint(__("Cochez au moins une ligne."));
+			frappe.call({ method: `${M}.creer_devis`, args: { eft: frm.doc.name, lignes, remise: v.remise || 0 }, freeze: true }).then((r) => {
+				d.hide();
+				frappe.set_route("Form", "Quotation", r.message);
+			});
+		},
+	});
+	const rendre = () => {
+		const montrer = d.get_value("sans_valeur");
+		const coches = new Set(d.$wrapper.find(".lsi-oc:checked").map(function () { return $(this).data("name"); }).get());
+		const premier = !d.$wrapper.find(".lsi-oc").length;
+		const lignes = vendues.filter((p) => montrer || !sans_valeur(p)).map((p) => {
+			const ok = premier ? !sans_valeur(p) : coches.has(p.name);
+			return `<tr><td><input type="checkbox" class="lsi-oc" data-name="${p.name}" ${ok ? "checked" : ""}></td>
+				<td>${esc(p.numero || "")}</td><td><b>${esc(p.designation || p.item_code)}</b>${p.designation_2 ? `<div class="text-muted small">${esc(p.designation_2)}</div>` : ""}</td>
+				<td class="text-right">${p.tarif ? __("tarif") : format_number(p.qty, null, 2)}</td><td>${esc(__(p.uom || ""))}</td>
+				<td class="text-right">${format_number(p.prix_unitaire, null, 3)}</td><td class="text-right">${format_number(p.prix_total, null, 3)}</td></tr>`;
+		}).join("");
+		d.fields_dict.lignes_html.$wrapper.html(`<div style="max-height:55vh;overflow:auto"><table class="table table-bordered table-sm">
+			<thead><tr><th><input type="checkbox" class="lsi-oc-tout" checked title="${__("Tout cocher / décocher")}"></th><th>${__("Pos")}</th><th>${__("Désignation")}</th>
+			<th class="text-right">${__("Quantité")}</th><th>${__("Unité")}</th><th class="text-right">${__("Prix unitaire")}</th><th class="text-right">${__("Valeur")}</th></tr></thead>
+			<tbody>${lignes || `<tr><td colspan="7" class="text-muted">${__("Aucune ligne vendue avec un prix.")}</td></tr>`}</tbody></table></div>
+			<p class="text-muted small">${__("Seules les lignes cochées vont dans le devis. Les sous-lignes restent dans le chiffrage.")}</p>`);
+		d.$wrapper.find(".lsi-oc-tout").on("change", function () { d.$wrapper.find(".lsi-oc").prop("checked", this.checked); });
+	};
+	d.fields_dict.sans_valeur.$input.on("change", rendre);
+	d.show();
+	rendre();
+};

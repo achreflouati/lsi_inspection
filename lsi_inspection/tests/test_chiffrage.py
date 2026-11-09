@@ -618,3 +618,30 @@ class TestChiffrage(TestChiffrageBase):
 		doc.save()
 		nouvelle = next(p for p in doc.positions if p.parente == "1.17" and p.numero not in ("1.17.1", "1.17.2", "1.17.3"))
 		self.assertEqual(nouvelle.numero, "1.17.4")
+
+	# ------------------------------------------------------------------ demande du client : opportunité → EFT (étude technique)
+	def test_demande_client_texte_et_pieces_jointes_dans_l_eft(self):
+		"""Le commercial écrit la demande telle quelle (ligne sans article possible) et joint un document : l'EFT les montre."""
+		texte = "<p>Contrôle des soudures du réservoir R2, rapport en français, intervention de nuit possible.</p>"
+		o = self.opportunite(self.parcours_standard(), lsi_demande_client=texte)
+		o.append("items", dict(item_name="Contrôle à préciser", description="Soudures du réservoir R2", qty=1, rate=0))
+		o.save()
+		frappe.get_doc(dict(doctype="File", file_name="cdc-client.pdf", file_url="https://example.com/cdc-client.pdf",
+			attached_to_doctype="Opportunity", attached_to_name=o.name)).insert()
+		e = frappe.get_doc("EFT", moteur.make_eft(o.name))  # la ligne sans article ne bloque pas
+		self.assertEqual(e.demande_client, texte)
+		self.assertEqual(len(e.etapes), 1)  # seule la ligne avec un article devient une prestation
+		d = moteur.demande_opportunite(o.name)
+		self.assertIn("Contrôle à préciser", [a["item_name"] for a in d["articles"]])
+		self.assertEqual([f["file_name"] for f in d["fichiers"]], ["cdc-client.pdf"])
+
+	# ------------------------------------------------------------------ « Créer l'offre client » : lignes cochées et remise
+	def test_offre_client_lignes_cochees_et_remise(self):
+		doc = self._valider(self.eft_exemple())
+		choisies = [self.pos(doc, n).name for n in ("1.1", "1.17", "2.1")]
+		q = frappe.get_doc("Quotation", moteur.creer_devis(doc.name, frappe.as_json(choisies), 10))
+		self.assertEqual(sorted(i.lsi_numero_position for i in q.items), ["1.1", "1.17", "2.1"])  # seulement les lignes cochées
+		self.assertEqual((q.apply_discount_on, q.additional_discount_percentage), ("Net Total", 10))
+		self.assertAlmostEqual(q.net_total, sum(flt(i.amount) for i in q.items) * 0.9, 2)
+		with self.assertRaises(frappe.ValidationError):
+			moteur.creer_devis(doc.name, "[]")

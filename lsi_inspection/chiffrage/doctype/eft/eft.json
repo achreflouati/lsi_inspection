@@ -20,6 +20,10 @@
   "workflow_state",
   "amended_from",
   "tab_structure",
+  "sb_demande",
+  "demande_client",
+  "demande_html",
+  "sb_prestations",
   "etapes",
   "groupes",
   "tableau_html",
@@ -220,13 +224,37 @@
    "fieldname": "tableau_html",
    "fieldtype": "HTML",
    "label": "Tableau de chiffrage"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.opportunity",
+   "fieldname": "sb_demande",
+   "fieldtype": "Section Break",
+   "label": "Demande du client (opportunit\u00e9)"
+  },
+  {
+   "fetch_from": "opportunity.lsi_demande_client",
+   "fieldname": "demande_client",
+   "fieldtype": "Text Editor",
+   "label": "Demande du client (telle qu'exprim\u00e9e)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "demande_html",
+   "fieldtype": "HTML",
+   "label": "Articles demand\u00e9s et pi\u00e8ces jointes de l'opportunit\u00e9"
+  },
+  {
+   "fieldname": "sb_prestations",
+   "fieldtype": "Section Break",
+   "label": "Prestations \u00e0 chiffrer"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-09 01:09:36.928435",
+ "modified": "2026-11-09 12:38:36.769288",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "EFT",

@@ -569,9 +569,22 @@ def make_eft(opportunity):
 		service=opp.get("lsi_service"),
 		customer=opp.party_name if opp.opportunity_from == "Customer" else None))
 	for it in opp.get("items") or []:
-		doc.append("etapes", dict(prestation=it.item_code, qty=flt(it.qty) or 1, uom=it.uom))
+		if it.item_code:  # ligne sans article (demande seulement décrite en texte) : l'équipe technique choisira les prestations
+			doc.append("etapes", dict(prestation=it.item_code, qty=flt(it.qty) or 1, uom=it.uom))
 	doc.insert()
 	return doc.name
+
+
+@frappe.whitelist()
+def demande_opportunite(opportunity):
+	"""Pour l'étude technique dans l'EFT : articles demandés et pièces jointes de l'opportunité (droit de lecture vérifié)."""
+	opp = frappe.get_doc("Opportunity", opportunity)
+	opp.check_permission("read")
+	articles = [dict(item_code=it.item_code, item_name=it.item_name, qty=it.qty, uom=it.uom, description=it.description)
+		for it in opp.get("items") or []]
+	fichiers = frappe.get_all("File", filters={"attached_to_doctype": "Opportunity", "attached_to_name": opp.name, "is_folder": 0},
+		fields=["file_name", "file_url", "is_private", "creation"], order_by="creation asc")
+	return dict(articles=articles, fichiers=fichiers)
 
 
 CHAMPS_APERCU_POSITION = ("numero", "groupe", "parente", "etape", "type_position", "mode", "tarif", "stock_disponible", "etapes", "cout_unitaire", "cout_total", "source_cout",
@@ -760,13 +773,20 @@ def charger_modele(eft, modele):
 
 
 @frappe.whitelist(methods=["POST"])
-def creer_devis(eft):
-	"""Un seul chemin : chaque POSITION VENDUE (sans parente) = une ligne de devis natif ; jamais les sous-positions."""
+def creer_devis(eft, lignes=None, remise=None):
+	"""Un seul chemin (« Créer l'offre client ») : chaque POSITION VENDUE cochée = une ligne de devis natif ; jamais les
+	sous-positions. lignes : positions retenues (toutes si absent) ; remise : % sur le total net, remise native du devis."""
 	doc = frappe.get_doc("EFT", eft)
 	doc.check_permission("read")
+	lignes = frappe.parse_json(lignes) if lignes else None
+	remise = flt(remise)
+	if lignes is not None and not lignes:
+		frappe.throw(_("Cochez au moins une ligne pour l'offre client."))
+	if not 0 <= remise < 100:
+		frappe.throw(_("La remise doit être comprise entre 0 et 100 %."))
 	if doc.docstatus != 1:
 		frappe.throw(_("L'EFT doit être validée avant de créer le devis."))
-	vendues = [p for p in doc.positions if not p.parente]
+	vendues = [p for p in doc.positions if not p.parente and (lignes is None or p.name in lignes)]
 	if any(cint(p.tarif) for p in vendues) and not cint(frappe.db.get_single_value("Selling Settings", "allow_zero_qty_in_quotation")):
 		frappe.throw(_("Des lignes tarif (quantité 0) existent : activez « Allow Quotation with Zero Quantity » dans les paramètres de vente."))
 	if not doc.customer:
@@ -781,5 +801,8 @@ def creer_devis(eft):
 			description=" — ".join(x for x in (p.designation or p.item_code, p.designation_2) if x),
 			lsi_groupe_numero=p.groupe, lsi_groupe_titre=titres.get(cstr(p.groupe)), lsi_numero_position=p.numero,
 			lsi_designation_2=p.designation_2, lsi_etapes=p.etapes, lsi_tarif=p.tarif, lsi_eft_position=p.name))
+	if remise:
+		q.apply_discount_on = "Net Total"
+		q.additional_discount_percentage = remise
 	q.insert()
 	return q.name
