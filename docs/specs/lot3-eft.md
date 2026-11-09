@@ -69,3 +69,13 @@ Prérequis : `bench --site tic.erpsys.ovh execute lsi_inspection.demo.lot3.run` 
 | T3.12 | Annuler, Amender ; Dupliquer | Nouvelle version recalculée |
 | T3.13 | Enregistrer comme modèle, charger sur une autre EFT | Structure sans coûts, recalcul immédiat |
 | T3.14 | Paramétreur chiffrage : nouveau type de position ; Chiffreur : coûts salariés | Fonctionne sans code ; coûts individuels invisibles |
+
+## Consommable chiffré par un pool (09/11)
+Type de position « Consommable à coût (pool) » (profil tic) : pool = groupe d'articles (ex. « Films »), ressources = articles actifs du groupe,
+coût = dernier prix d'achat, règle « Plus élevé » (ou Moins élevé / Moyenne). L'article facturé (ex. « Film ») porte dans son onglet Chiffrage
+Pool (type) = Item Group, Pool = le groupe. « Voir les ressources » permet de retenir un article précis. Aucun code : configuration seule.
+
+## Tableau de chiffrage (09/11)
+Colonnes = tous les champs d'EFT Position (définition du doctype), principaux d'abord ; défilement horizontal, N° et Article figés ;
+bascule « colonnes essentielles / toutes » (préférence du navigateur). Chaque colonne suit les permissions natives du champ (permlevel) :
+masquée, lecture seule ou modifiable. Coût unitaire modifiable seulement si « Coût manuel ».

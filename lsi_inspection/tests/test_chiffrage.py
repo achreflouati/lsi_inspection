@@ -420,3 +420,32 @@ class TestChiffrage(TestChiffrageBase):
 		doc = self._valider(doc)
 		q = frappe.get_doc("Quotation", moteur.creer_devis(doc.name))
 		self.assertEqual((q.lsi_bu, q.lsi_service), (bu, service))
+
+	# ------------------------------------------------------------------ consommable chiffré par un pool (groupe d'articles)
+	def test_consommable_pool_groupe_d_articles(self):
+		"""Ligne facturée « Film » : pool = groupe d'articles « Films » ; coût = dernier prix d'achat le plus élevé du groupe."""
+		racine = frappe.db.get_value("Item Group", {"is_group": 1, "parent_item_group": ("in", ["", None])})
+		films = frappe.get_doc(dict(doctype="Item Group", item_group_name=f"{P} Films", parent_item_group=racine, is_group=0)).insert().name
+		typ = frappe.get_doc(dict(doctype="Type Position", libelle=f"{P} Consommable pool", actif=1, mode="À coût", source_cout="Pool de ressources",
+			pool_doctype="Item Group", ressource_doctype="Item", champ_appartenance="item_group", champ_cout="last_purchase_rate",
+			filtres_ressources='{"disabled": 0}', regle="Plus élevé")).insert().name
+		ressources = []
+		for i, prix in enumerate([10, 15, 20], 1):
+			code = f"{P} Film {i}"
+			frappe.get_doc(dict(doctype="Item", item_code=code, item_name=code, item_group=films, stock_uom="Unité", is_stock_item=1,
+				include_item_in_manufacturing=0)).insert()
+			frappe.db.set_value("Item", code, "last_purchase_rate", prix)  # (normalement mis à jour par les achats)
+			ressources.append(code)
+		self.item(f"{P} Film RTX", "Unité", lsi_pool_doctype="Item Group", lsi_pool=films)
+		doc = frappe.new_doc("EFT")
+		doc.update(dict(titre=f"{P} film", company=self.company, customer=self.client()))
+		doc.append("etapes", dict(prestation=ETAPES["Contrôle par Radiographie (RT)"], qty=1))
+		doc.append("positions", dict(etape=ETAPES["Contrôle par Radiographie (RT)"], item_code=f"{P} Film RTX", type_position=typ, qty=3, uom="Unité",
+			prix_unitaire=25))
+		doc.insert()
+		p = doc.positions[0]
+		self.assertEqual((p.cout_unitaire, p.cout_total, p.cout_manquant), (20, 60, 0))
+		self.assertIn("Plus élevé", p.source_cout)
+		self.assertEqual(sorted(r["name"] for r in moteur.voir_ressources(doc.name, p.numero)["ressources"]), ressources)
+		moteur.choisir_ressource(doc.name, p.numero, ressources[0])  # le chiffreur peut retenir un film précis
+		self.assertEqual(frappe.get_doc("EFT", doc.name).positions[0].cout_unitaire, 10)
