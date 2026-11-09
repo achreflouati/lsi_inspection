@@ -484,7 +484,7 @@ lsi_eft.tableau = function (frm) {
 	w.find(".lsi-add").on("click", function () { lsi_eft.ajouter_ligne(frm, String($(this).data("groupe")), null); });
 	w.find(".lsi-sous").on("click", function () {
 		const p = locals["EFT Position"][$(this).data("name")];
-		lsi_eft.ajouter_ligne(frm, String(p.groupe), p.numero);
+		lsi_eft.ajouter_ligne(frm, String(p.groupe), p.name);  // la parente est identifiée par sa ligne : son n° peut arriver pendant la saisie
 	});
 	w.find(".lsi-grille").on("click", () => {
 		const cache = frm.get_field("positions").df.hidden;
@@ -492,7 +492,9 @@ lsi_eft.tableau = function (frm) {
 	});
 };
 
-lsi_eft.ajouter_ligne = function (frm, groupe, parente) {
+lsi_eft.ajouter_ligne = function (frm, groupe, ligne_parente) {
+	const num_parente = () => (ligne_parente ? (locals["EFT Position"][ligne_parente] || {}).numero : null);
+	const parente = ligne_parente ? num_parente() || __("(en cours de numérotation)") : null;
 	const d = new frappe.ui.Dialog({
 		title: parente ? __("Sous-position de la ligne {0}", [parente]) : __("Nouvelle ligne — groupe {0}", [groupe]),
 		fields: [
@@ -506,6 +508,12 @@ lsi_eft.ajouter_ligne = function (frm, groupe, parente) {
 		],
 		primary_action_label: __("Ajouter"),
 		primary_action(v) {
+			const parente = ligne_parente ? num_parente() : null;
+			if (ligne_parente && !parente) {
+				frappe.show_alert({ message: __("La ligne parente est en cours de numérotation : réessayez dans un instant."), indicator: "orange" });
+				lsi_eft.apercu(frm);
+				return;
+			}
 			frappe.db.get_value("Item", v.item_code, "stock_uom").then((r) => {
 				const row = frappe.model.add_child(frm.doc, "EFT Position", "positions");
 				const g = (frm.doc.groupes || []).find((x) => String(x.numero) === groupe);

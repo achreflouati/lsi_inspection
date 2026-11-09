@@ -125,6 +125,10 @@ def _suivant(prefixe, numeros):
 	return f"{prefixe}.{max(ks, default=0) + 1}"
 
 
+def _est_prix_fixe(p):
+	return bool(p and p.type_position and frappe.get_cached_value("Type Position", p.type_position, "mode") == PRIX_FIXE)
+
+
 def organiser(doc, numeroter=True):
 	"""L'utilisateur ne travaille que sur les prestations (étapes) : les groupes, la répartition et les n° suivent.
 	- une prestation sans groupe (sans gamme) reçoit un groupe vide ;
@@ -154,12 +158,26 @@ def organiser(doc, numeroter=True):
 			p.etape = presentes[0]
 			p.groupe = groupe_de_etape(doc, p.etape) or _creer_groupe(doc, p.etape)
 	if not numeroter:
-		return  # aperçu : les n° ne sont donnés qu'à l'enregistrement (la ligne parente peut encore être choisie)
+		return
+	# n° donnés aussi pendant la saisie (aperçu) : une ligne dont le n° ne correspond plus à son groupe ou à sa parente
+	# (ex. numérotée 1.21 puis rattachée à 1.20) est renumérotée, et ses sous-lignes la suivent
 	numeros = {p.numero for p in positions if p.numero}
-	for p in positions:
-		if not p.numero and (p.parente or p.groupe):
-			p.numero = _suivant(cstr(p.parente or p.groupe), numeros)
-			numeros.add(p.numero)
+	for p in sorted(positions, key=lambda x: bool(x.parente)):  # positions principales d'abord (les sous-lignes suivent)
+		prefixe = cstr(p.parente or p.groupe)
+		if not prefixe:
+			continue
+		if p.numero and p.numero.startswith(prefixe + ".") and p.numero.count(".") == prefixe.count(".") + 1:
+			continue
+		if p.numero and p.parente and not _est_prix_fixe(par_num.get(p.parente)):
+			continue  # rattachement invalide : n° conservé, l'erreur de structure le citera tel que l'utilisateur le voit
+		ancien = p.numero
+		numeros.discard(ancien)
+		p.numero = _suivant(prefixe, numeros)
+		numeros.add(p.numero)
+		if ancien:
+			for k in positions:
+				if k.parente == ancien:
+					k.parente = p.numero
 
 
 @frappe.whitelist(methods=["POST"])
@@ -556,7 +574,7 @@ def make_eft(opportunity):
 	return doc.name
 
 
-CHAMPS_APERCU_POSITION = ("numero", "groupe", "etape", "type_position", "mode", "tarif", "stock_disponible", "etapes", "cout_unitaire", "cout_total", "source_cout",
+CHAMPS_APERCU_POSITION = ("numero", "groupe", "parente", "etape", "type_position", "mode", "tarif", "stock_disponible", "etapes", "cout_unitaire", "cout_total", "source_cout",
 	"ressource", "ressource_doctype", "cout_manquant", "cout_en_attente", "prix_unitaire", "prix_total", "prix_conseille", "marge", "taux_marge", "retenue")
 
 
@@ -570,7 +588,7 @@ def apercu(doc):
 	if d.docstatus != 0:
 		return {}
 	try:
-		organiser(d, numeroter=False)
+		organiser(d)  # n° et groupes donnés pendant la saisie, comme à l'enregistrement
 		calculer(d)
 	except frappe.ValidationError as e:
 		frappe.clear_messages()

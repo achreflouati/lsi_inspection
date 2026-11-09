@@ -592,3 +592,29 @@ class TestChiffrage(TestChiffrageBase):
 		doc, _typ = self._film_max()
 		films = {l["ressource"]: l["quantite"] for l in besoins(doc) if "FILM" in (l["ressource"] or "") and "CASSETTE" not in l["ressource"]}
 		self.assertEqual(films, {article("FILM FUJIFILM RECHARGEABLE IX100 10/40"): 3})  # seul le film retenu, × 3
+
+	# ------------------------------------------------------------------ numérotation pendant la saisie (sans enregistrer)
+	def test_apercu_numerote_les_nouvelles_lignes(self):
+		"""Ligne prix fixe ajoutée puis sous-ligne : l'aperçu donne les n° (1.20, puis 1.20.1) sans enregistrer."""
+		doc = self.eft_exemple()
+		brouillon = doc.as_dict()
+		brouillon["positions"].append(dict(doctype="EFT Position", name="new-pf", __islocal=1, groupe="1", item_code=article("Film"),
+			type_position=TYPES["Prix fixe"], qty=1, uom="Unité", parenttype="EFT", parentfield="positions"))
+		r = moteur.apercu(frappe.as_json(brouillon))
+		self.assertEqual(r["positions"]["new-pf"]["numero"], "1.20")
+		brouillon["positions"][-1]["numero"] = "1.20"
+		brouillon["positions"].append(dict(doctype="EFT Position", name="new-sp", __islocal=1, parente="1.20",
+			item_code=article("FILM MX125 RECHARGEABLE 10/40"), type_position=TYPES["Article de la position à prix fixe"], qty=1, uom="Unité",
+			parenttype="EFT", parentfield="positions"))
+		r = moteur.apercu(frappe.as_json(brouillon))
+		self.assertEqual(r["positions"]["new-sp"]["numero"], "1.20.1")
+		self.assertEqual(r["positions"]["new-pf"]["cout_total"], 12)  # somme calculée en direct
+
+	def test_ligne_renumerotee_quand_rattachee_a_une_parente(self):
+		"""Ancien défaut : une ligne numérotée 1.20 puis rattachée à 1.17 devient 1.17.4 (et non « 1.20 sous 1.17 »)."""
+		doc = self.eft_exemple()
+		doc.append("positions", dict(groupe="1", item_code=article("FILM MX125 RECHARGEABLE 10/40"),
+			type_position=TYPES["Article de la position à prix fixe"], qty=1, uom="Unité", numero="1.20", parente="1.17"))
+		doc.save()
+		nouvelle = next(p for p in doc.positions if p.parente == "1.17" and p.numero not in ("1.17.1", "1.17.2", "1.17.3"))
+		self.assertEqual(nouvelle.numero, "1.17.4")
