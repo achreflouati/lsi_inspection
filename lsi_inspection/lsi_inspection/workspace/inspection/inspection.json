@@ -70,7 +70,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Param\u00e9trage commercial",
-   "link_count": 9,
+   "link_count": 10,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -173,6 +173,16 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "BU",
+   "link_count": 0,
+   "link_to": "Branch",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -335,7 +345,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-08 16:10:53.433856",
+ "modified": "2026-11-09 00:55:45.248069",
  "modified_by": "Administrator",
  "module": "LSI Inspection",
  "name": "Inspection",

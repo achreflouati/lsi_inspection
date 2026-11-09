@@ -474,7 +474,8 @@ def make_eft(opportunity):
 	opp = frappe.get_doc("Opportunity", opportunity)
 	opp.check_permission("read")
 	doc = frappe.new_doc("EFT")
-	doc.update(dict(titre=opp.get("title") or opp.name, opportunity=opp.name, company=opp.company,
+	doc.update(dict(titre=opp.get("title") or opp.name, opportunity=opp.name, company=opp.company, bu=opp.get("lsi_bu"),
+		service=opp.get("lsi_service"),
 		customer=opp.party_name if opp.opportunity_from == "Customer" else None))
 	for it in opp.get("items") or []:
 		doc.append("etapes", dict(prestation=it.item_code, qty=flt(it.qty) or 1, uom=it.uom))
@@ -684,7 +685,8 @@ def creer_devis(eft):
 	titres = {cstr(g.numero): g.titre for g in doc.groupes}
 	q = frappe.new_doc("Quotation")
 	q.update(dict(quotation_to="Customer", party_name=doc.customer, company=doc.company, transaction_date=nowdate(),
-		valid_till=add_days(nowdate(), 30), opportunity=doc.opportunity, lsi_eft=doc.name, ignore_pricing_rule=1))
+		valid_till=add_days(nowdate(), 30), opportunity=doc.opportunity, lsi_eft=doc.name, lsi_bu=doc.bu, lsi_service=doc.service,
+		ignore_pricing_rule=1))
 	for p in vendues:
 		q.append("items", dict(item_code=p.item_code, qty=flt(p.qty), uom=p.uom, conversion_factor=1, rate=flt(p.prix_unitaire),
 			description=" — ".join(x for x in (p.designation or p.item_code, p.designation_2) if x),
