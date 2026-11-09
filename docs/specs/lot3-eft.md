@@ -79,3 +79,6 @@ Pool (type) = Item Group, Pool = le groupe. « Voir les ressources » permet de 
 Colonnes = tous les champs d'EFT Position (définition du doctype), principaux d'abord ; défilement horizontal, N° et Article figés ;
 bascule « colonnes essentielles / toutes » (préférence du navigateur). Chaque colonne suit les permissions natives du champ (permlevel) :
 masquée, lecture seule ou modifiable. Coût unitaire modifiable seulement si « Coût manuel ».
+Sous-ligne d'un prix fixe : type « Consommable de la position à prix fixe (pool) » (mode Sous-position, même pool groupe d'articles).
+Le prix fixe fait toujours la somme de ses sous-lignes ; chaque sous-ligne prend par défaut le coût le plus élevé de son pool,
+l'utilisateur peut en retenir un autre (Positions > Voir les ressources).

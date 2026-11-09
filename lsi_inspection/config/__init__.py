@@ -74,8 +74,20 @@ def _charger_reglages(dt, valeurs):
 
 
 def charger_dossier(dossier):
-	"""Insère les éléments absents. Un élément dont un lien n'existe pas encore (ex. gamme citant des articles à créer) est
-	mis en attente : il sera inséré au prochain chargement."""
+	"""Insère les éléments absents. Un élément dont un lien n'existe pas encore est mis en attente ; tout le manifeste est
+	repassé tant que des éléments en attente peuvent être insérés (liens entre fichiers, ex. article → type de position)."""
+	total = 0
+	while True:
+		n, attente = _passe(dossier)
+		total += n
+		if not attente or not n:
+			break
+	if attente:
+		print(f"lsi_inspection : en attente (lien manquant) : {', '.join(attente)}")
+	return total
+
+
+def _passe(dossier):
 	n, attente = 0, []
 	frappe.flags.lsi_chargement_config = True
 	try:
@@ -107,9 +119,7 @@ def charger_dossier(dossier):
 				restants = echecs
 	finally:
 		frappe.flags.lsi_chargement_config = False
-	if attente:
-		print(f"lsi_inspection : en attente (lien manquant) : {', '.join(attente)}")
-	return n
+	return n, attente
 
 
 # ------------------------------------------------------------------ export

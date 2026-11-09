@@ -449,3 +449,29 @@ class TestChiffrage(TestChiffrageBase):
 		self.assertEqual(sorted(r["name"] for r in moteur.voir_ressources(doc.name, p.numero)["ressources"]), ressources)
 		moteur.choisir_ressource(doc.name, p.numero, ressources[0])  # le chiffreur peut retenir un film précis
 		self.assertEqual(frappe.get_doc("EFT", doc.name).positions[0].cout_unitaire, 10)
+
+	def test_sous_position_consommable_pool_dans_prix_fixe(self):
+		"""Prix fixe = somme ; sa sous-ligne « Film » prend le film le plus cher du groupe, ou celui choisi par l'utilisateur."""
+		racine = frappe.db.get_value("Item Group", {"is_group": 1, "parent_item_group": ("in", ["", None])})
+		films = frappe.get_doc(dict(doctype="Item Group", item_group_name=f"{P} Films SP", parent_item_group=racine, is_group=0)).insert().name
+		typ = frappe.get_doc(dict(doctype="Type Position", libelle=f"{P} Consommable sous-position pool", actif=1, mode="Sous-position",
+			source_cout="Pool de ressources", pool_doctype="Item Group", ressource_doctype="Item", champ_appartenance="item_group",
+			champ_cout="last_purchase_rate", filtres_ressources='{"disabled": 0}', regle="Plus élevé")).insert().name
+		codes = []
+		for i, prix in enumerate([10, 15, 20], 1):
+			code = f"{P} Film SP {i}"
+			frappe.get_doc(dict(doctype="Item", item_code=code, item_name=code, item_group=films, stock_uom="Unité", is_stock_item=1,
+				include_item_in_manufacturing=0)).insert()
+			frappe.db.set_value("Item", code, "last_purchase_rate", prix)
+			codes.append(code)
+		self.item(f"{P} Film RTX SP", "Unité", lsi_pool_doctype="Item Group", lsi_pool=films)
+		doc = self.eft_exemple()
+		avant = self.pos(doc, "5.1").cout_total
+		doc.append("positions", dict(parente="5.1", item_code=f"{P} Film RTX SP", type_position=typ, qty=2, uom="Unité"))
+		doc.save()
+		film = next(p for p in doc.positions if p.item_code == f"{P} Film RTX SP")
+		self.assertEqual((film.cout_unitaire, film.cout_total), (20, 40))  # le plus élevé par défaut
+		self.assertEqual(self.pos(doc, "5.1").cout_total, avant + 40)  # le prix fixe fait toujours la somme
+		moteur.choisir_ressource(doc.name, film.numero, codes[0])  # l'utilisateur choisit un autre film
+		doc = frappe.get_doc("EFT", doc.name)
+		self.assertEqual((self.pos(doc, film.numero).cout_unitaire, self.pos(doc, "5.1").cout_total), (10, avant + 20))
