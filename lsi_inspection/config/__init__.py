@@ -16,7 +16,7 @@ from frappe.utils import cstr
 from frappe.model import default_fields, no_value_fields, table_fields
 
 TECHNIQUES = set(default_fields) | {"parent", "parentfield", "parenttype", "amended_from", "_user_tags", "_comments", "_assign",
-	"_liked_by", "_seen"}
+	"_liked_by", "_seen", "lft", "rgt", "old_parent"}  # lft / rgt / old_parent : arbre recalculé à l'insertion
 
 
 def racine():
@@ -87,19 +87,24 @@ def charger_dossier(dossier):
 					with open(chemin) as f:
 						n += _charger_reglages(dt, json.load(f))
 				continue
-			for d in _lire(dossier, dt):
-				if frappe.db.exists(dt, d["name"]):
-					continue
-				doc = frappe.get_doc(dict(d, doctype=dt))
-				doc.flags.ignore_permissions = True
-				frappe.db.savepoint("lsi_config")
-				try:
-					doc.insert(set_name=d["name"])
-					n += 1
-				except frappe.LinkValidationError:
-					frappe.db.rollback(save_point="lsi_config")
-					frappe.clear_messages()
-					attente.append(f"{dt} {d['name']}")
+			restants = [d for d in _lire(dossier, dt) if not frappe.db.exists(dt, d["name"])]
+			while restants:  # plusieurs passes : un élément peut citer un autre du même fichier (ex. département parent)
+				echecs = []
+				for d in restants:
+					doc = frappe.get_doc(dict(d, doctype=dt))
+					doc.flags.ignore_permissions = True
+					frappe.db.savepoint("lsi_config")
+					try:
+						doc.insert(set_name=d["name"])
+						n += 1
+					except frappe.LinkValidationError:
+						frappe.db.rollback(save_point="lsi_config")
+						frappe.clear_messages()
+						echecs.append(d)
+				if len(echecs) == len(restants):
+					attente += [f"{dt} {d['name']}" for d in echecs]
+					break
+				restants = echecs
 	finally:
 		frappe.flags.lsi_chargement_config = False
 	if attente:
@@ -165,7 +170,7 @@ def exporter_profil(profil, dossier=None):
 		if e.get("export") == "references" or e.get("single"):
 			continue
 		exclus = {d["name"] for d in _lire(commun, e["doctype"])}
-		noms = [n for n in frappe.get_all(e["doctype"], filters=e.get("filtres"), pluck="name", order_by="name asc") if n not in exclus]
+		noms = [n for n in frappe.get_all(e["doctype"], filters=e.get("filtres"), or_filters=e.get("filtres_ou"), pluck="name", order_by="name asc") if n not in exclus]
 		docs[e["doctype"]] = [frappe.get_doc(e["doctype"], n) for n in noms]
 	tous = [d for liste in docs.values() for d in liste]
 	for e in entrees:

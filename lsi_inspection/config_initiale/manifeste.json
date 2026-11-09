@@ -1,11 +1,49 @@
 {
- "description": "Doctypes de la configuration initiale, dans l'ordre de chargement. export = references : seuls les documents cités par les autres sont exportés. filtres : filtres de l'export (ex. Notifications de configuration : sans module, les Notifications de structure étant livrées en fixtures). single : réglage natif (document unique) : seuls les champs listés, renseignés s'ils sont à leur valeur d'origine.",
+ "description": "Doctypes de la configuration initiale, dans l'ordre de chargement. export = references : seuls les documents cités par les autres sont exportés. filtres : filtres de l'export (ex. Notifications de configuration : sans module, les Notifications de structure étant livrées en fixtures). single : réglage natif (document unique) : seuls les champs listés, renseignés s'ils sont à leur valeur d'origine. filtres_ou : filtres « ou » de l'export.",
  "doctypes": [
   {
    "doctype": "Famille de Type"
   },
   {
    "doctype": "Type Metier"
+  },
+  {
+   "doctype": "Item Group",
+   "filtres": [
+    [
+     "name",
+     "=",
+     "Prestations"
+    ]
+   ]
+  },
+  {
+   "doctype": "Item",
+   "filtres": [
+    [
+     "item_group",
+     "=",
+     "Prestations"
+    ]
+   ]
+  },
+  {
+   "doctype": "Branch"
+  },
+  {
+   "doctype": "Department",
+   "filtres_ou": [
+    [
+     "name",
+     "=",
+     "Services - tic"
+    ],
+    [
+     "parent_department",
+     "=",
+     "Services - tic"
+    ]
+   ]
   },
   {
    "doctype": "Sales Stage"

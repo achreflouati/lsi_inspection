@@ -1,0 +1,138 @@
+[
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "ADMIN SFAX",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "ADMIN SFAX - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "ADMIN SOUSSE",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "ADMIN SOUSSE - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "ADMIN TUNIS",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "ADMIN TUNIS - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "CND SFAX",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "CND SFAX - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "CND TUNIS",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "CND TUNIS - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "CRP SFAX",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "CRP SFAX - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "CRP SOUSSE",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "CRP SOUSSE - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "CRP TUNIS",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "CRP TUNIS - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "FORMATION",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "FORMATION - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "INSP SFAX",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "INSP SFAX - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "INSP SOUDAGE SFAX",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "INSP SOUDAGE SFAX - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "INSP SOUDAGE TUNIS",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "INSP SOUDAGE TUNIS - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "INSP TUNIS",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "INSP TUNIS - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "REG SFAX",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "REG SFAX - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "REG SOUSSE",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "REG SOUSSE - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "REG TUNIS",
+  "disabled": 0,
+  "is_group": 0,
+  "name": "REG TUNIS - tic",
+  "parent_department": "Services - tic"
+ },
+ {
+  "company": "technique inspection et contrôle",
+  "department_name": "Services",
+  "disabled": 0,
+  "is_group": 1,
+  "name": "Services - tic",
+  "parent_department": "Tous les départements"
+ }
+]

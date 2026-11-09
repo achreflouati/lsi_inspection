@@ -1,0 +1,38 @@
+[
+ {
+  "branch": "Administration",
+  "name": "Administration"
+ },
+ {
+  "branch": "CND Sfax",
+  "name": "CND Sfax"
+ },
+ {
+  "branch": "CND Tunis",
+  "name": "CND Tunis"
+ },
+ {
+  "branch": "Formation Divers Zones",
+  "name": "Formation Divers Zones"
+ },
+ {
+  "branch": "INSP Sfax",
+  "name": "INSP Sfax"
+ },
+ {
+  "branch": "INSP Tunis",
+  "name": "INSP Tunis"
+ },
+ {
+  "branch": "REG Sfax",
+  "name": "REG Sfax"
+ },
+ {
+  "branch": "REG Sousse",
+  "name": "REG Sousse"
+ },
+ {
+  "branch": "REG Tunis",
+  "name": "REG Tunis"
+ }
+]

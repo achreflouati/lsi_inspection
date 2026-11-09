@@ -408,3 +408,15 @@ class TestChiffrage(TestChiffrageBase):
 		t = {x.etape: x.cout_total for x in doc.totaux_etapes}
 		g2 = next(g for g in doc.groupes if g.numero == "2")
 		self.assertAlmostEqual(t[dmos], g2.cout_total + g4.cout_total / 2, 3)
+
+	# ------------------------------------------------------------------ BU et Service : opportunité → EFT → devis
+	def test_bu_et_service_recopies(self):
+		bu = frappe.get_doc(dict(doctype="Branch", branch=f"{P} BU")).insert().name
+		service = self.departement(f"{P} SERVICE")
+		o = self.opportunite(self.parcours_standard(), lsi_bu=bu, lsi_service=service)
+		e = frappe.get_doc("EFT", moteur.make_eft(o.name))
+		self.assertEqual((e.bu, e.service), (bu, service))
+		doc = self.eft_exemple(bu=bu, service=service)
+		doc = self._valider(doc)
+		q = frappe.get_doc("Quotation", moteur.creer_devis(doc.name))
+		self.assertEqual((q.lsi_bu, q.lsi_service), (bu, service))
