@@ -604,7 +604,7 @@ lsi_eft.demande = function (frm) {
 	const f = frm.get_field("demande_html");
 	if (!f || !frm.doc.opportunity) return;
 	const esc = frappe.utils.escape_html;
-	frappe.call({ method: `${M}.demande_opportunite`, args: { opportunity: frm.doc.opportunity } }).then((r) => {
+	frappe.call({ method: "lsi_inspection.chiffrage.etude.demande_opportunite", args: { opportunity: frm.doc.opportunity } }).then((r) => {
 		const d = r.message || {};
 		const articles = (d.articles || []).map((a) => `<tr><td>${a.item_code ? `<a href="/app/item/${encodeURIComponent(a.item_code)}">${esc(a.item_code)}</a>`
 			: `<span class="text-muted">${__("(sans article)")}</span>`}</td><td>${esc(a.item_name || "")}</td>
@@ -640,7 +640,7 @@ lsi_eft.offre_client = function (frm) {
 		primary_action(v) {
 			const lignes = d.$wrapper.find(".lsi-oc:checked").map(function () { return $(this).data("name"); }).get();
 			if (!lignes.length) return frappe.msgprint(__("Cochez au moins une ligne."));
-			frappe.call({ method: `${M}.creer_devis`, args: { eft: frm.doc.name, lignes, remise: v.remise || 0 }, freeze: true }).then((r) => {
+			frappe.call({ method: "lsi_inspection.chiffrage.devis.creer_devis", args: { eft: frm.doc.name, lignes, remise: v.remise || 0 }, freeze: true }).then((r) => {
 				d.hide();
 				frappe.set_route("Form", "Quotation", r.message);
 			});

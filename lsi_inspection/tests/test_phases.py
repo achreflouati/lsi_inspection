@@ -7,6 +7,7 @@ import frappe
 from frappe.utils import get_datetime
 
 from lsi_inspection.commercial import phases
+from lsi_inspection.commercial.phases import evenements as evenements_phase
 from lsi_inspection.tests.contexte import PREFIXE, TestLot2
 
 
@@ -178,19 +179,19 @@ class TestPhases(TestLot2):
 
 	def test_erreur_du_moteur_ne_bloque_pas_le_document(self):
 		o = self.opportunite(self.parcours_standard())
-		with patch.object(phases, "appliquer_evenement", side_effect=Exception("panne simulée")):
+		with patch.object(evenements_phase, "appliquer_evenement", side_effect=Exception("panne simulée")):
 			q = self.devis(o)
 		self.assertEqual(q.docstatus, 1)
 		self.assertTrue(self.erreurs(o.name))
 
 	def test_document_hors_evenements_sans_appel_au_moteur(self):
 		self.parcours_standard()
-		phases.evenements()
-		with patch.object(phases, "declencher") as d, patch.object(phases, "_noter_valeurs") as n:
+		phases.evenements_actifs()
+		with patch.object(evenements_phase, "declencher") as d, patch.object(evenements_phase, "_noter_valeurs") as n:
 			frappe.get_doc(dict(doctype="ToDo", description="hors événements")).insert(ignore_permissions=True)
 		d.assert_not_called()
 		n.assert_not_called()
-		self.assertNotIn("ToDo", phases.evenements())
+		self.assertNotIn("ToDo", phases.evenements_actifs())
 
 	def test_sales_stage_natif_suit_la_phase_en_cours(self):
 		"""Le champ natif sales_stage est la seule « phase en cours » : il suit chaque transition."""

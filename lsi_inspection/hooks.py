@@ -268,29 +268,41 @@ fixtures = [
 		"Issue", "Issue Type", "Issue Priority"]]]},
 ]
 
-# Lot 2 — opportunité : moteur générique des phases (configuration : Opportunity Type, Evenement Phase, Notification Phase)
-_phases = "lsi_inspection.commercial.phases"
+# ------------------------------------------------------------------ écrans (JS par doctype)
 doctype_js = {"Opportunity": "public/js/opportunity.js", "EFT": "public/js/eft.js"}
 doctype_list_js = {"Opportunity": "public/js/opportunity_list.js"}
+
+# ------------------------------------------------------------------ événements des documents
+_PHASES = "lsi_inspection.commercial.phases"
 doc_events = {
+	# Moteur des phases : n'importe quel document peut terminer une phase (Evenement Phase configuré à l'écran).
+	# Sortie immédiate si le doctype n'est dans aucun événement actif (cache).
 	"*": {
-		# événements de fin de phase : sortie immédiate si le doctype n'est dans aucun Evenement Phase actif
-		"after_insert": f"{_phases}.sur_document",
-		"on_submit": f"{_phases}.sur_document",
-		"on_cancel": f"{_phases}.sur_document",
-		"on_change": f"{_phases}.sur_document",
+		"after_insert": f"{_PHASES}.evenements.sur_document",  # déclencheur « Création »
+		"on_submit": f"{_PHASES}.evenements.sur_document",  # déclencheur « Validation »
+		"on_cancel": f"{_PHASES}.evenements.sur_document",  # déclencheur « Annulation »
+		"on_change": f"{_PHASES}.evenements.sur_document",  # déclencheurs « valeur » (état du workflow, statut) : évalués avant le commit
 	},
 	"Opportunity": {
-		"validate": ["lsi_inspection.outils.defauts_referentiel", "lsi_inspection.outils.verifier_obligatoires",
-			f"{_phases}.opportunity_validate"],
-		"on_update": f"{_phases}.opportunity_on_update",
+		"validate": [
+			"lsi_inspection.outils.defauts_referentiel",  # valeurs par défaut du référentiel (nouveau document seulement)
+			"lsi_inspection.outils.verifier_obligatoires",  # « obligatoire si » vérifié aussi côté serveur
+			f"{_PHASES}.ecran.opportunity_validate",  # tableau des phases, en-tête (sales_stage), historique en ajout seul
+		],
+		"on_update": f"{_PHASES}.ecran.opportunity_on_update",  # ToDo des responsables à l'entrée / la sortie d'une phase
 	},
-	"Opportunity Type": {"validate": f"{_phases}.type_validate", "on_update": f"{_phases}.type_on_update"},
-	# Lot 3 — chiffrage (moteur générique : Type Position, pools, gammes, modèles)
-	"EFT": {"validate": "lsi_inspection.chiffrage.moteur.eft_validate"},
-	"Modele EFT": {"validate": "lsi_inspection.chiffrage.moteur.modele_validate"},
-	"Supplier Quotation": {"on_submit": "lsi_inspection.chiffrage.moteur.offre_fournisseur"},
+	"Opportunity Type": {
+		"validate": f"{_PHASES}.parcours.type_validate",  # contrôle du parcours configuré
+		"on_update": f"{_PHASES}.ecran.type_on_update",  # parcours modifié : tableaux des opportunités ouvertes reconstruits
+	},
+	# Chiffrage : calcul complet à chaque enregistrement d'un brouillon (gammes, organisation, coûts, totaux)
+	"EFT": {"validate": "lsi_inspection.chiffrage.moteur.calcul.eft_validate"},
+	"Modele EFT": {"validate": "lsi_inspection.chiffrage.moteur.modeles.modele_validate"},  # un modèle ne garde ni coût ni prix
+	# Offre fournisseur validée en réponse à une demande de prix : le chiffrage en attente est recalculé
+	"Supplier Quotation": {"on_submit": "lsi_inspection.chiffrage.moteur.actions.offre_fournisseur"},
 }
-# configuration initiale (commun + profil du site) : insère ce qui manque, ne modifie jamais l'existant
+
+# ------------------------------------------------------------------ configuration initiale (commun + profil du site)
+# Insère ce qui manque, ne modifie jamais l'existant (voir lsi_inspection/config).
 after_sync = "lsi_inspection.config.charger"
 after_migrate = "lsi_inspection.config.charger"

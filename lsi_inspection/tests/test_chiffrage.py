@@ -4,7 +4,8 @@ import frappe
 from frappe.model.workflow import apply_workflow
 from frappe.utils import flt
 
-from lsi_inspection.chiffrage import moteur
+from lsi_inspection.chiffrage import devis, etude, moteur
+from lsi_inspection.constants import REGLE_SOUS
 from lsi_inspection.tests.chiffrage_contexte import (
 	CATEGORIES, DESIGNATIONS, ETAPES, PRIX, TYPES, TestChiffrageBase, article, lire_projet,
 )
@@ -271,7 +272,7 @@ class TestChiffrage(TestChiffrageBase):
 	# ------------------------------------------------------------------ devis
 	def test_devis_positions_vendues_seulement(self):
 		doc = self._valider(self.eft_exemple())
-		q = frappe.get_doc("Quotation", moteur.creer_devis(doc.name))
+		q = frappe.get_doc("Quotation", devis.creer_devis(doc.name))
 		vendues = [p for p in doc.positions if not p.parente]
 		self.assertEqual([i.lsi_numero_position for i in q.items], [p.numero for p in vendues])
 		self.assertFalse([i for i in q.items if i.lsi_numero_position.count(".") == 2])  # aucune sous-position
@@ -289,7 +290,7 @@ class TestChiffrage(TestChiffrageBase):
 		doc = self._valider(self.eft_exemple())
 		frappe.db.set_single_value("Selling Settings", "allow_zero_qty_in_quotation", 0)
 		with self.assertRaises(frappe.ValidationError):
-			moteur.creer_devis(doc.name)
+			devis.creer_devis(doc.name)
 
 	# ------------------------------------------------------------------ droits, rapport, événements
 	def test_couts_journaliers_invisibles_pour_le_chiffreur(self):
@@ -329,7 +330,7 @@ class TestChiffrage(TestChiffrageBase):
 			(20, "T Étude", "Commercial", evt), (30, "T Chiffrage", "Commercial", "Manuel")])
 		o = self.opportunite(t)
 		phases.terminer_phase(o.name)  # → T Étude
-		eft = moteur.make_eft(o.name)
+		eft = etude.make_eft(o.name)
 		o = self.recharger(o)
 		self.assertEqual(o.sales_stage, "T Chiffrage")
 		self.assertEqual(o.lsi_historique_phases[-1].document_name, eft)
@@ -417,11 +418,11 @@ class TestChiffrage(TestChiffrageBase):
 		bu = frappe.get_doc(dict(doctype="Branch", branch=f"{P} BU")).insert().name
 		service = self.departement(f"{P} SERVICE")
 		o = self.opportunite(self.parcours_standard(), lsi_bu=bu, lsi_service=service)
-		e = frappe.get_doc("EFT", moteur.make_eft(o.name))
+		e = frappe.get_doc("EFT", etude.make_eft(o.name))
 		self.assertEqual((e.bu, e.service), (bu, service))
 		doc = self.eft_exemple(bu=bu, service=service)
 		doc = self._valider(doc)
-		q = frappe.get_doc("Quotation", moteur.creer_devis(doc.name))
+		q = frappe.get_doc("Quotation", devis.creer_devis(doc.name))
 		self.assertEqual((q.lsi_bu, q.lsi_service), (bu, service))
 
 	# ------------------------------------------------------------------ consommable chiffré par un pool (groupe d'articles)
@@ -553,7 +554,7 @@ class TestChiffrage(TestChiffrageBase):
 	# ------------------------------------------------------------------ prix fixe « le plus élevé » : les sous-lignes sont des choix
 	def _film_max(self, regle="Plus élevé"):
 		typ = frappe.get_doc(dict(doctype="Type Position", libelle=f"{P} Prix fixe max", actif=1, mode="Prix fixe",
-			source_cout=moteur.REGLE_SOUS, regle=regle)).insert().name
+			source_cout=REGLE_SOUS, regle=regle)).insert().name
 		doc = self.eft_exemple()
 		self.pos(doc, "1.17").type_position = typ  # Film (3) : films 12, 15, 10
 		doc.save()
@@ -628,10 +629,10 @@ class TestChiffrage(TestChiffrageBase):
 		o.save()
 		frappe.get_doc(dict(doctype="File", file_name="cdc-client.pdf", file_url="https://example.com/cdc-client.pdf",
 			attached_to_doctype="Opportunity", attached_to_name=o.name)).insert()
-		e = frappe.get_doc("EFT", moteur.make_eft(o.name))  # la ligne sans article ne bloque pas
+		e = frappe.get_doc("EFT", etude.make_eft(o.name))  # la ligne sans article ne bloque pas
 		self.assertEqual(e.demande_client, texte)
 		self.assertEqual(len(e.etapes), 1)  # seule la ligne avec un article devient une prestation
-		d = moteur.demande_opportunite(o.name)
+		d = etude.demande_opportunite(o.name)
 		self.assertIn("Contrôle à préciser", [a["item_name"] for a in d["articles"]])
 		self.assertEqual([f["file_name"] for f in d["fichiers"]], ["cdc-client.pdf"])
 
@@ -639,9 +640,9 @@ class TestChiffrage(TestChiffrageBase):
 	def test_offre_client_lignes_cochees_et_remise(self):
 		doc = self._valider(self.eft_exemple())
 		choisies = [self.pos(doc, n).name for n in ("1.1", "1.17", "2.1")]
-		q = frappe.get_doc("Quotation", moteur.creer_devis(doc.name, frappe.as_json(choisies), 10))
+		q = frappe.get_doc("Quotation", devis.creer_devis(doc.name, frappe.as_json(choisies), 10))
 		self.assertEqual(sorted(i.lsi_numero_position for i in q.items), ["1.1", "1.17", "2.1"])  # seulement les lignes cochées
 		self.assertEqual((q.apply_discount_on, q.additional_discount_percentage), ("Net Total", 10))
 		self.assertAlmostEqual(q.net_total, sum(flt(i.amount) for i in q.items) * 0.9, 2)
 		with self.assertRaises(frappe.ValidationError):
-			moteur.creer_devis(doc.name, "[]")
+			devis.creer_devis(doc.name, "[]")

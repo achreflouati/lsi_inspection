@@ -68,7 +68,7 @@ class TestReouverture(TestLot2):
 
 	def test_sens_quitte_la_valeur_ne_se_declenche_pas_a_l_arrivee(self):
 		self.parcours_standard()
-		ev = frappe._dict(phases.evenements())
+		ev = frappe._dict(phases.evenements_actifs())
 		rouverte = next(e for e in ev["Opportunity"] if e.name == "Opportunité rouverte")
 		self.assertEqual(rouverte.sens, "Quitte la valeur")
 		o, _ = self._perdre()  # l'arrivée en « Lost » ne déclenche pas la réouverture
