@@ -16,7 +16,7 @@ frappe.ui.form.on("Opportunity", {
 	refresh(frm) {
 		lsi.phases.durees(frm);
 		lsi.devis_hors_eft(frm);
-		if (!frm.is_new() && frappe.model.can_create("EFT")) {
+		if (!frm.is_new() && frappe.model.can_create("EFT") && frm.doc.lsi_statut_validation === "Validée") {
 			// une seule EFT par opportunité : ouverte si elle existe, créée sinon
 			frm.add_custom_button(__("EFT (étude technique)"), () =>
 				frappe.call({ method: "lsi_inspection.chiffrage.etude.ouvrir_ou_creer", args: { opportunity: frm.doc.name }, freeze: true })

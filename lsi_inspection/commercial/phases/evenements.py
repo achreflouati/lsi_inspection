@@ -197,8 +197,10 @@ def appliquer_evenement(opportunity, evenement, source):
 	else:
 		sautees = [r for r in _sequence(opp) if r.statut in (A_VENIR, EN_COURS) and cint(r.ordre) < cint(cible.ordre)]
 		for r in sautees:
-			_terminer(opp, r, SAUTEE_AUTO, maintenant)
+			# la phase en cours a été traitée : terminée par l'événement ; seules les phases jamais commencées sont sautées
+			_terminer(opp, r, TERMINEE if r.statut == EN_COURS else SAUTEE_AUTO, maintenant)
 			r.commentaire = f"{evenement} : {origine.doctype} {origine.name}"
+		sautees = [r for r in sautees if r.statut == SAUTEE_AUTO]
 		_terminer(opp, cible, TERMINEE, maintenant)
 		suivante = None
 		if not cible.phase_finale:

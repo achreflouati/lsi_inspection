@@ -4,7 +4,7 @@ jointes de l'opportunité. « Non faisable » : proposition de déclarer l'oppor
 import frappe
 from frappe import _
 
-from lsi_inspection.constants import NON_FAISABLE
+from lsi_inspection.constants import NON_FAISABLE, VALIDEE
 from lsi_inspection.outils import utilisateur_responsable
 
 
@@ -16,6 +16,7 @@ def ouvrir_ou_creer(opportunity):
 	existante = eft_active(opportunity)
 	if existante:
 		return existante
+	verifier_demande_validee(opp)
 	doc = frappe.new_doc("EFT")
 	doc.update(dict(opportunity=opp.name, company=opp.company,
 		customer=opp.party_name if opp.opportunity_from == "Customer" else None))
@@ -33,6 +34,8 @@ def eft_active(opportunity, sauf=None):
 
 def valider(doc):
 	"""EFT.validate : une seule EFT active par opportunité (une nouvelle version remplace l'ancienne) ; responsable du service."""
+	if doc.is_new() and not doc.amended_from:
+		verifier_demande_validee(frappe.get_doc("Opportunity", doc.opportunity))
 	autre = eft_active(doc.opportunity, sauf=doc.name)
 	if autre and autre != doc.amended_from:
 		frappe.throw(_("L'opportunité {0} a déjà une EFT : {1}.").format(doc.opportunity, autre))
@@ -68,3 +71,10 @@ def declarer_perdue(eft, motifs, detail=None):
 	raisons = [dict(lost_reason=m) for m in frappe.parse_json(motifs) or []]
 	opp.declare_enquiry_lost(raisons, [], detail or doc.commentaire_faisabilite)
 	return opp.name
+
+
+def verifier_demande_validee(opp):
+	"""Refuse la création d'une EFT tant que la demande d'offre (workflow de l'opportunité) n'est pas validée."""
+	if opp.get("lsi_statut_validation") != VALIDEE:
+		frappe.throw(_("La demande d'offre {0} doit être validée avant de créer l'EFT (état actuel : {1}).").format(
+			opp.name, opp.get("lsi_statut_validation") or _("non renseigné")), title=_("Demande non validée"))
