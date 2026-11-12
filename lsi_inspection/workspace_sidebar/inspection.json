@@ -21,6 +21,7 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "user-check",
    "indent": 0,
    "keep_closed": 0,
    "label": "Mes opportunit\u00e9s ouvertes",
@@ -32,6 +33,7 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "target",
    "indent": 0,
    "keep_closed": 0,
    "label": "Opportunit\u00e9s ouvertes",
@@ -43,6 +45,7 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "message-square-warning",
    "indent": 0,
    "keep_closed": 0,
    "label": "Signaler un retour",
@@ -54,6 +57,7 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "list-checks",
    "indent": 0,
    "keep_closed": 0,
    "label": "Retours de test",
@@ -65,6 +69,7 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "briefcase",
    "indent": 1,
    "keep_closed": 0,
    "label": "Commercial",
@@ -75,6 +80,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "target",
    "indent": 0,
    "keep_closed": 0,
    "label": "Opportunit\u00e9",
@@ -86,6 +92,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "receipt-text",
    "indent": 0,
    "keep_closed": 0,
    "label": "Devis",
@@ -97,6 +104,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "building-2",
    "indent": 0,
    "keep_closed": 0,
    "label": "Client",
@@ -108,6 +116,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "user-plus",
    "indent": 0,
    "keep_closed": 0,
    "label": "Prospect",
@@ -119,6 +128,7 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "settings",
    "indent": 1,
    "keep_closed": 0,
    "label": "Param\u00e9trage commercial",
@@ -129,6 +139,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "tags",
    "indent": 0,
    "keep_closed": 0,
    "label": "Type d'opportunit\u00e9",
@@ -140,6 +151,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "git-branch",
    "indent": 0,
    "keep_closed": 0,
    "label": "\u00c9tape de vente",
@@ -151,6 +163,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "zap",
    "indent": 0,
    "keep_closed": 0,
    "label": "\u00c9v\u00e9nement de phase",
@@ -162,6 +175,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "folder-tree",
    "indent": 0,
    "keep_closed": 0,
    "label": "Famille de type",
@@ -173,6 +187,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "list",
    "indent": 0,
    "keep_closed": 0,
    "label": "Type m\u00e9tier",
@@ -184,6 +199,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "mail",
    "indent": 0,
    "keep_closed": 0,
    "label": "Mod\u00e8le d'e-mail",
@@ -195,6 +211,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "radio",
    "indent": 0,
    "keep_closed": 0,
    "label": "Source",
@@ -206,6 +223,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "circle-x",
    "indent": 0,
    "keep_closed": 0,
    "label": "Motif de perte",
@@ -217,6 +235,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "network",
    "indent": 0,
    "keep_closed": 0,
    "label": "D\u00e9partement",
@@ -228,6 +247,7 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "calculator",
    "indent": 1,
    "keep_closed": 0,
    "label": "Chiffrage",
@@ -238,6 +258,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "map-pin",
    "indent": 0,
    "keep_closed": 0,
    "label": "BU",
@@ -249,6 +270,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "clipboard-check",
    "indent": 0,
    "keep_closed": 0,
    "label": "EFT (\u00e9tude technique)",
@@ -260,6 +282,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "calculator",
    "indent": 0,
    "keep_closed": 0,
    "label": "Chiffrage (variantes)",
@@ -271,6 +294,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "copy",
    "indent": 0,
    "keep_closed": 0,
    "label": "Mod\u00e8le de chiffrage",
@@ -282,6 +306,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "bar-chart-3",
    "indent": 0,
    "keep_closed": 0,
    "label": "Besoins du chiffrage",
@@ -293,6 +318,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "send",
    "indent": 0,
    "keep_closed": 0,
    "label": "Demande de prix fournisseur",
@@ -304,6 +330,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "file-text",
    "indent": 0,
    "keep_closed": 0,
    "label": "Offre fournisseur",
@@ -315,6 +342,7 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "sliders-horizontal",
    "indent": 1,
    "keep_closed": 0,
    "label": "Param\u00e9trage chiffrage",
@@ -325,6 +353,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "shapes",
    "indent": 0,
    "keep_closed": 0,
    "label": "Type de position",
@@ -336,6 +365,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "layers",
    "indent": 0,
    "keep_closed": 0,
    "label": "Gamme",
@@ -347,6 +377,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "ruler",
    "indent": 0,
    "keep_closed": 0,
    "label": "Conversion d'unit\u00e9s",
@@ -358,6 +389,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "id-card",
    "indent": 0,
    "keep_closed": 0,
    "label": "D\u00e9signation (pool main-d'\u0153uvre)",
@@ -369,6 +401,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "users",
    "indent": 0,
    "keep_closed": 0,
    "label": "Salari\u00e9 (co\u00fbt journalier)",
@@ -380,6 +413,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "boxes",
    "indent": 0,
    "keep_closed": 0,
    "label": "Cat\u00e9gorie d'actif (pool \u00e9quipement)",
@@ -391,6 +425,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "wrench",
    "indent": 0,
    "keep_closed": 0,
    "label": "Actif (co\u00fbt journalier)",
@@ -402,6 +437,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "package",
    "indent": 0,
    "keep_closed": 0,
    "label": "Article",
@@ -413,6 +449,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "folder",
    "indent": 0,
    "keep_closed": 0,
    "label": "Groupe d'articles",
@@ -424,6 +461,7 @@
   {
    "child": 1,
    "collapsible": 1,
+   "icon": "badge-dollar-sign",
    "indent": 0,
    "keep_closed": 0,
    "label": "Prix d'article",
@@ -433,7 +471,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-12 10:46:18.663093",
+ "modified": "2026-11-12 10:50:08.558583",
  "modified_by": "Administrator",
  "module": "LSI Inspection",
  "name": "Inspection",
