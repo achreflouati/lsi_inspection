@@ -75,7 +75,10 @@ def _charger_reglages(dt, valeurs):
 	if changes:
 		doc.update(changes)
 		doc.flags.ignore_permissions = True
-		doc.save()
+		try:
+			doc.save()
+		except frappe.LinkValidationError as e:
+			print(f"[lsi_inspection] réglage {dt} ignoré : {e}")
 	return len(changes)
 
 
