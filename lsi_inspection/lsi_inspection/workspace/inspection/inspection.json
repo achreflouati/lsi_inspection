@@ -1,11 +1,16 @@
 {
+ "app": "lsi_inspection",
  "charts": [
   {
    "chart_name": "Opportunites par phase",
    "label": "Opportunit\u00e9s ouvertes par phase"
+  },
+  {
+   "chart_name": "Chiffrages par mois",
+   "label": "Chiffrages par mois"
   }
  ],
- "content": "[{\"id\": \"lsi1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Inspection</b></span>\", \"col\": 12}}, {\"id\": \"lsi2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Mes opportunit\\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Opportunit\\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"lsi_retour\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Signaler un retour\", \"col\": 3}}, {\"id\": \"lsi_retours\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Retours de test\", \"col\": 3}}, {\"id\": \"lsi4\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Opportunites par phase\", \"col\": 12}}, {\"id\": \"lsi5\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Commercial</b></span>\", \"col\": 12}}, {\"id\": \"lsi6\", \"type\": \"card\", \"data\": {\"card_name\": \"Commercial\", \"col\": 4}}, {\"id\": \"lsi7\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\\u00e9trage commercial\", \"col\": 4}}, {\"id\": \"lsi8\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Chiffrage</b></span>\", \"col\": 12}}, {\"id\": \"lsi9\", \"type\": \"card\", \"data\": {\"card_name\": \"Chiffrage\", \"col\": 4}}, {\"id\": \"lsi10\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\\u00e9trage chiffrage\", \"col\": 4}}]",
+ "content": "[{\"id\": \"5fed4ade85\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Tableau de bord</b></span>\", \"col\": 12}}, {\"id\": \"09232faf24\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Opportunit\\u00e9s ouvertes\", \"col\": 4}}, {\"id\": \"03b2af2638\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"EFT en cours\", \"col\": 4}}, {\"id\": \"c3c487a51c\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Chiffrages en brouillon\", \"col\": 4}}, {\"id\": \"378a117626\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Devis en attente\", \"col\": 4}}, {\"id\": \"9c09dae81f\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Phases en retard\", \"col\": 4}}, {\"id\": \"e50a1ecbf5\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Retours de test ouverts\", \"col\": 4}}, {\"id\": \"f4037c0c13\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Actions</b></span>\", \"col\": 12}}, {\"id\": \"a046efa823\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Nouvelle opportunit\\u00e9\", \"col\": 3}}, {\"id\": \"8090023984\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Nouvelle EFT\", \"col\": 3}}, {\"id\": \"7f25e6eeae\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Mes chiffrages\", \"col\": 3}}, {\"id\": \"0c94edb849\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Mes opportunit\\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"9d0033e702\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Opportunit\\u00e9s ouvertes\", \"col\": 3}}, {\"id\": \"161a1daa38\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Signaler un retour\", \"col\": 3}}, {\"id\": \"64f51d9b2f\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Retours de test\", \"col\": 3}}, {\"id\": \"lsi4\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Opportunites par phase\", \"col\": 12}}, {\"id\": \"517f733b70\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Chiffrages par mois\", \"col\": 6}}, {\"id\": \"lsi6\", \"type\": \"card\", \"data\": {\"card_name\": \"Commercial\", \"col\": 4}}, {\"id\": \"lsi7\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\\u00e9trage commercial\", \"col\": 4}}, {\"id\": \"lsi9\", \"type\": \"card\", \"data\": {\"card_name\": \"Chiffrage\", \"col\": 4}}, {\"id\": \"lsi10\", \"type\": \"card\", \"data\": {\"card_name\": \"Param\\u00e9trage chiffrage\", \"col\": 4}}]",
  "creation": "2026-11-08 12:14:48.901026",
  "custom_blocks": [],
  "docstatus": 0,
@@ -140,7 +145,7 @@
    "is_query_report": 0,
    "label": "Source",
    "link_count": 0,
-   "link_to": "Lead Source",
+   "link_to": "UTM Source",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -355,11 +360,36 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-09 17:00:00.000000",
+ "modified": "2026-11-12 12:36:28.755990",
  "modified_by": "Administrator",
  "module": "LSI Inspection",
  "name": "Inspection",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Opportunit\u00e9s ouvertes",
+   "number_card_name": "Opportunit\u00e9s ouvertes"
+  },
+  {
+   "label": "EFT en cours",
+   "number_card_name": "EFT en cours"
+  },
+  {
+   "label": "Chiffrages en brouillon",
+   "number_card_name": "Chiffrages en brouillon"
+  },
+  {
+   "label": "Devis en attente",
+   "number_card_name": "Devis en attente"
+  },
+  {
+   "label": "Phases en retard",
+   "number_card_name": "Phases en retard"
+  },
+  {
+   "label": "Retours de test ouverts",
+   "number_card_name": "Retours de test ouverts"
+  }
+ ],
  "owner": "Administrator",
  "public": 1,
  "quick_lists": [],
@@ -401,7 +431,29 @@
    "link_to": "Issue",
    "stats_filter": "[[\"Issue\",\"status\",\"=\",\"Open\"]]",
    "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "",
+   "label": "Nouvelle opportunit\u00e9",
+   "type": "URL",
+   "url": "/desk/opportunity/new"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "",
+   "label": "Nouvelle EFT",
+   "type": "URL",
+   "url": "/desk/eft/new"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "",
+   "label": "Mes chiffrages",
+   "type": "URL",
+   "url": "/desk/chiffrage"
   }
  ],
- "title": "Inspection"
+ "title": "Inspection",
+ "type": "Workspace"
 }
