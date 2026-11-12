@@ -321,5 +321,5 @@ override_doctype_dashboards = {
 
 # ------------------------------------------------------------------ configuration initiale (commun + profil du site)
 # Insère ce qui manque, ne modifie jamais l'existant (voir lsi_inspection/config).
-after_sync = "lsi_inspection.config.charger"
+after_install = "lsi_inspection.config.charger"
 after_migrate = "lsi_inspection.config.charger"
