@@ -79,6 +79,7 @@ def _charger_reglages(dt, valeurs):
 			doc.save()
 		except frappe.LinkValidationError as e:
 			print(f"[lsi_inspection] réglage {dt} ignoré : {e}")
+			return 0
 	return len(changes)
 
 
