@@ -34,7 +34,9 @@ def _position(doc, numero):
 
 
 @frappe.whitelist(methods=["POST"])
-def partager_groupe(chiffrage, groupe, etapes):
+def partager_groupe(chiffrage, groupe, etapes=None):
+	if not etapes or len(frappe.parse_json(etapes)) < 2:
+		frappe.throw(_("Ajoutez au moins 2 prestations au chiffrage pour partager un groupe entre elles."))
 	"""Un groupe partagé entre plusieurs prestations (parts égales) : cocher les prestations concernées."""
 	doc = _chiffrage_brouillon(chiffrage)
 	etapes = frappe.parse_json(etapes) or []

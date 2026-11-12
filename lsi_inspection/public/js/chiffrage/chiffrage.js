@@ -16,9 +16,6 @@ frappe.ui.form.on("Chiffrage", {
 			frm.add_custom_button(__("Demander un prix"), () => lsi_chiffrage.demander_prix(frm), P);
 			frm.add_custom_button(__("Répartir au prorata"), () => lsi_chiffrage.prorata(frm), P);
 			frm.add_custom_button(__("Partager un groupe"), () => lsi_chiffrage.partager(frm), P);
-			frm.add_custom_button(__("Planifier postions"), () => lsi_chiffrage.planifier_position(frm), P);
-			frm.add_custom_button(__("📋 Planning global"), () => lsi_chiffrage.planning_global(frm), P);
-			frm.add_custom_button(__("dhia non pas comme ca  Vue Gantt prévisionnelle"), () => lsi_chiffrage.vue_gantt(frm), P);
 			frm.add_custom_button(__("Charger un modèle"), () => lsi_chiffrage.charger_modele(frm), __("Modèle"));
 		}
 		frm.add_custom_button(__("Enregistrer comme modèle"), () => lsi_chiffrage.enregistrer_modele(frm), __("Modèle"));
