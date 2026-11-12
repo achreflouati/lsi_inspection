@@ -17,6 +17,15 @@ def _chiffrage_brouillon(chiffrage):
 	return doc
 
 
+def _eft_brouillon(eft):
+	"""Récupère un EFT en brouillon avec vérification des droits."""
+	doc = frappe.get_doc("Chiffrage", eft)
+	doc.check_permission("write")
+	if doc.docstatus != 0:
+		frappe.throw(_("L'EFT {0} n'est plus en brouillon.").format(eft))
+	return doc
+
+
 def _position(doc, numero):
 	p = next((x for x in doc.positions if x.numero == numero), None)
 	if not p:
@@ -137,3 +146,98 @@ def repartir_prorata(chiffrage, numero):
 	p.qty_base = p.qty
 	doc.save()
 	return ratio
+
+
+@frappe.whitelist(methods=["POST"])
+def planifier_positions_globales(eft, positions):
+	"""
+	Planification globale intelligente selon le type :
+	- Équipement ➔ Task de réservation d'asset
+	- Stock ➔ Material Request
+	- Consommable ➔ Material Request (sans responsable)
+	- Activité ➔ Task assignée
+	"""
+	doc = _eft_brouillon(eft)
+	positions_data = frappe.parse_json(positions)
+	
+	if not positions_data:
+		frappe.throw(_("Aucune position à planifier."))
+	
+	par_num = {p.numero: p for p in doc.positions}
+	nb_planifie = 0
+	messages = []
+	
+	for ligne in positions_data:
+		numero = ligne.get("numero")
+		# Gérer le cas où le numéro est un float (1.1) ou string ("1.1")
+		p = par_num.get(str(numero)) or par_num.get(numero) or par_num.get(float(numero))
+		if not p or not ligne.get("date_debut"):
+			continue
+		
+		type_planif = ligne.get("type_planif")
+		date_debut = getdate(ligne.get("date_debut"))
+		date_fin = getdate(ligne.get("date_fin")) if ligne.get("date_fin") else date_debut
+		responsable = ligne.get("responsable")
+		asset = ligne.get("asset_specifique")
+		qty_commande = ligne.get("qty_commande") or flt(p.qty) or 1
+		notes = ligne.get("notes")
+		
+		# Enregistrement des dates sur la position
+		p.db_set("date_debut_prevue", date_debut, update_modified=False)
+		p.db_set("date_fin_prevue", date_fin, update_modified=False)
+		p.db_set("responsable", responsable, update_modified=False)
+		p.db_set("notes_planification", notes, update_modified=False)
+		p.db_set("statut_planification", "Planifié", update_modified=False)
+		
+		# --- ACTION SELON LE TYPE ---
+		if type_planif == "equipement":
+			subject = f"[ÉQUIPEMENT] {p.numero} - {p.designation or p.item_code}"
+			if asset:
+				subject += f" ({asset})"
+			task = frappe.get_doc({
+				"doctype": "Task",
+				"subject": subject,
+				"description": notes or f"Réservation équipement depuis EFT {eft}",
+				"exp_start_date": date_debut,
+				"exp_end_date": date_fin,
+				"assigned_to": responsable,
+				"status": "Open",
+				"priority": "High"
+			})
+			task.insert(ignore_permissions=True)
+			messages.append(f"🚜 {p.numero} : Task {task.name}")
+			
+		elif type_planif in ("stock", "consommable"):
+			mr = frappe.new_doc("Material Request")
+			mr.material_request_type = "Purchase"
+			mr.schedule_date = date_debut
+			mr.company = doc.company
+			mr.append("items", {
+				"item_code": p.item_code,
+				"qty": flt(qty_commande),
+				"schedule_date": date_debut,
+				"description": f"{p.designation or ''} (Pos: {p.numero})"
+			})
+			mr.insert(ignore_permissions=True)
+			messages.append(f"📦 {p.numero} : Demande {mr.name}")
+			
+		else:  # activite
+			task = frappe.get_doc({
+				"doctype": "Task",
+				"subject": f"[ACTIVITÉ] {p.numero} - {p.designation or p.item_code}",
+				"description": notes or f"Intervention planifiée depuis EFT {eft}",
+				"project": doc.get("project"),
+				"exp_start_date": date_debut,
+				"exp_end_date": date_fin,
+				"assigned_to": responsable,
+				"status": "Open"
+			})
+			task.insert(ignore_permissions=True)
+			messages.append(f"👷 {p.numero} : Task {task.name}")
+		
+		nb_planifie += 1
+	
+	doc.save()
+	
+	recap = "\n".join(messages) if messages else ""
+	return _("✅ {0} position(s) planifiée(s).\n\n{1}").format(nb_planifie, recap)

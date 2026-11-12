@@ -22,6 +22,12 @@
   "tarif",
   "stock_disponible",
   "etapes",
+  "sb_planification",
+  "date_debut_prevue",
+  "date_fin_prevue",
+  "responsable",
+  "notes_planification",
+  "statut_planification",
   "sb_cout",
   "cout_manuel",
   "retenue",
@@ -145,6 +151,39 @@
    "fieldtype": "Small Text",
    "label": "Étapes",
    "read_only": 1
+  },
+  {
+   "fieldname": "sb_planification",
+   "fieldtype": "Section Break",
+   "label": "Planification"
+  },
+  {
+   "fieldname": "date_debut_prevue",
+   "fieldtype": "Date",
+   "label": "Date début prévue"
+  },
+  {
+   "fieldname": "date_fin_prevue",
+   "fieldtype": "Date",
+   "label": "Date fin prévue"
+  },
+  {
+   "fieldname": "responsable",
+   "fieldtype": "Link",
+   "label": "Responsable / Intervenant",
+   "options": "User"
+  },
+  {
+   "fieldname": "notes_planification",
+   "fieldtype": "Small Text",
+   "label": "Notes de planification"
+  },
+  {
+   "default": "Non planifié",
+   "fieldname": "statut_planification",
+   "fieldtype": "Select",
+   "label": "Statut planification",
+   "options": "Non planifié\nPlanifié\nEn cours\nTerminé"
   },
   {
    "fieldname": "sb_cout",
@@ -287,7 +326,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-11-09 11:41:29.317100",
+ "modified": "2026-11-10 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Chiffrage",
  "name": "Chiffrage Position",

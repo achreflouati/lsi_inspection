@@ -23,3 +23,4 @@ from lsi_inspection.chiffrage.moteur.formules import cle_numero  # noqa: F401
 from lsi_inspection.chiffrage.moteur.gammes import ajouter_gamme, appliquer_gammes, numeros_gamme  # noqa: F401
 from lsi_inspection.chiffrage.moteur.modeles import charger_modele, enregistrer_modele, modele_validate  # noqa: F401
 from lsi_inspection.chiffrage.moteur.organisation import organiser  # noqa: F401
+from lsi_inspection.chiffrage.moteur.actions import planifier_positions_globales
