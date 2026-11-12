@@ -4,6 +4,6 @@
   "item_group_name": "Prestations",
   "lsi_marge_cible": 0.0,
   "name": "Prestations",
-  "parent_item_group": "Tous les Groupes d'Articles"
+  "parent_item_group": "{racine_groupe_articles}"
  }
 ]

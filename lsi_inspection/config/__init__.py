@@ -9,6 +9,7 @@ Circuit : TIC paramètre à l'écran → export → commit Git → la production
 """
 
 import json
+import glob
 import os
 
 import frappe
@@ -37,7 +38,7 @@ def _lire(dossier, doctype):
 	if not os.path.exists(chemin):
 		return []
 	with open(chemin) as f:
-		return json.load(f)
+		return _substituer(json.load(f), _variables())
 
 
 def dossiers(profil=None):
@@ -108,13 +109,14 @@ def _passe(dossier):
 	n, attente = 0, []
 	frappe.flags.lsi_chargement_config = True
 	try:
-		for entree in manifeste():
+		_creer_unites(dossier)
+		for entree in _substituer(manifeste(), _variables()):
 			dt = entree["doctype"]
 			if entree.get("single"):
 				chemin = _fichier(dossier, dt)
 				if os.path.exists(chemin):
 					with open(chemin) as f:
-						n += _charger_reglages(dt, json.load(f))
+						n += _charger_reglages(dt, _substituer(json.load(f), _variables()))
 				continue
 			restants = [d for d in _lire(dossier, dt) if not frappe.db.exists(dt, d["name"])]
 			while restants:  # plusieurs passes : un élément peut citer un autre du même fichier (ex. département parent)
@@ -137,6 +139,80 @@ def _passe(dossier):
 	finally:
 		frappe.flags.lsi_chargement_config = False
 	return n, attente
+
+
+# ------------------------------------------------------------------ portabilité du profil
+# Le profil n'écrit jamais le nom de la société, son abréviation ni les racines des arbres :
+# il utilise des variables, remplacées ici par les valeurs du site.
+CHAMPS_UNITE = ("uom", "stock_uom", "from_uom", "to_uom")
+
+
+def _variables():
+	"""Valeurs du site : {societe}, {abbr}, {racine_groupe_articles}, {racine_departements}, {categorie_temps}."""
+	from frappe.utils.nestedset import get_root_of
+	societe = frappe.defaults.get_global_default("company") or frappe.db.get_value("Company", {}, "name")
+	return {
+		"societe": societe or "",
+		"abbr": (frappe.db.get_value("Company", societe, "abbr") if societe else "") or "",
+		"racine_groupe_articles": get_root_of("Item Group") or "",
+		"racine_departements": get_root_of("Department") or "",
+		"categorie_temps": next((c for c in ("Temps", "Time") if frappe.db.exists("UOM Category", c)), ""),
+	}
+
+
+def _substituer(valeur, variables):
+	"""Remplace {variable} par sa valeur ; une variable inconnue (vide) reste telle quelle."""
+	if isinstance(valeur, str):
+		for cle, val in variables.items():
+			if val:
+				valeur = valeur.replace("{" + cle + "}", val)
+		return valeur
+	if isinstance(valeur, list):
+		return [_substituer(v, variables) for v in valeur]
+	if isinstance(valeur, dict):
+		return {k: _substituer(v, variables) for k, v in valeur.items()}
+	return valeur
+
+
+def _variabiliser(valeur, variables):
+	"""Inverse de _substituer, pour l'export : remet les variables à la place des valeurs du site."""
+	if isinstance(valeur, str):
+		abbr = variables.get("abbr")
+		if abbr and valeur.endswith(" - " + abbr):
+			valeur = valeur[: -len(abbr)] + "{abbr}"
+		for cle in ("societe", "racine_groupe_articles", "racine_departements", "categorie_temps"):
+			if variables.get(cle) and valeur == variables[cle]:
+				return "{" + cle + "}"
+		return valeur
+	if isinstance(valeur, list):
+		return [_variabiliser(v, variables) for v in valeur]
+	if isinstance(valeur, dict):
+		return {k: _variabiliser(v, variables) for k, v in valeur.items()}
+	return valeur
+
+
+def _creer_unites(dossier):
+	"""Crée les unités citées par le profil si le site ne les a pas (ex. « Jour » sur un site en anglais)."""
+	noms = set()
+
+	def parcourir(x):
+		if isinstance(x, dict):
+			for k, v in x.items():
+				if k in CHAMPS_UNITE and isinstance(v, str) and v:
+					noms.add(v)
+				else:
+					parcourir(v)
+		elif isinstance(x, list):
+			for v in x:
+				parcourir(v)
+
+	for fichier in glob.glob(os.path.join(dossier, "*.json")):
+		with open(fichier, encoding="utf-8") as f:
+			parcourir(json.load(f))
+	for nom in sorted(noms):
+		if not frappe.db.exists("UOM", nom):
+			frappe.get_doc({"doctype": "UOM", "uom_name": nom}).insert(ignore_permissions=True)
+
 
 
 # ------------------------------------------------------------------ export
@@ -191,7 +267,8 @@ def exporter_profil(profil, dossier=None):
 	if os.path.realpath(cible).startswith(os.path.realpath(commun)):
 		frappe.throw("L'export n'écrit jamais dans commun/")
 	os.makedirs(cible, exist_ok=True)
-	entrees = manifeste()
+	variables = _variables()
+	entrees = _substituer(manifeste(), variables)
 	docs = {}
 	for e in entrees:
 		if e.get("export") == "references" or e.get("single"):
@@ -210,11 +287,13 @@ def exporter_profil(profil, dossier=None):
 		dt = e["doctype"]
 		if e.get("single"):
 			valeurs = {c: frappe.db.get_single_value(dt, c) for c in e.get("champs") or []}
+			valeurs = _variabiliser(valeurs, variables)
 			with open(_fichier(cible, dt), "w") as f:
 				f.write(json.dumps(valeurs, indent=1, ensure_ascii=False, sort_keys=True) + "\n")
 			resultat[dt] = len(valeurs)
 			continue
 		contenu = sorted((_propre(d) for d in docs.get(dt, [])), key=lambda x: x["name"])
+		contenu = _variabiliser(contenu, variables)
 		chemin = _fichier(cible, dt)
 		if contenu:
 			with open(chemin, "w") as f:

@@ -36,12 +36,12 @@
     [
      "name",
      "=",
-     "Services - tic"
+     "Services - {abbr}"
     ],
     [
      "parent_department",
      "=",
-     "Services - tic"
+     "Services - {abbr}"
     ]
    ]
   },

@@ -1,6 +1,6 @@
 [
  {
-  "category": "Temps",
+  "category": "{categorie_temps}",
   "from_uom": "Jour",
   "name": "Jour-Heure (chiffrage)",
   "to_uom": "Heure",

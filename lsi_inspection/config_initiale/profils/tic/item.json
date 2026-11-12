@@ -29,8 +29,8 @@
   "item_code": "Analyse Chimique",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -94,8 +94,8 @@
   "item_code": "Approbation des WPS",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -159,8 +159,8 @@
   "item_code": "Approbation des dossiers d'ingénierie",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -224,8 +224,8 @@
   "item_code": "Approbation des plans photovoltaïques",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -289,8 +289,8 @@
   "item_code": "Assistance Tarage de soupapes",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -354,8 +354,8 @@
   "item_code": "Assistance aux essais mécaniques",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -419,8 +419,8 @@
   "item_code": "Assistance technique",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -484,8 +484,8 @@
   "item_code": "Assistance à l'épreuve hydrau Pipeline",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -549,8 +549,8 @@
   "item_code": "Assistance à l'épreuve hydrau Sous Press",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -614,8 +614,8 @@
   "item_code": "Assistance à l'épreuve hydraulique EE",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -679,8 +679,8 @@
   "item_code": "Contrôle d'adhérence",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -744,8 +744,8 @@
   "item_code": "Contrôle de dureté",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -809,8 +809,8 @@
   "item_code": "Contrôle de revêtement",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -874,8 +874,8 @@
   "item_code": "Contrôle des appareils de levage",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -939,8 +939,8 @@
   "item_code": "Contrôle dimensionnel",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1004,8 +1004,8 @@
   "item_code": "Contrôle du fond par LFET",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1069,8 +1069,8 @@
   "item_code": "Contrôle du fond par MFL",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1134,8 +1134,8 @@
   "item_code": "Contrôle dégazage",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1199,8 +1199,8 @@
   "item_code": "Contrôle géométrique",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1264,8 +1264,8 @@
   "item_code": "Contrôle par Courant de Foucault-Soudure",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1329,8 +1329,8 @@
   "item_code": "Contrôle par Endoscopie",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1394,8 +1394,8 @@
   "item_code": "Contrôle par Magnétoscopie",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1459,8 +1459,8 @@
   "item_code": "Contrôle par Magnétoscopie - Fluorescent",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1524,8 +1524,8 @@
   "item_code": "Contrôle par PEC (Pulse Eddy Current)",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1589,8 +1589,8 @@
   "item_code": "Contrôle par PMI",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1654,8 +1654,8 @@
   "item_code": "Contrôle par Radiographie - Rayon Gamma",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1719,8 +1719,8 @@
   "item_code": "Contrôle par Radiographie - Rayon X",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1784,8 +1784,8 @@
   "item_code": "Contrôle par Radiographie - SCAR",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1849,8 +1849,8 @@
   "item_code": "Contrôle par Ressuage",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1914,8 +1914,8 @@
   "item_code": "Contrôle par Ressuage - Fluorescent",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -1979,8 +1979,8 @@
   "item_code": "Contrôle par TOFD",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2044,8 +2044,8 @@
   "item_code": "Contrôle par Ultrason",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2109,8 +2109,8 @@
   "item_code": "Contrôle par Ultrason Multi-éléments-PA",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2174,8 +2174,8 @@
   "item_code": "Contrôle par Ultrason automatisé",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2239,8 +2239,8 @@
   "item_code": "Contrôle par balai électrique",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2304,8 +2304,8 @@
   "item_code": "Contrôle par boite à vide",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2369,8 +2369,8 @@
   "item_code": "Contrôle peinture",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2434,8 +2434,8 @@
   "item_code": "Contrôle taux de ferrite",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2499,8 +2499,8 @@
   "item_code": "Coordination Projet",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2564,8 +2564,8 @@
   "item_code": "Ctrl Radio-Crawler-Rayon Gamma",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2629,8 +2629,8 @@
   "item_code": "Ctrl Radio-Crawler-Rayon X",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2694,8 +2694,8 @@
   "item_code": "Ctrl install thermographie IR",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2759,8 +2759,8 @@
   "item_code": "Diagnostic et Analyse de défaillance",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2824,8 +2824,8 @@
   "item_code": "Détection de fuite",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2889,8 +2889,8 @@
   "item_code": "Elaboration des notes de calcul",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -2954,8 +2954,8 @@
   "item_code": "Eval de l'intégrité tuyauterie API 570",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3019,8 +3019,8 @@
   "item_code": "Eval intég. app. sous pression-API 510",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3084,8 +3084,8 @@
   "item_code": "Eval intégrité des réservoirs-API 653",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3149,8 +3149,8 @@
   "item_code": "Evaluation FFS",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3214,8 +3214,8 @@
   "item_code": "Expertise Gaz",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3279,8 +3279,8 @@
   "item_code": "Expertise Incendie",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3344,8 +3344,8 @@
   "item_code": "Expertise Levage",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3409,8 +3409,8 @@
   "item_code": "Expertise Thermographie",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3474,8 +3474,8 @@
   "item_code": "Expertise électrique",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3539,8 +3539,8 @@
   "item_code": "Fabric maintenance",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3604,8 +3604,8 @@
   "item_code": "Formation",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3669,8 +3669,8 @@
   "item_code": "Insp des installations photovoltaïques",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3734,8 +3734,8 @@
   "item_code": "Insp des équipements et moyens de levage",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3799,8 +3799,8 @@
   "item_code": "Insp installations intérieures du gaz",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3864,8 +3864,8 @@
   "item_code": "Insp. installation par thermographie IR",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3929,8 +3929,8 @@
   "item_code": "Insp.Sys.prévention & détection incendie",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -3994,8 +3994,8 @@
   "item_code": "Inspection des installations électriques",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4059,8 +4059,8 @@
   "item_code": "Inspection des équipements sous pression",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4124,8 +4124,8 @@
   "item_code": "Inspection tierce partie",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4189,8 +4189,8 @@
   "item_code": "Inspection visuelle",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4254,8 +4254,8 @@
   "item_code": "Inspection visuelle selon L'API 510",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4319,8 +4319,8 @@
   "item_code": "Inspection visuelle selon L'API 653",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4384,8 +4384,8 @@
   "item_code": "Inspection visuelle selon l'API 570",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4449,8 +4449,8 @@
   "item_code": "Integrity",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4514,8 +4514,8 @@
   "item_code": "Mesure d'épaisseur - Bacs de stockage -",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4579,8 +4579,8 @@
   "item_code": "Mesure d'épaisseur - Sous pression -",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4644,8 +4644,8 @@
   "item_code": "Mesure d'épaisseur B-Scan - Tuyauterie -",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4709,8 +4709,8 @@
   "item_code": "Mesure d'épaisseur B-Scan -Sous pression",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4774,8 +4774,8 @@
   "item_code": "Mesure d'épaisseur Divers équipement",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4839,8 +4839,8 @@
   "item_code": "Mise à disposition de personnel QA/QC",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4904,8 +4904,8 @@
   "item_code": "Msr d'épaisseur B-Scan -Bac de stockage-",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -4969,8 +4969,8 @@
   "item_code": "Msr d'épaisseur par scanning Sous Press",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5034,8 +5034,8 @@
   "item_code": "Msr d'épaisseur par scanning bac de stoc",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5099,8 +5099,8 @@
   "item_code": "Msr d'épaisseur par scanning tuyauterie",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5164,8 +5164,8 @@
   "item_code": "Protection cathodique",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5229,8 +5229,8 @@
   "item_code": "Préparation des PQRs",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5294,8 +5294,8 @@
   "item_code": "Qualification des soudeurs",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5359,8 +5359,8 @@
   "item_code": "Réplique métallographique",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5424,8 +5424,8 @@
   "item_code": "Service API",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5489,8 +5489,8 @@
   "item_code": "Service Niveau III",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5554,8 +5554,8 @@
   "item_code": "Service RBI",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5619,8 +5619,8 @@
   "item_code": "Supervision des travaux Génie Civil",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5684,8 +5684,8 @@
   "item_code": "Supérvision travaux de soudage",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5749,8 +5749,8 @@
   "item_code": "Visite avant l'épreuve",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5814,8 +5814,8 @@
   "item_code": "Vérif.Appr.Doss.Tech.Dém.Admin Pipeline",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5879,8 +5879,8 @@
   "item_code": "Vérif.Appr.Doss.Tech.Dém.Admin SP",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
@@ -5944,8 +5944,8 @@
   "item_code": "Vérification des postes de soudages",
   "item_defaults": [
    {
-    "company": "technique inspection et contrôle",
-    "default_warehouse": "Magasins - tic"
+    "company": "{societe}",
+    "default_warehouse": "Magasins - {abbr}"
    }
   ],
   "item_group": "Prestations",
