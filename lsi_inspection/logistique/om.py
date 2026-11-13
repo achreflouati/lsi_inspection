@@ -52,7 +52,7 @@ def _om(doc, p, occ):
 	for o in occ:
 		om.append("ressources", dict(type_ressource=o.ligne.type_ressource, ressource_doctype=o.doctype, ressource=o.ressource,
 			nom_ressource=o.affectation.nom_ressource, date_debut=o.debut, date_fin=o.fin, qty=o.qty, uom=o.ligne.uom, part=o.part,
-			partagee=o.ligne.partagee, numero=o.ligne.numero, task=ancien.pop((o.doctype, o.ressource), None)))
+			partagee=o.ligne.partagee, numero=o.ligne.numero, pool=o.ligne.pool, task=ancien.pop((o.doctype, o.ressource), None)))
 	om.flags.taches_retirees = list(ancien.values())  # employés qui ont quitté l'OM : tâches annulées
 	om.save()
 	return om
