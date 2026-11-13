@@ -20,8 +20,10 @@ def valider(doc):
 	"""Besoin Logistique.validate : affectations complétées, contrôles (controles.py), statut."""
 	from lsi_inspection.logistique.controles import controler
 
-	if doc.statut == ANNULE and not doc.flags.changement_statut:
-		frappe.throw(_("Le besoin {0} est annulé : il ne peut plus être modifié.").format(doc.name))
+	if doc.statut == ANNULE:  # annulation (om.annuler_besoin) : aucun contrôle ; ensuite plus aucune modification
+		if not doc.flags.changement_statut:
+			frappe.throw(_("Le besoin {0} est annulé : il ne peut plus être modifié.").format(doc.name))
+		return
 	_options_lignes(doc)
 	for a in doc.affectations:
 		completer(doc, a)
@@ -98,10 +100,21 @@ def occupations(doc):
 			continue
 		cibles = {a.prestation: flt(a.part) or None} if a.prestation else parts(doc, r.numero)
 		for e, part in cibles.items():
+			debut, fin = _dates(a, prestation(doc, e) if not a.prestation else None)
 			out.append(frappe._dict(affectation=a, ligne=r, prestation=e, doctype=a.ressource_doctype, ressource=a.ressource,
-				debut=getdate(a.date_debut) if a.date_debut else None, fin=getdate(a.date_fin) if a.date_fin else None,
-				qty=flt(a.qty), part=part if cint(r.partagee) else None))
+				debut=debut, fin=fin, qty=flt(a.qty), part=part if cint(r.partagee) else None))
 	return out
+
+
+def _dates(a, p=None):
+	"""Dates d'une occupation : celles de l'affectation ; dépliée sur une prestation p (ressource partagée sans prestation),
+	bornées aux dates de p (le véhicule du 23 au 25 n'occupe l'OM du 23 que le 23)."""
+	debut, fin = (getdate(a.date_debut) if a.date_debut else None), (getdate(a.date_fin) if a.date_fin else None)
+	if p and p.date_debut and p.date_fin and debut and fin:
+		debut, fin = max(debut, getdate(p.date_debut)), min(fin, getdate(p.date_fin))
+		if debut > fin:  # l'affectation ne couvre pas cette prestation : dates de l'affectation gardées (visible dans l'OM)
+			debut, fin = getdate(a.date_debut), getdate(a.date_fin)
+	return debut, fin
 
 
 def statut(doc):

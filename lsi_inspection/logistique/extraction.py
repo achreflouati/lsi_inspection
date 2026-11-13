@@ -60,9 +60,7 @@ def _creer_projet(so):
 	from erpnext.selling.doctype.sales_order.sales_order import make_project
 
 	projet = make_project(so.name)
-	projet.expected_start_date = projet.expected_start_date or so.transaction_date
-	projet.expected_end_date = projet.expected_end_date or so.delivery_date
-	projet.insert()
+	projet.insert()  # dates prévues du projet : posées à la génération des OM (om._dates_projet)
 	return projet.name
 
 
