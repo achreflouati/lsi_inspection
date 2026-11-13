@@ -19,6 +19,9 @@ frappe.ui.form.on("Besoin Logistique", {
 	},
 
 	refresh(frm) {
+		// les prestations viennent de l'extraction de la commande : ni ajout ni suppression de ligne
+		frm.set_df_property("prestations", "cannot_add_rows", true);
+		frm.set_df_property("prestations", "cannot_delete_rows", true);
 		options_lignes(frm);
 		charger_filtres_pool(frm);
 		if (frm.is_new()) return;
