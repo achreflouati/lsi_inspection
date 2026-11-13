@@ -239,8 +239,8 @@ commandées) ; OFF-2026-0002 (déjà Converted) : aucune phase modifiée. Tous l
      Sami Trabelsi est déjà affecté(e) … sur Ordre de Mission OM-2026-00002 ».
    - **Démo pool** : forcer un véhicule sur la ligne 2.6 (champ saisi à la main) → refus « n'appartient pas au pool Appareils photo ».
    - **Démo exception** : véhicule 3.1 sur les deux prestations aux mêmes dates → accepté.
-5. **Actions › Générer les OM** → « 2 OM et 1 tâche(s) » (seul l'Inspecteur Démo a un utilisateur… et Hela Mansour a aussi
-   sa tâche, non assignée) ; statut « OM générés » ; colonne « Ordre de mission » remplie.
+5. **Actions › Générer les OM** → « 2 OM et 2 tâche(s) » (une par inspecteur ; seule celle de l'Inspecteur Démo est assignée :
+   c'est le seul salarié qui a un utilisateur) ; statut « OM générés » ; colonne « Ordre de mission » remplie.
 6. Ouvrir un OM : prestation, dates, lieu, projet, commande, ligne de commande ; ressources (véhicule à 50 %), colonne Tâche.
 7. Voir › Projet → onglet / liste des tâches du projet ; la tâche de l'Inspecteur Démo est assignée à inspecteur.demo@tic.local.
 8. Page **Inspection** : carte / section « Logistique ».
