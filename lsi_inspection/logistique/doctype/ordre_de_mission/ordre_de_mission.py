@@ -4,5 +4,5 @@
 from frappe.model.document import Document
 
 
-class OrdreDeMission(Document):
+class OrdredeMission(Document):
 	pass
