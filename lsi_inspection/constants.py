@@ -43,3 +43,15 @@ RESP_COMMERCIAL, RESP_ROLE, RESP_UTILISATEUR, RESP_PILOTE = "Commercial", "Rôle
 
 # Statuts natifs ERPNext lus par le code
 OPP_FERMEES = ("Converted", "Lost", "Closed")  # opportunité close : son tableau des phases n'est plus reconstruit
+
+# ------------------------------------------------------------------ logistique (Besoin Logistique, Ordre de Mission)
+# Statuts du Besoin Logistique (BROUILLON ci-dessus est réutilisé) ; un OM est « Planifié » ou « Annulé »
+EN_PLANIFICATION, PLANIFIE, OM_GENERES, ANNULE = "En planification", "Planifié", "OM générés", "Annulé"
+# Type d'une ressource prévue, déduit du doctype des ressources de son pool (Type Position.ressource_doctype)
+MAIN_OEUVRE, EQUIPEMENT, CONSOMMABLE = "Main-d'œuvre", "Équipement", "Consommable"
+TYPE_PAR_DOCTYPE = {"Employee": MAIN_OEUVRE, "Asset": EQUIPEMENT, "Item": CONSOMMABLE}
+DOCTYPES_A_CONFLIT = ("Employee", "Asset")  # une ressource nominative de ces doctypes ne peut être à deux endroits à la fois
+# Statuts natifs lus par la logistique
+ACTIFS_HORS_SERVICE = ("In Maintenance", "Out of Order", "Scrapped", "Sold")  # Asset.status : affectation refusée
+CONGE_APPROUVE = "Approved"  # Leave Application.status (HRMS) : avertissement
+TACHE_ANNULEE = "Cancelled"  # Task.status : tâche d'un OM annulé

@@ -277,6 +277,8 @@ doctype_js = {
 	# Chiffrage : actions.js définit lsi_chiffrage (API), puis aperçu, tableau et boutons de l'écran
 	"Chiffrage": ["public/js/commun/demande_client.js", "public/js/chiffrage/actions.js", "public/js/chiffrage/apercu.js",
 		"public/js/chiffrage/tableau.js", "public/js/chiffrage/chiffrage.js"],
+	# Logistique : bouton « Créer projet et besoin logistique » (lsi_inspection/logistique/extraction.py)
+	"Sales Order": "logistique/public/sales_order.js",
 }
 doctype_list_js = {"Opportunity": "public/js/opportunity_list.js"}
 

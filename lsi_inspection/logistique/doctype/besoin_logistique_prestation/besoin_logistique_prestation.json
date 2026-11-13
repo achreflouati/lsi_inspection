@@ -1,0 +1,100 @@
+{
+ "actions": [],
+ "creation": "2026-11-13 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "prestation",
+  "libelle",
+  "date_debut",
+  "date_fin",
+  "lieu",
+  "ordre_mission",
+  "ligne_commande",
+  "item_commande",
+  "lignes_commande"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "prestation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Prestation",
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "libelle",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Libellé",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "date_debut",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Début"
+  },
+  {
+   "columns": 1,
+   "fieldname": "date_fin",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Fin"
+  },
+  {
+   "columns": 2,
+   "fieldname": "lieu",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Lieu"
+  },
+  {
+   "columns": 1,
+   "fieldname": "ordre_mission",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Ordre de mission",
+   "options": "Ordre de Mission",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ligne_commande",
+   "fieldtype": "Data",
+   "label": "Ligne de commande (principale)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "item_commande",
+   "fieldtype": "Link",
+   "label": "Article de la ligne de commande",
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lignes_commande",
+   "fieldtype": "Small Text",
+   "label": "Lignes de commande couvertes",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-13 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Logistique",
+ "name": "Besoin Logistique Prestation",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

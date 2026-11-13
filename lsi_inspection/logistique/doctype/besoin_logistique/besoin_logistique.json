@@ -1,0 +1,212 @@
+{
+ "actions": [],
+ "autoname": "format:BL-{sales_order}",
+ "creation": "2026-11-13 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sb_commande",
+  "sales_order",
+  "customer",
+  "customer_name",
+  "cb_commande",
+  "project",
+  "chiffrage",
+  "company",
+  "cb_statut",
+  "statut",
+  "sb_prestations",
+  "prestations",
+  "sb_ressources",
+  "ressources",
+  "repartitions",
+  "non_extraites",
+  "sb_affectations",
+  "affectations",
+  "avertissements"
+ ],
+ "fields": [
+  {
+   "fieldname": "sb_commande",
+   "fieldtype": "Section Break",
+   "label": "Commande"
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Commande client",
+   "options": "Sales Order",
+   "read_only": 1,
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Client",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nom du client",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_commande",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Projet",
+   "options": "Project",
+   "read_only": 1
+  },
+  {
+   "fieldname": "chiffrage",
+   "fieldtype": "Link",
+   "label": "Chiffrage retenu",
+   "options": "Chiffrage",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Société",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_statut",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Brouillon",
+   "fieldname": "statut",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Statut",
+   "options": "Brouillon\nEn planification\nPlanifié\nOM générés\nAnnulé",
+   "read_only": 1
+  },
+  {
+   "description": "Dates et lieu de chaque prestation vendue. Les affectations reprennent ces dates par défaut.",
+   "fieldname": "sb_prestations",
+   "fieldtype": "Section Break",
+   "label": "Prestations (un OM par prestation)"
+  },
+  {
+   "fieldname": "prestations",
+   "fieldtype": "Table",
+   "label": "Prestations",
+   "options": "Besoin Logistique Prestation"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "sb_ressources",
+   "fieldtype": "Section Break",
+   "label": "Ressources prévues (extraites du chiffrage)"
+  },
+  {
+   "fieldname": "ressources",
+   "fieldtype": "Table",
+   "label": "Ressources prévues",
+   "options": "Besoin Logistique Ressource",
+   "read_only": 1
+  },
+  {
+   "fieldname": "repartitions",
+   "fieldtype": "Table",
+   "label": "Répartition des ressources partagées",
+   "options": "Besoin Logistique Repartition",
+   "read_only": 1
+  },
+  {
+   "fieldname": "non_extraites",
+   "fieldtype": "Small Text",
+   "label": "Lignes non extraites (hors pool de ressources)",
+   "read_only": 1
+  },
+  {
+   "description": "Une ligne par ressource nominative. Ressource partagée : prestation vide = toutes les prestations qu'elle partage (parts du chiffrage).",
+   "fieldname": "sb_affectations",
+   "fieldtype": "Section Break",
+   "label": "Affectations"
+  },
+  {
+   "fieldname": "affectations",
+   "fieldtype": "Table",
+   "label": "Affectations",
+   "options": "Besoin Logistique Affectation"
+  },
+  {
+   "fieldname": "avertissements",
+   "fieldtype": "Small Text",
+   "label": "Avertissements (congés)",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-11-13 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Logistique",
+ "name": "Besoin Logistique",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Projects Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Projects User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "customer_name,project",
+ "show_title_field_in_link": 0,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "customer_name",
+ "track_changes": 1
+}

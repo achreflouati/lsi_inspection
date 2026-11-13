@@ -1,0 +1,117 @@
+{
+ "actions": [],
+ "creation": "2026-11-13 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "ligne_ressource",
+  "prestation",
+  "ressource",
+  "date_debut",
+  "date_fin",
+  "qty",
+  "part",
+  "nom_ressource",
+  "type_ressource",
+  "ressource_doctype",
+  "remarque"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "description": "N° de la ressource prévue (chiffrage).",
+   "fieldname": "ligne_ressource",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Ligne (n°)",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "description": "Obligatoire sauf pour une ressource partagée (vide = toutes ses prestations).",
+   "fieldname": "prestation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Prestation",
+   "options": "Item"
+  },
+  {
+   "columns": 2,
+   "fieldname": "ressource",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Ressource",
+   "options": "ressource_doctype"
+  },
+  {
+   "columns": 1,
+   "fieldname": "date_debut",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Début"
+  },
+  {
+   "columns": 1,
+   "fieldname": "date_fin",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Fin"
+  },
+  {
+   "columns": 1,
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantité"
+  },
+  {
+   "columns": 1,
+   "description": "Ressource partagée seulement.",
+   "fieldname": "part",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Part (%)"
+  },
+  {
+   "fieldname": "nom_ressource",
+   "fieldtype": "Data",
+   "label": "Nom de la ressource",
+   "read_only": 1
+  },
+  {
+   "fieldname": "type_ressource",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Main-d'œuvre\nÉquipement\nConsommable",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ressource_doctype",
+   "fieldtype": "Link",
+   "label": "Doctype de la ressource",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "remarque",
+   "fieldtype": "Small Text",
+   "label": "Remarque (contrôles)",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-13 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Logistique",
+ "name": "Besoin Logistique Affectation",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,161 @@
+{
+ "actions": [],
+ "creation": "2026-11-13 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "numero",
+  "type_ressource",
+  "item_code",
+  "prestation",
+  "pool",
+  "qty",
+  "cout_prevu",
+  "partagee",
+  "repartition",
+  "uom",
+  "cout_unitaire",
+  "type_position",
+  "pool_doctype",
+  "ressource_doctype",
+  "ressource_chiffrage",
+  "ligne_commande"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "fieldname": "numero",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "N° (chiffrage)",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "type_ressource",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "Main-d'œuvre\nÉquipement\nConsommable",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Article (chiffrage)",
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "description": "Vide si la ressource est partagée.",
+   "fieldname": "prestation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Prestation",
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "pool",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Pool",
+   "options": "pool_doctype",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantité",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "cout_prevu",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Coût prévu",
+   "read_only": 1
+  },
+  {
+   "fieldname": "partagee",
+   "fieldtype": "Check",
+   "label": "Partagée",
+   "read_only": 1
+  },
+  {
+   "fieldname": "repartition",
+   "fieldtype": "Small Text",
+   "label": "Répartition",
+   "read_only": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "Unité",
+   "options": "UOM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cout_unitaire",
+   "fieldtype": "Currency",
+   "label": "Coût unitaire",
+   "read_only": 1
+  },
+  {
+   "fieldname": "type_position",
+   "fieldtype": "Link",
+   "label": "Type de position",
+   "options": "Type Position",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pool_doctype",
+   "fieldtype": "Link",
+   "label": "Doctype du pool",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ressource_doctype",
+   "fieldtype": "Link",
+   "label": "Doctype des ressources",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ressource_chiffrage",
+   "fieldtype": "Dynamic Link",
+   "label": "Ressource choisie au chiffrage",
+   "options": "ressource_doctype",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ligne_commande",
+   "fieldtype": "Data",
+   "label": "Ligne de commande",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-13 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Logistique",
+ "name": "Besoin Logistique Ressource",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
