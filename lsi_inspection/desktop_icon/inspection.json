@@ -1,0 +1,21 @@
+{
+ "app": "lsi_inspection",
+ "bg_color": "gray",
+ "creation": "2026-11-12 14:30:32.444445",
+ "docstatus": 0,
+ "doctype": "Desktop Icon",
+ "hidden": 0,
+ "icon": "search",
+ "icon_type": "Link",
+ "idx": 0,
+ "label": "Inspection",
+ "link_to": "Inspection",
+ "link_type": "Workspace Sidebar",
+ "modified": "2026-11-14 10:51:19.952218",
+ "modified_by": "Administrator",
+ "name": "Inspection",
+ "owner": "Administrator",
+ "restrict_removal": 0,
+ "roles": [],
+ "standard": 1
+}
