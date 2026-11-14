@@ -325,3 +325,13 @@ override_doctype_dashboards = {
 # Insère ce qui manque, ne modifie jamais l'existant (voir lsi_inspection/config).
 after_install = "lsi_inspection.config.charger"
 after_migrate = "lsi_inspection.config.charger"
+
+# Icône de l'app sur l'écran d'accueil (v16)
+add_to_apps_screen = [
+	{
+		"name": app_name,
+		"logo": "/assets/lsi_inspection/images/inspection-logo.svg",
+		"title": "Inspection",
+		"route": "/desk/inspection",
+	}
+]
